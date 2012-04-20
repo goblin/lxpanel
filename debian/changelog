@@ -1,3 +1,23 @@
+lxpanel (0.5.4.1-1) unstable; urgency=low
+
+  * New upstream release (Closes: #493253, #534222, #548333, #560843)
+    - Fixed crash problem on creating new panel
+    - Fixed segfault when battery is not exist 
+    - Use _NET_SHOWING_DESKTOP to toggle the desktop efficiently in wincmd 
+      applet when available
+    - Better checks for EWMH compliant window managers 
+    - Fixed cpufreq plugin, thermal plugin (Closes: #535568)
+    - Support recognizing current DE with $XDG_CURRENT_DESKTOP
+    - Fixed string format warning in src/misc.c
+    - Translation updated
+  * debian/control:
+    - drop deprecated lxpanel-netstat-plugin binary package
+  * Added README.source
+  * Updated README.Debian
+  * Bumped Standard-version to 3.8.3
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Sat, 19 Dec 2009 00:34:40 +0800
+
 lxpanel (0.5.3-1) experimental; urgency=low
 
   * New upstream release
