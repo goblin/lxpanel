@@ -2,9 +2,9 @@ Author: Sergey Slipchenko <faergeek@gmail.com>
 Description: Remove missing files to pass check target
 
 diff -Naurp lxpanel.orig/po/POTFILES.in lxpanel/po/POTFILES.in
---- lxpanel.orig/po/POTFILES.in	2011-07-29 14:37:01.000000000 +0200
-+++ lxpanel/po/POTFILES.in	2012-04-20 14:37:26.335272042 +0200
-@@ -14,7 +14,6 @@ data/ui/panel-pref.ui
+--- lxpanel.orig/po/POTFILES.in	2012-04-20 17:12:48.420543687 +0200
++++ lxpanel/po/POTFILES.in	2012-04-20 17:14:32.617254186 +0200
+@@ -17,7 +17,6 @@ data/ui/panel-pref.ui
  # Putting translation of plugins in main catalog is not a good idea...
  src/plugins/cpu/cpu.c
  src/plugins/deskno/deskno.c
@@ -12,7 +12,7 @@ diff -Naurp lxpanel.orig/po/POTFILES.in lxpanel/po/POTFILES.in
  src/plugins/launchbar.c
  src/plugins/taskbar.c
  src/plugins/dclock.c
-@@ -32,17 +31,12 @@ src/plugins/volume/volume.c
+@@ -35,10 +34,6 @@ src/plugins/volume/volume.c
  src/plugins/volume/volume-impl.c
  src/plugins/volumealsa/volumealsa.c
  
@@ -23,10 +23,3 @@ diff -Naurp lxpanel.orig/po/POTFILES.in lxpanel/po/POTFILES.in
  src/plugins/netstatus/netstatus.c
  src/plugins/netstatus/netstatus-dialog.c
  src/plugins/netstatus/netstatus-icon.c
- src/plugins/netstatus/netstatus-iface.c
- src/plugins/netstatus/netstatus-sysdeps.c
- src/plugins/netstatus/netstatus-util.c
--src/plugins/netstatus/gnome-netstatus.glade
- 
- src/plugins/batt/batt.c
- 
