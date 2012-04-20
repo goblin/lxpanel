@@ -1,8 +1,11 @@
 AC_PREREQ(2.53)
-AC_INIT(lxpanel, 0.5.6, http://lxde.org/)
-AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([src/bg.c])
+AC_INIT(lxpanel, 0.5.7, http://lxde.org/)
+AM_INIT_AUTOMAKE([1.11 -Wall -Werror foreign])
 AC_CONFIG_HEADER([config.h])
+
+# Support silent build rules. Disable by either passing --disable-silent-rules
+# to configure or passing V=1 to make
+AM_SILENT_RULES([yes])
 
 # Force to dynamic
 AC_DISABLE_STATIC
@@ -11,9 +14,12 @@ AC_DISABLE_STATIC
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_PROG_LIBTOOL
 AC_PROG_INTLTOOL(, [no-xml])
 AM_PROG_CC_C_O
+
+#Initialize libtool
+LT_PREREQ([2.2])
+LT_INIT
 
 # Checks for libraries.
 pkg_modules="gtk+-2.0 >= 2.12.0 \
@@ -37,9 +43,21 @@ if test x"$enable_menu_cache" = "xno"; then
 fi
 AC_SUBST(MENU_CACHE_CFLAGS)
 AC_SUBST(MENU_CACHE_LIBS)
-AM_CONDITIONAL(ENABLE_MENU_CACHE, test x"$enable_menu_cache" = x"yes") 
+AM_CONDITIONAL(ENABLE_MENU_CACHE, test x"$enable_menu_cache" = x"yes")
 
-PACKAGE_CFLAGS="$PACKAGE_CFLAGS $MENU_CACHE_CFLAGS"
+AC_ARG_ENABLE(more_warnings,
+       [AC_HELP_STRING([--enable-more-warnings],
+               [Add more warnings @<:@default=no@:>@])],
+       [enable_more_warnings="${enableval}"],
+       [enable_more_warnings=no]
+)
+
+if test x"$enable_more_warnings" = x"yes"; then
+  ADDITIONAL_FLAGS="-Wall -Werror=all -Werror=format -Werror=implicit-function-declaration -Werror=implicit-int -Werror=missing-braces -Werror=parentheses -Werror=return-type -Werror=strict-aliasing -Werror=switch -Wuninitialized -Werror=unused-label -Werror=unused-value -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -Werror=missing-declarations -Wredundant-decls -Wmissing-noreturn -Wpointer-arith -Wcast-align -Wwrite-strings -Werror=inline -Werror=format-nonliteral -Wformat-nonliteral -Werror=format-security -Wformat-security -Winit-self -Werror=missing-include-dirs -Werror=undef -Werror=aggregate-return -Wmissing-format-attribute -Werror=nested-externs -fno-strict-aliasing -fmessage-length=0 -Wp,-D_FORTIFY_SOURCE=2 -DG_DISABLE_DEPRECATED -DG_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES -DGTK_DISABLE_DEPRECATED -DGTK_DISABLE_SINGLE_INCLUDES"
+fi
+AC_SUBST(ADDITIONAL_FLAGS)
+
+PACKAGE_CFLAGS="$PACKAGE_CFLAGS $MENU_CACHE_CFLAGS $ADDITIONAL_FLAGS"
 PACKAGE_LIBS="$PACKAGE_LIBS $MENU_CACHE_LIBS"
 
 AC_ARG_ENABLE(man,
@@ -288,13 +306,22 @@ AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([bzero memset mkdir setlocale strchr])
 
 
+# Generate po/LINGUAS on the fly rather than relying on translators
+# to maintain it manually. This also overcome the problem that Transifex
+# cannot add a language to po/LINGUAS if a new po file is submitted.
+rm -f $srcdir/po/LINGUAS
+for po_file in `ls $srcdir/po/*.po | sort`;
+do
+    lang=`echo "$po_file" | sed "s|.*/po/\(.*\)\.po|\1|g"`
+    echo $lang >> $srcdir/po/LINGUAS
+done
+
 GETTEXT_PACKAGE=lxpanel
 #AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION(0.14.1)
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package.])
 
-ALL_LINGUAS="af ar cs da de es et eu fa fi fr gl hu hr id it ja ko lt ml ms nb nl nn pl ps pt pt_BR ru sk sl sv tr uk ur ur_PK vi zh_CN zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 if test x"$enable_man" = x"yes"; then

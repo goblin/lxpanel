@@ -56,25 +56,30 @@ am__lxpanel_SOURCES_DIST = misc.c misc.h bg.c bg.h configurator.c \
 	dbg.c dbg.h ev.c ev.h gtkbar.h gtkbar.c icon-grid.h \
 	icon-grid.c menu-policy.h menu-policy.c panel.c panel.h \
 	plugin.c plugin.h gtk-run.c
-@ENABLE_MENU_CACHE_TRUE@am__objects_1 = gtk-run.$(OBJEXT)
-am_lxpanel_OBJECTS = misc.$(OBJEXT) bg.$(OBJEXT) \
-	configurator.$(OBJEXT) dbg.$(OBJEXT) ev.$(OBJEXT) \
-	gtkbar.$(OBJEXT) icon-grid.$(OBJEXT) menu-policy.$(OBJEXT) \
-	panel.$(OBJEXT) plugin.$(OBJEXT) $(am__objects_1)
+@ENABLE_MENU_CACHE_TRUE@am__objects_1 = lxpanel-gtk-run.$(OBJEXT)
+am_lxpanel_OBJECTS = lxpanel-misc.$(OBJEXT) lxpanel-bg.$(OBJEXT) \
+	lxpanel-configurator.$(OBJEXT) lxpanel-dbg.$(OBJEXT) \
+	lxpanel-ev.$(OBJEXT) lxpanel-gtkbar.$(OBJEXT) \
+	lxpanel-icon-grid.$(OBJEXT) lxpanel-menu-policy.$(OBJEXT) \
+	lxpanel-panel.$(OBJEXT) lxpanel-plugin.$(OBJEXT) \
+	$(am__objects_1)
 lxpanel_OBJECTS = $(am_lxpanel_OBJECTS)
 am__DEPENDENCIES_1 =
 lxpanel_DEPENDENCIES = $(BUILTIN_PLUGINS) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
-lxpanel_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(lxpanel_LDFLAGS) \
-	$(LDFLAGS) -o $@
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+lxpanel_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(lxpanel_CFLAGS) \
+	$(CFLAGS) $(lxpanel_LDFLAGS) $(LDFLAGS) -o $@
 am_lxpanelctl_OBJECTS = lxpanelctl.$(OBJEXT)
 lxpanelctl_OBJECTS = $(am_lxpanelctl_OBJECTS)
 lxpanelctl_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_xml_purge_OBJECTS = xml_purge-xml-purge.$(OBJEXT)
 xml_purge_OBJECTS = $(am_xml_purge_OBJECTS)
 xml_purge_DEPENDENCIES =
-xml_purge_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+xml_purge_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(xml_purge_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -83,13 +88,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(lxpanel_SOURCES) $(lxpanelctl_SOURCES) \
 	$(xml_purge_SOURCES)
 DIST_SOURCES = $(am__lxpanel_SOURCES_DIST) $(lxpanelctl_SOURCES) \
@@ -160,9 +178,11 @@ am__relativize = \
   done; \
   reldir="$$dir2"
 ACLOCAL = @ACLOCAL@
+ADDITIONAL_FLAGS = @ADDITIONAL_FLAGS@
 ALL_LINGUAS = @ALL_LINGUAS@
 ALL_PLUGINS_LIST = @ALL_PLUGINS_LIST@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
@@ -179,6 +199,7 @@ CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
@@ -213,6 +234,7 @@ LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 LXPANEL_MODULE = @LXPANEL_MODULE@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MENU_CACHE_CFLAGS = @MENU_CACHE_CFLAGS@
 MENU_CACHE_LIBS = @MENU_CACHE_LIBS@
 MKDIR_P = @MKDIR_P@
@@ -262,6 +284,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
@@ -310,7 +333,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = plugins
-INCLUDES = \
+lxpanel_CFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src/plugins \
@@ -343,6 +366,7 @@ lxpanel_LDFLAGS = $(DYNAMIC_FLAGS)
 lxpanel_LDADD = \
 		$(BUILTIN_PLUGINS) \
 		$(PACKAGE_LIBS) \
+		$(X11_LIBS) \
 		$(INTLLIBS)
 
 lxpanelctl_SOURCES = lxpanelctl.c lxpanelctl.h
@@ -366,9 +390,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/Makefile
+	  $(AUTOMAKE) --foreign src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -441,13 +465,13 @@ clean-noinstPROGRAMS:
 	rm -f $$list
 lxpanel$(EXEEXT): $(lxpanel_OBJECTS) $(lxpanel_DEPENDENCIES) 
 	@rm -f lxpanel$(EXEEXT)
-	$(lxpanel_LINK) $(lxpanel_OBJECTS) $(lxpanel_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(lxpanel_LINK) $(lxpanel_OBJECTS) $(lxpanel_LDADD) $(LIBS)
 lxpanelctl$(EXEEXT): $(lxpanelctl_OBJECTS) $(lxpanelctl_DEPENDENCIES) 
 	@rm -f lxpanelctl$(EXEEXT)
-	$(LINK) $(lxpanelctl_OBJECTS) $(lxpanelctl_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(lxpanelctl_OBJECTS) $(lxpanelctl_LDADD) $(LIBS)
 xml-purge$(EXEEXT): $(xml_purge_OBJECTS) $(xml_purge_DEPENDENCIES) 
 	@rm -f xml-purge$(EXEEXT)
-	$(xml_purge_LINK) $(xml_purge_OBJECTS) $(xml_purge_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(xml_purge_LINK) $(xml_purge_OBJECTS) $(xml_purge_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -455,51 +479,232 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bg.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/configurator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbg.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ev.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtk-run.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtkbar.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/icon-grid.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-bg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-configurator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-dbg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-ev.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-gtk-run.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-gtkbar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-icon-grid.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-menu-policy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-misc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-panel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-plugin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanelctl.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/menu-policy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/misc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/panel.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xml_purge-xml-purge.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
+lxpanel-misc.o: misc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-misc.o -MD -MP -MF $(DEPDIR)/lxpanel-misc.Tpo -c -o lxpanel-misc.o `test -f 'misc.c' || echo '$(srcdir)/'`misc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-misc.Tpo $(DEPDIR)/lxpanel-misc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='misc.c' object='lxpanel-misc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-misc.o `test -f 'misc.c' || echo '$(srcdir)/'`misc.c
+
+lxpanel-misc.obj: misc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-misc.obj -MD -MP -MF $(DEPDIR)/lxpanel-misc.Tpo -c -o lxpanel-misc.obj `if test -f 'misc.c'; then $(CYGPATH_W) 'misc.c'; else $(CYGPATH_W) '$(srcdir)/misc.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-misc.Tpo $(DEPDIR)/lxpanel-misc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='misc.c' object='lxpanel-misc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-misc.obj `if test -f 'misc.c'; then $(CYGPATH_W) 'misc.c'; else $(CYGPATH_W) '$(srcdir)/misc.c'; fi`
+
+lxpanel-bg.o: bg.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-bg.o -MD -MP -MF $(DEPDIR)/lxpanel-bg.Tpo -c -o lxpanel-bg.o `test -f 'bg.c' || echo '$(srcdir)/'`bg.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-bg.Tpo $(DEPDIR)/lxpanel-bg.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='bg.c' object='lxpanel-bg.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-bg.o `test -f 'bg.c' || echo '$(srcdir)/'`bg.c
+
+lxpanel-bg.obj: bg.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-bg.obj -MD -MP -MF $(DEPDIR)/lxpanel-bg.Tpo -c -o lxpanel-bg.obj `if test -f 'bg.c'; then $(CYGPATH_W) 'bg.c'; else $(CYGPATH_W) '$(srcdir)/bg.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-bg.Tpo $(DEPDIR)/lxpanel-bg.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='bg.c' object='lxpanel-bg.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-bg.obj `if test -f 'bg.c'; then $(CYGPATH_W) 'bg.c'; else $(CYGPATH_W) '$(srcdir)/bg.c'; fi`
+
+lxpanel-configurator.o: configurator.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-configurator.o -MD -MP -MF $(DEPDIR)/lxpanel-configurator.Tpo -c -o lxpanel-configurator.o `test -f 'configurator.c' || echo '$(srcdir)/'`configurator.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-configurator.Tpo $(DEPDIR)/lxpanel-configurator.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='configurator.c' object='lxpanel-configurator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-configurator.o `test -f 'configurator.c' || echo '$(srcdir)/'`configurator.c
+
+lxpanel-configurator.obj: configurator.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-configurator.obj -MD -MP -MF $(DEPDIR)/lxpanel-configurator.Tpo -c -o lxpanel-configurator.obj `if test -f 'configurator.c'; then $(CYGPATH_W) 'configurator.c'; else $(CYGPATH_W) '$(srcdir)/configurator.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-configurator.Tpo $(DEPDIR)/lxpanel-configurator.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='configurator.c' object='lxpanel-configurator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-configurator.obj `if test -f 'configurator.c'; then $(CYGPATH_W) 'configurator.c'; else $(CYGPATH_W) '$(srcdir)/configurator.c'; fi`
+
+lxpanel-dbg.o: dbg.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-dbg.o -MD -MP -MF $(DEPDIR)/lxpanel-dbg.Tpo -c -o lxpanel-dbg.o `test -f 'dbg.c' || echo '$(srcdir)/'`dbg.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-dbg.Tpo $(DEPDIR)/lxpanel-dbg.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dbg.c' object='lxpanel-dbg.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-dbg.o `test -f 'dbg.c' || echo '$(srcdir)/'`dbg.c
+
+lxpanel-dbg.obj: dbg.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-dbg.obj -MD -MP -MF $(DEPDIR)/lxpanel-dbg.Tpo -c -o lxpanel-dbg.obj `if test -f 'dbg.c'; then $(CYGPATH_W) 'dbg.c'; else $(CYGPATH_W) '$(srcdir)/dbg.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-dbg.Tpo $(DEPDIR)/lxpanel-dbg.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dbg.c' object='lxpanel-dbg.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-dbg.obj `if test -f 'dbg.c'; then $(CYGPATH_W) 'dbg.c'; else $(CYGPATH_W) '$(srcdir)/dbg.c'; fi`
+
+lxpanel-ev.o: ev.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-ev.o -MD -MP -MF $(DEPDIR)/lxpanel-ev.Tpo -c -o lxpanel-ev.o `test -f 'ev.c' || echo '$(srcdir)/'`ev.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-ev.Tpo $(DEPDIR)/lxpanel-ev.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ev.c' object='lxpanel-ev.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-ev.o `test -f 'ev.c' || echo '$(srcdir)/'`ev.c
+
+lxpanel-ev.obj: ev.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-ev.obj -MD -MP -MF $(DEPDIR)/lxpanel-ev.Tpo -c -o lxpanel-ev.obj `if test -f 'ev.c'; then $(CYGPATH_W) 'ev.c'; else $(CYGPATH_W) '$(srcdir)/ev.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-ev.Tpo $(DEPDIR)/lxpanel-ev.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ev.c' object='lxpanel-ev.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-ev.obj `if test -f 'ev.c'; then $(CYGPATH_W) 'ev.c'; else $(CYGPATH_W) '$(srcdir)/ev.c'; fi`
+
+lxpanel-gtkbar.o: gtkbar.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-gtkbar.o -MD -MP -MF $(DEPDIR)/lxpanel-gtkbar.Tpo -c -o lxpanel-gtkbar.o `test -f 'gtkbar.c' || echo '$(srcdir)/'`gtkbar.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-gtkbar.Tpo $(DEPDIR)/lxpanel-gtkbar.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gtkbar.c' object='lxpanel-gtkbar.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-gtkbar.o `test -f 'gtkbar.c' || echo '$(srcdir)/'`gtkbar.c
+
+lxpanel-gtkbar.obj: gtkbar.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-gtkbar.obj -MD -MP -MF $(DEPDIR)/lxpanel-gtkbar.Tpo -c -o lxpanel-gtkbar.obj `if test -f 'gtkbar.c'; then $(CYGPATH_W) 'gtkbar.c'; else $(CYGPATH_W) '$(srcdir)/gtkbar.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-gtkbar.Tpo $(DEPDIR)/lxpanel-gtkbar.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gtkbar.c' object='lxpanel-gtkbar.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-gtkbar.obj `if test -f 'gtkbar.c'; then $(CYGPATH_W) 'gtkbar.c'; else $(CYGPATH_W) '$(srcdir)/gtkbar.c'; fi`
+
+lxpanel-icon-grid.o: icon-grid.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-icon-grid.o -MD -MP -MF $(DEPDIR)/lxpanel-icon-grid.Tpo -c -o lxpanel-icon-grid.o `test -f 'icon-grid.c' || echo '$(srcdir)/'`icon-grid.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-icon-grid.Tpo $(DEPDIR)/lxpanel-icon-grid.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='icon-grid.c' object='lxpanel-icon-grid.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-icon-grid.o `test -f 'icon-grid.c' || echo '$(srcdir)/'`icon-grid.c
+
+lxpanel-icon-grid.obj: icon-grid.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-icon-grid.obj -MD -MP -MF $(DEPDIR)/lxpanel-icon-grid.Tpo -c -o lxpanel-icon-grid.obj `if test -f 'icon-grid.c'; then $(CYGPATH_W) 'icon-grid.c'; else $(CYGPATH_W) '$(srcdir)/icon-grid.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-icon-grid.Tpo $(DEPDIR)/lxpanel-icon-grid.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='icon-grid.c' object='lxpanel-icon-grid.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-icon-grid.obj `if test -f 'icon-grid.c'; then $(CYGPATH_W) 'icon-grid.c'; else $(CYGPATH_W) '$(srcdir)/icon-grid.c'; fi`
+
+lxpanel-menu-policy.o: menu-policy.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-menu-policy.o -MD -MP -MF $(DEPDIR)/lxpanel-menu-policy.Tpo -c -o lxpanel-menu-policy.o `test -f 'menu-policy.c' || echo '$(srcdir)/'`menu-policy.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-menu-policy.Tpo $(DEPDIR)/lxpanel-menu-policy.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='menu-policy.c' object='lxpanel-menu-policy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-menu-policy.o `test -f 'menu-policy.c' || echo '$(srcdir)/'`menu-policy.c
+
+lxpanel-menu-policy.obj: menu-policy.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-menu-policy.obj -MD -MP -MF $(DEPDIR)/lxpanel-menu-policy.Tpo -c -o lxpanel-menu-policy.obj `if test -f 'menu-policy.c'; then $(CYGPATH_W) 'menu-policy.c'; else $(CYGPATH_W) '$(srcdir)/menu-policy.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-menu-policy.Tpo $(DEPDIR)/lxpanel-menu-policy.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='menu-policy.c' object='lxpanel-menu-policy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-menu-policy.obj `if test -f 'menu-policy.c'; then $(CYGPATH_W) 'menu-policy.c'; else $(CYGPATH_W) '$(srcdir)/menu-policy.c'; fi`
+
+lxpanel-panel.o: panel.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-panel.o -MD -MP -MF $(DEPDIR)/lxpanel-panel.Tpo -c -o lxpanel-panel.o `test -f 'panel.c' || echo '$(srcdir)/'`panel.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-panel.Tpo $(DEPDIR)/lxpanel-panel.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='panel.c' object='lxpanel-panel.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-panel.o `test -f 'panel.c' || echo '$(srcdir)/'`panel.c
+
+lxpanel-panel.obj: panel.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-panel.obj -MD -MP -MF $(DEPDIR)/lxpanel-panel.Tpo -c -o lxpanel-panel.obj `if test -f 'panel.c'; then $(CYGPATH_W) 'panel.c'; else $(CYGPATH_W) '$(srcdir)/panel.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-panel.Tpo $(DEPDIR)/lxpanel-panel.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='panel.c' object='lxpanel-panel.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-panel.obj `if test -f 'panel.c'; then $(CYGPATH_W) 'panel.c'; else $(CYGPATH_W) '$(srcdir)/panel.c'; fi`
+
+lxpanel-plugin.o: plugin.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-plugin.o -MD -MP -MF $(DEPDIR)/lxpanel-plugin.Tpo -c -o lxpanel-plugin.o `test -f 'plugin.c' || echo '$(srcdir)/'`plugin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-plugin.Tpo $(DEPDIR)/lxpanel-plugin.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='plugin.c' object='lxpanel-plugin.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-plugin.o `test -f 'plugin.c' || echo '$(srcdir)/'`plugin.c
+
+lxpanel-plugin.obj: plugin.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-plugin.obj -MD -MP -MF $(DEPDIR)/lxpanel-plugin.Tpo -c -o lxpanel-plugin.obj `if test -f 'plugin.c'; then $(CYGPATH_W) 'plugin.c'; else $(CYGPATH_W) '$(srcdir)/plugin.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-plugin.Tpo $(DEPDIR)/lxpanel-plugin.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='plugin.c' object='lxpanel-plugin.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-plugin.obj `if test -f 'plugin.c'; then $(CYGPATH_W) 'plugin.c'; else $(CYGPATH_W) '$(srcdir)/plugin.c'; fi`
+
+lxpanel-gtk-run.o: gtk-run.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-gtk-run.o -MD -MP -MF $(DEPDIR)/lxpanel-gtk-run.Tpo -c -o lxpanel-gtk-run.o `test -f 'gtk-run.c' || echo '$(srcdir)/'`gtk-run.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-gtk-run.Tpo $(DEPDIR)/lxpanel-gtk-run.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gtk-run.c' object='lxpanel-gtk-run.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-gtk-run.o `test -f 'gtk-run.c' || echo '$(srcdir)/'`gtk-run.c
+
+lxpanel-gtk-run.obj: gtk-run.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -MT lxpanel-gtk-run.obj -MD -MP -MF $(DEPDIR)/lxpanel-gtk-run.Tpo -c -o lxpanel-gtk-run.obj `if test -f 'gtk-run.c'; then $(CYGPATH_W) 'gtk-run.c'; else $(CYGPATH_W) '$(srcdir)/gtk-run.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lxpanel-gtk-run.Tpo $(DEPDIR)/lxpanel-gtk-run.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gtk-run.c' object='lxpanel-gtk-run.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lxpanel_CFLAGS) $(CFLAGS) -c -o lxpanel-gtk-run.obj `if test -f 'gtk-run.c'; then $(CYGPATH_W) 'gtk-run.c'; else $(CYGPATH_W) '$(srcdir)/gtk-run.c'; fi`
+
 xml_purge-xml-purge.o: xml-purge.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xml_purge_CFLAGS) $(CFLAGS) -MT xml_purge-xml-purge.o -MD -MP -MF $(DEPDIR)/xml_purge-xml-purge.Tpo -c -o xml_purge-xml-purge.o `test -f 'xml-purge.c' || echo '$(srcdir)/'`xml-purge.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xml_purge-xml-purge.Tpo $(DEPDIR)/xml_purge-xml-purge.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xml_purge_CFLAGS) $(CFLAGS) -MT xml_purge-xml-purge.o -MD -MP -MF $(DEPDIR)/xml_purge-xml-purge.Tpo -c -o xml_purge-xml-purge.o `test -f 'xml-purge.c' || echo '$(srcdir)/'`xml-purge.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xml_purge-xml-purge.Tpo $(DEPDIR)/xml_purge-xml-purge.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xml-purge.c' object='xml_purge-xml-purge.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xml_purge_CFLAGS) $(CFLAGS) -c -o xml_purge-xml-purge.o `test -f 'xml-purge.c' || echo '$(srcdir)/'`xml-purge.c
 
 xml_purge-xml-purge.obj: xml-purge.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xml_purge_CFLAGS) $(CFLAGS) -MT xml_purge-xml-purge.obj -MD -MP -MF $(DEPDIR)/xml_purge-xml-purge.Tpo -c -o xml_purge-xml-purge.obj `if test -f 'xml-purge.c'; then $(CYGPATH_W) 'xml-purge.c'; else $(CYGPATH_W) '$(srcdir)/xml-purge.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xml_purge-xml-purge.Tpo $(DEPDIR)/xml_purge-xml-purge.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xml_purge_CFLAGS) $(CFLAGS) -MT xml_purge-xml-purge.obj -MD -MP -MF $(DEPDIR)/xml_purge-xml-purge.Tpo -c -o xml_purge-xml-purge.obj `if test -f 'xml-purge.c'; then $(CYGPATH_W) 'xml-purge.c'; else $(CYGPATH_W) '$(srcdir)/xml-purge.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xml_purge-xml-purge.Tpo $(DEPDIR)/xml_purge-xml-purge.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xml-purge.c' object='xml_purge-xml-purge.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xml_purge_CFLAGS) $(CFLAGS) -c -o xml_purge-xml-purge.obj `if test -f 'xml-purge.c'; then $(CYGPATH_W) 'xml-purge.c'; else $(CYGPATH_W) '$(srcdir)/xml-purge.c'; fi`

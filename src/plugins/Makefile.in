@@ -47,30 +47,55 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
+AM_V_AR = $(am__v_AR_$(V))
+am__v_AR_ = $(am__v_AR_$(AM_DEFAULT_VERBOSITY))
+am__v_AR_0 = @echo "  AR    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 libbuiltin_plugins_a_AR = $(AR) $(ARFLAGS)
 libbuiltin_plugins_a_DEPENDENCIES =
 am__libbuiltin_plugins_a_SOURCES_DIST = launchbar.c taskbar.c dclock.c \
 	menu.c separator.c pager.c space.c tray.c wincmd.c dirmenu.c
-@ENABLE_MENU_CACHE_TRUE@am__objects_1 = menu.$(OBJEXT)
-am__objects_2 = launchbar.$(OBJEXT) taskbar.$(OBJEXT) dclock.$(OBJEXT) \
-	$(am__objects_1) separator.$(OBJEXT) pager.$(OBJEXT) \
-	space.$(OBJEXT) tray.$(OBJEXT) wincmd.$(OBJEXT) \
-	dirmenu.$(OBJEXT)
+@ENABLE_MENU_CACHE_TRUE@am__objects_1 =  \
+@ENABLE_MENU_CACHE_TRUE@	libbuiltin_plugins_a-menu.$(OBJEXT)
+am__objects_2 = libbuiltin_plugins_a-launchbar.$(OBJEXT) \
+	libbuiltin_plugins_a-taskbar.$(OBJEXT) \
+	libbuiltin_plugins_a-dclock.$(OBJEXT) $(am__objects_1) \
+	libbuiltin_plugins_a-separator.$(OBJEXT) \
+	libbuiltin_plugins_a-pager.$(OBJEXT) \
+	libbuiltin_plugins_a-space.$(OBJEXT) \
+	libbuiltin_plugins_a-tray.$(OBJEXT) \
+	libbuiltin_plugins_a-wincmd.$(OBJEXT) \
+	libbuiltin_plugins_a-dirmenu.$(OBJEXT)
 am_libbuiltin_plugins_a_OBJECTS = $(am__objects_2)
 libbuiltin_plugins_a_OBJECTS = $(am_libbuiltin_plugins_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libbuiltin_plugins_a_SOURCES)
 DIST_SOURCES = $(am__libbuiltin_plugins_a_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -114,9 +139,11 @@ am__relativize = \
   done; \
   reldir="$$dir2"
 ACLOCAL = @ACLOCAL@
+ADDITIONAL_FLAGS = @ADDITIONAL_FLAGS@
 ALL_LINGUAS = @ALL_LINGUAS@
 ALL_PLUGINS_LIST = @ALL_PLUGINS_LIST@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
@@ -133,6 +160,7 @@ CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
@@ -167,6 +195,7 @@ LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 LXPANEL_MODULE = @LXPANEL_MODULE@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MENU_CACHE_CFLAGS = @MENU_CACHE_CFLAGS@
 MENU_CACHE_LIBS = @MENU_CACHE_LIBS@
 MKDIR_P = @MKDIR_P@
@@ -216,6 +245,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
@@ -269,7 +299,7 @@ DIST_SUBDIRS = $(ALL_PLUGINS_LIST)
 
 SUBDIRS = $(DYNAMIC_PLUGINS)
 noinst_LIBRARIES = libbuiltin_plugins.a
-INCLUDES = \
+libbuiltin_plugins_a_CFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src \
@@ -315,9 +345,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/plugins/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/plugins/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/plugins/Makefile
+	  $(AUTOMAKE) --foreign src/plugins/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -340,9 +370,9 @@ $(am__aclocal_m4_deps):
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 libbuiltin_plugins.a: $(libbuiltin_plugins_a_OBJECTS) $(libbuiltin_plugins_a_DEPENDENCIES) 
-	-rm -f libbuiltin_plugins.a
-	$(libbuiltin_plugins_a_AR) libbuiltin_plugins.a $(libbuiltin_plugins_a_OBJECTS) $(libbuiltin_plugins_a_LIBADD)
-	$(RANLIB) libbuiltin_plugins.a
+	$(AM_V_at)-rm -f libbuiltin_plugins.a
+	$(AM_V_AR)$(libbuiltin_plugins_a_AR) libbuiltin_plugins.a $(libbuiltin_plugins_a_OBJECTS) $(libbuiltin_plugins_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libbuiltin_plugins.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -350,37 +380,200 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dclock.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirmenu.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/launchbar.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/menu.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pager.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/separator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/space.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/taskbar.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tray.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wincmd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-dclock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-dirmenu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-launchbar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-menu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-pager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-separator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-space.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-taskbar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-tray.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-wincmd.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+libbuiltin_plugins_a-launchbar.o: launchbar.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-launchbar.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-launchbar.Tpo -c -o libbuiltin_plugins_a-launchbar.o `test -f 'launchbar.c' || echo '$(srcdir)/'`launchbar.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-launchbar.Tpo $(DEPDIR)/libbuiltin_plugins_a-launchbar.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='launchbar.c' object='libbuiltin_plugins_a-launchbar.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-launchbar.o `test -f 'launchbar.c' || echo '$(srcdir)/'`launchbar.c
+
+libbuiltin_plugins_a-launchbar.obj: launchbar.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-launchbar.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-launchbar.Tpo -c -o libbuiltin_plugins_a-launchbar.obj `if test -f 'launchbar.c'; then $(CYGPATH_W) 'launchbar.c'; else $(CYGPATH_W) '$(srcdir)/launchbar.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-launchbar.Tpo $(DEPDIR)/libbuiltin_plugins_a-launchbar.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='launchbar.c' object='libbuiltin_plugins_a-launchbar.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-launchbar.obj `if test -f 'launchbar.c'; then $(CYGPATH_W) 'launchbar.c'; else $(CYGPATH_W) '$(srcdir)/launchbar.c'; fi`
+
+libbuiltin_plugins_a-taskbar.o: taskbar.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-taskbar.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-taskbar.Tpo -c -o libbuiltin_plugins_a-taskbar.o `test -f 'taskbar.c' || echo '$(srcdir)/'`taskbar.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-taskbar.Tpo $(DEPDIR)/libbuiltin_plugins_a-taskbar.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='taskbar.c' object='libbuiltin_plugins_a-taskbar.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-taskbar.o `test -f 'taskbar.c' || echo '$(srcdir)/'`taskbar.c
+
+libbuiltin_plugins_a-taskbar.obj: taskbar.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-taskbar.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-taskbar.Tpo -c -o libbuiltin_plugins_a-taskbar.obj `if test -f 'taskbar.c'; then $(CYGPATH_W) 'taskbar.c'; else $(CYGPATH_W) '$(srcdir)/taskbar.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-taskbar.Tpo $(DEPDIR)/libbuiltin_plugins_a-taskbar.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='taskbar.c' object='libbuiltin_plugins_a-taskbar.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-taskbar.obj `if test -f 'taskbar.c'; then $(CYGPATH_W) 'taskbar.c'; else $(CYGPATH_W) '$(srcdir)/taskbar.c'; fi`
+
+libbuiltin_plugins_a-dclock.o: dclock.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-dclock.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-dclock.Tpo -c -o libbuiltin_plugins_a-dclock.o `test -f 'dclock.c' || echo '$(srcdir)/'`dclock.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-dclock.Tpo $(DEPDIR)/libbuiltin_plugins_a-dclock.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dclock.c' object='libbuiltin_plugins_a-dclock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-dclock.o `test -f 'dclock.c' || echo '$(srcdir)/'`dclock.c
+
+libbuiltin_plugins_a-dclock.obj: dclock.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-dclock.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-dclock.Tpo -c -o libbuiltin_plugins_a-dclock.obj `if test -f 'dclock.c'; then $(CYGPATH_W) 'dclock.c'; else $(CYGPATH_W) '$(srcdir)/dclock.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-dclock.Tpo $(DEPDIR)/libbuiltin_plugins_a-dclock.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dclock.c' object='libbuiltin_plugins_a-dclock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-dclock.obj `if test -f 'dclock.c'; then $(CYGPATH_W) 'dclock.c'; else $(CYGPATH_W) '$(srcdir)/dclock.c'; fi`
+
+libbuiltin_plugins_a-menu.o: menu.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-menu.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-menu.Tpo -c -o libbuiltin_plugins_a-menu.o `test -f 'menu.c' || echo '$(srcdir)/'`menu.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-menu.Tpo $(DEPDIR)/libbuiltin_plugins_a-menu.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='menu.c' object='libbuiltin_plugins_a-menu.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-menu.o `test -f 'menu.c' || echo '$(srcdir)/'`menu.c
+
+libbuiltin_plugins_a-menu.obj: menu.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-menu.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-menu.Tpo -c -o libbuiltin_plugins_a-menu.obj `if test -f 'menu.c'; then $(CYGPATH_W) 'menu.c'; else $(CYGPATH_W) '$(srcdir)/menu.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-menu.Tpo $(DEPDIR)/libbuiltin_plugins_a-menu.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='menu.c' object='libbuiltin_plugins_a-menu.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-menu.obj `if test -f 'menu.c'; then $(CYGPATH_W) 'menu.c'; else $(CYGPATH_W) '$(srcdir)/menu.c'; fi`
+
+libbuiltin_plugins_a-separator.o: separator.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-separator.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-separator.Tpo -c -o libbuiltin_plugins_a-separator.o `test -f 'separator.c' || echo '$(srcdir)/'`separator.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-separator.Tpo $(DEPDIR)/libbuiltin_plugins_a-separator.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='separator.c' object='libbuiltin_plugins_a-separator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-separator.o `test -f 'separator.c' || echo '$(srcdir)/'`separator.c
+
+libbuiltin_plugins_a-separator.obj: separator.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-separator.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-separator.Tpo -c -o libbuiltin_plugins_a-separator.obj `if test -f 'separator.c'; then $(CYGPATH_W) 'separator.c'; else $(CYGPATH_W) '$(srcdir)/separator.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-separator.Tpo $(DEPDIR)/libbuiltin_plugins_a-separator.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='separator.c' object='libbuiltin_plugins_a-separator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-separator.obj `if test -f 'separator.c'; then $(CYGPATH_W) 'separator.c'; else $(CYGPATH_W) '$(srcdir)/separator.c'; fi`
+
+libbuiltin_plugins_a-pager.o: pager.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-pager.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-pager.Tpo -c -o libbuiltin_plugins_a-pager.o `test -f 'pager.c' || echo '$(srcdir)/'`pager.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-pager.Tpo $(DEPDIR)/libbuiltin_plugins_a-pager.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pager.c' object='libbuiltin_plugins_a-pager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-pager.o `test -f 'pager.c' || echo '$(srcdir)/'`pager.c
+
+libbuiltin_plugins_a-pager.obj: pager.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-pager.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-pager.Tpo -c -o libbuiltin_plugins_a-pager.obj `if test -f 'pager.c'; then $(CYGPATH_W) 'pager.c'; else $(CYGPATH_W) '$(srcdir)/pager.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-pager.Tpo $(DEPDIR)/libbuiltin_plugins_a-pager.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pager.c' object='libbuiltin_plugins_a-pager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-pager.obj `if test -f 'pager.c'; then $(CYGPATH_W) 'pager.c'; else $(CYGPATH_W) '$(srcdir)/pager.c'; fi`
+
+libbuiltin_plugins_a-space.o: space.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-space.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-space.Tpo -c -o libbuiltin_plugins_a-space.o `test -f 'space.c' || echo '$(srcdir)/'`space.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-space.Tpo $(DEPDIR)/libbuiltin_plugins_a-space.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='space.c' object='libbuiltin_plugins_a-space.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-space.o `test -f 'space.c' || echo '$(srcdir)/'`space.c
+
+libbuiltin_plugins_a-space.obj: space.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-space.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-space.Tpo -c -o libbuiltin_plugins_a-space.obj `if test -f 'space.c'; then $(CYGPATH_W) 'space.c'; else $(CYGPATH_W) '$(srcdir)/space.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-space.Tpo $(DEPDIR)/libbuiltin_plugins_a-space.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='space.c' object='libbuiltin_plugins_a-space.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-space.obj `if test -f 'space.c'; then $(CYGPATH_W) 'space.c'; else $(CYGPATH_W) '$(srcdir)/space.c'; fi`
+
+libbuiltin_plugins_a-tray.o: tray.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-tray.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-tray.Tpo -c -o libbuiltin_plugins_a-tray.o `test -f 'tray.c' || echo '$(srcdir)/'`tray.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-tray.Tpo $(DEPDIR)/libbuiltin_plugins_a-tray.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tray.c' object='libbuiltin_plugins_a-tray.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-tray.o `test -f 'tray.c' || echo '$(srcdir)/'`tray.c
+
+libbuiltin_plugins_a-tray.obj: tray.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-tray.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-tray.Tpo -c -o libbuiltin_plugins_a-tray.obj `if test -f 'tray.c'; then $(CYGPATH_W) 'tray.c'; else $(CYGPATH_W) '$(srcdir)/tray.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-tray.Tpo $(DEPDIR)/libbuiltin_plugins_a-tray.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tray.c' object='libbuiltin_plugins_a-tray.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-tray.obj `if test -f 'tray.c'; then $(CYGPATH_W) 'tray.c'; else $(CYGPATH_W) '$(srcdir)/tray.c'; fi`
+
+libbuiltin_plugins_a-wincmd.o: wincmd.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-wincmd.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-wincmd.Tpo -c -o libbuiltin_plugins_a-wincmd.o `test -f 'wincmd.c' || echo '$(srcdir)/'`wincmd.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-wincmd.Tpo $(DEPDIR)/libbuiltin_plugins_a-wincmd.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='wincmd.c' object='libbuiltin_plugins_a-wincmd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-wincmd.o `test -f 'wincmd.c' || echo '$(srcdir)/'`wincmd.c
+
+libbuiltin_plugins_a-wincmd.obj: wincmd.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-wincmd.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-wincmd.Tpo -c -o libbuiltin_plugins_a-wincmd.obj `if test -f 'wincmd.c'; then $(CYGPATH_W) 'wincmd.c'; else $(CYGPATH_W) '$(srcdir)/wincmd.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-wincmd.Tpo $(DEPDIR)/libbuiltin_plugins_a-wincmd.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='wincmd.c' object='libbuiltin_plugins_a-wincmd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-wincmd.obj `if test -f 'wincmd.c'; then $(CYGPATH_W) 'wincmd.c'; else $(CYGPATH_W) '$(srcdir)/wincmd.c'; fi`
+
+libbuiltin_plugins_a-dirmenu.o: dirmenu.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-dirmenu.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-dirmenu.Tpo -c -o libbuiltin_plugins_a-dirmenu.o `test -f 'dirmenu.c' || echo '$(srcdir)/'`dirmenu.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-dirmenu.Tpo $(DEPDIR)/libbuiltin_plugins_a-dirmenu.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dirmenu.c' object='libbuiltin_plugins_a-dirmenu.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-dirmenu.o `test -f 'dirmenu.c' || echo '$(srcdir)/'`dirmenu.c
+
+libbuiltin_plugins_a-dirmenu.obj: dirmenu.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-dirmenu.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-dirmenu.Tpo -c -o libbuiltin_plugins_a-dirmenu.obj `if test -f 'dirmenu.c'; then $(CYGPATH_W) 'dirmenu.c'; else $(CYGPATH_W) '$(srcdir)/dirmenu.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-dirmenu.Tpo $(DEPDIR)/libbuiltin_plugins_a-dirmenu.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dirmenu.c' object='libbuiltin_plugins_a-dirmenu.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-dirmenu.obj `if test -f 'dirmenu.c'; then $(CYGPATH_W) 'dirmenu.c'; else $(CYGPATH_W) '$(srcdir)/dirmenu.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

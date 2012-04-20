@@ -4,7 +4,7 @@ SUBDIRS = plugins
 
 bin_PROGRAMS = lxpanel lxpanelctl
 
-INCLUDES = \
+lxpanel_CFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src/plugins \
@@ -45,6 +45,7 @@ lxpanel_LDFLAGS = $(DYNAMIC_FLAGS)
 lxpanel_LDADD = \
 		$(BUILTIN_PLUGINS) \
 		$(PACKAGE_LIBS) \
+		$(X11_LIBS) \
 		$(INTLLIBS)
 
 lxpanelctl_SOURCES = lxpanelctl.c lxpanelctl.h
