@@ -9,7 +9,10 @@ module_LTLIBRARIES = batt.la
 moduledir = $(libdir)/lxpanel/plugins
 
 batt_la_SOURCES = \
-	batt.c
+	batt.c \
+	batt_sys.h \
+	batt_sys.c
+
 
 batt_la_LIBADD = \
 	$(PACKAGE_LIBS)

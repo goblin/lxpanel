@@ -8,13 +8,15 @@ default_config_paneldir = $(datadir)/lxpanel/profile/default/panels
 
 uidir=$(datadir)/lxpanel/ui
 ui_in_files= \
-	ui/panel-pref.glade
+	ui/panel-pref.glade \
+	ui/launchbar.glade \
+	ui/netstatus.glade
+
 ui_DATA = $(ui_in_files:.glade=.ui)
 
 # Generate GtkBuilder UI files from Glade files
 %.ui: %.glade
-	$(top_srcdir)/gtk-builder-convert $< $@
-#	$(GTK_BUILDER_CONVERT) $< $@
+	cp $< $@
 	$(top_builddir)/src/xml-purge $@
 
 CLEANFILES = \
@@ -51,7 +53,9 @@ lxpanel_images_DATA = \
 	images/numlock-on.png \
 	images/numlock-off.png \
 	images/scrllock-on.png \
-	images/scrllock-off.png
+	images/scrllock-off.png \
+	images/window-manager.png \
+	images/clock.png
 
 
 lxpanel_imagesdir = $(datadir)/lxpanel/images

@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(lxpanel, 0.4.1, http://lxde.org/)
+AC_INIT(lxpanel, 0.5.3, http://lxde.org/)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/bg.c])
 AC_CONFIG_HEADER([config.h])
@@ -13,9 +13,11 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_LIBTOOL
 AC_PROG_INTLTOOL(, [no-xml])
+AM_PROG_CC_C_O
 
 # Checks for libraries.
 pkg_modules="gtk+-2.0 >= 2.12.0 \
+             gio-unix-2.0 \
              gthread-2.0"
 #             libstartup-notification-1.0"
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
@@ -36,11 +38,12 @@ AM_CONDITIONAL(ENABLE_MENU_CACHE, test x"$enable_menu_cache" = x"yes")
 PACKAGE_CFLAGS="$PACKAGE_CFLAGS $MENU_CACHE_CFLAGS"
 PACKAGE_LIBS="$PACKAGE_LIBS $MENU_CACHE_LIBS"
 
-# Gtk Builder
-#AC_PATH_PROG([GTK_BUILDER_CONVERT],[gtk-builder-convert],[false])
-#if test "$GTK_BUILDER_CONVERT" = "false"; then
-#  AC_MSG_ERROR([gtk-builder-convert not found])
-#fi
+AC_ARG_ENABLE(man,
+	[AC_HELP_STRING([--enable-man],
+		[regenerate roff man pages from Docbook @<:@default=no@:>@])],
+	[enable_man="${enableval}"],
+	[enable_man=no]
+)
 
 AC_ARG_ENABLE([cast-checks],
     AS_HELP_STRING([--enable-cast-checks],
@@ -131,21 +134,6 @@ AM_CONDITIONAL(BUILD_ALSA_PLUGINS, test x$compile_alsa = xyes)
 dnl FIXME: check OSS existence
 AM_CONDITIONAL(BUILD_OSS_PLUGINS, test x$compile_alsa = xno)
 
-# check libiw for netstat plugin
-AC_ARG_ENABLE([libiw],
-    AS_HELP_STRING([--disable-libiw],
-                    [compile libiw-based netstat plugin (default: disable)]),
-            compile_libiw=$enableval, compile_libiw="no")
-if test x"$compile_libiw" = "xyes"; then
-    AC_CHECK_HEADERS(iwlib.h,
-                     [AC_CHECK_LIB(iw,
-                                   iw_sockets_open,
-                                   compile_libiw=yes,
-                                   compile_libiw=no)],
-                                   compile_libiw=no)
-fi
-AM_CONDITIONAL(BUILD_LIBIW_PLUGINS, test x$compile_libiw = xyes)
-
 AC_ARG_ENABLE([plugins-loading],
     AS_HELP_STRING([--disable-plugins-loading],
                [disable plugin loading (default: enable)]),
@@ -159,7 +147,6 @@ fi
 
 dnl Here are plugin listing.
 plugin_netstatus=
-plugin_netstat=
 plugin_volume=
 plugin_volumealsa=
 plugin_cpu=
@@ -175,7 +162,7 @@ AC_ARG_WITH(plugins,
 [                         plugins may be comma separated ]
 [                         'all' builds all plugins (default), 'none' builds none ]
 [                         Possible plugins are: ]
-[                         netstatus, netstat, volume, volumealsa, cpu, deskno, batt, kbled, xkb, thermal], plugins="$withval",[plugins="all"])
+[                         netstatus, volume, volumealsa, cpu, deskno, batt, kbled, xkb, thermal], plugins="$withval",[plugins="all"])
 
 if test x"$plugins" != xall -a x"$plugins" != xnone; then
     if test x"$plugins_loading" = xno; then
@@ -184,7 +171,7 @@ if test x"$plugins" != xall -a x"$plugins" != xnone; then
     fi
 fi
 
-ALL_PLUGINS_LIST="netstatus netstat volume volumealsa cpu deskno batt kbled xkb thermal"
+ALL_PLUGINS_LIST="netstatus volume volumealsa cpu deskno batt kbled xkb thermal"
 AC_SUBST(ALL_PLUGINS_LIST)
 
 if test x"$plugins" = xall; then
@@ -194,14 +181,13 @@ dnl        export plugin_$name="$name"
 dnl    done
 
     plugin_netstatus=netstatus
-    plugin_netstat=
     plugin_volume=volume
     plugin_volumealsa=volumealsa
     plugin_cpu=cpu
     plugin_deskno=deskno
     plugin_batt=batt
     plugin_kbled=kbled
-    plugin_xkb=
+    plugin_xkb=xkb
     plugin_thermal=thermal
 
     AC_MSG_RESULT(all)
@@ -213,9 +199,6 @@ else
         case "$plugin" in
             netstatus)
                 plugin_netstatus=netstatus
-                ;;
-            netstat)
-                plugin_netstat=netstat
                 ;;
             volume)
                 plugin_volume=volume
@@ -261,15 +244,8 @@ else
     dnl force OSS plugin to <null>
     plugin_volume=
 fi
-if test x"$compile_libiw" = "xno"; then
-   if test ! -z $plugin_netstat; then
-       AC_MSG_RESULT([no libiw headers/libraries found!])
-   fi
-   plugin_netstat=
-fi
 PLUGINS_LIST="\
     $plugin_netstatus \
-    $plugin_netstat \
     $plugin_volume \
     $plugin_volumealsa \
     $plugin_cpu \
@@ -311,13 +287,27 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package.])
 ALL_LINGUAS="af ar cs da de es et eu fa fi fr gl hu hr id it ja ko lt ml ms nb nl nn pl ps pt pt_BR ru sk sl sv tr uk ur ur_PK vi zh_CN zh_TW"
 AM_GLIB_GNU_GETTEXT
 
+if test x"$enable_man" = x"yes"; then
+	AC_PATH_PROG([XSLTPROC], [xsltproc])
+	if test -z "$XSLTPROC"; then
+		enable_man=no
+	fi
+
+	dnl check for DocBook DTD and stylesheets in the local catalog.
+	JH_CHECK_XML_CATALOG([-//OASIS//DTD DocBook XML V4.1.2//EN],
+		[DocBook XML DTD V4.1.2], [], enable_man=no)
+	JH_CHECK_XML_CATALOG([http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl],
+		[DocBook XSL Stylesheets >= 1.70.1], [], enable_man=no)
+fi
+
+AM_CONDITIONAL(ENABLE_REGENERATE_MAN, test "x$enable_man" != "xno")
+
 AC_CONFIG_FILES([
     lxpanel.pc
     Makefile
     src/Makefile
     src/plugins/Makefile
     src/plugins/netstatus/Makefile
-    src/plugins/netstat/Makefile
     src/plugins/volume/Makefile
     src/plugins/volumealsa/Makefile
     src/plugins/cpu/Makefile
@@ -342,11 +332,8 @@ echo Building dynamic plugins:
     if test x"$plugin_netstatus" != x; then
         AC_MSG_RESULT([    netstatus - Monitor networking status])
     fi
-    if test x"$plugin_netstat" != x; then
-        AC_MSG_RESULT([    netstat - Monitor networking status (Linux Only)])
-    fi
     if test x"$plugin_volume" != x; then
-        AC_MSG_RESULT([    volume - Display and adjust volume of sound card])
+        AC_MSG_RESULT([    volume - Display and adjust volume of sound card for OSS])
     fi
     if test x"$plugin_volumealsa" != x; then
         AC_MSG_RESULT([    volumealsa - Display and adjust volume of sound card for ALSA])

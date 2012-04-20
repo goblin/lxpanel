@@ -39,21 +39,25 @@ enum {
 };
 enum { POS_NONE, POS_START, POS_END };
 
-#define PANEL_HEIGHT_DEFAULT  26
-#define PANEL_HEIGHT_MAX      200
-#define PANEL_HEIGHT_MIN      16
+#define PANEL_ICON_SIZE               24	/* Default size of panel icons */
+#define PANEL_HEIGHT_DEFAULT          26	/* Default height of horizontal panel */
+#define PANEL_WIDTH_DEFAULT           150	/* Default "height" of vertical panel */
+#define PANEL_HEIGHT_MAX              200	/* Maximum height of panel */
+#define PANEL_HEIGHT_MIN              16	/* Minimum height of panel */
+#define PANEL_ICON_HIGHLIGHT          0x202020	/* Constant to pass to icon loader */
 
 /* to check if we are in LXDE */
 extern gboolean is_in_lxde;
 
-typedef struct _Panel Panel;
-
-struct _Panel{
+/* Context of a panel on a given edge. */
+typedef struct _Panel {
     char* name;
-    GtkWidget *topgwin;           /* main panel window */
-    Window topxwin;               /* and it X window   */
-    GtkStyle *defstyle;
-    GtkWidget *box;              /* primary layout box which contains all plugins */
+    GtkWidget * topgwin;		/* Main panel window */
+    Window topxwin;			/* Main panel's X window   */
+    GdkDisplay * display;		/* Main panel's GdkDisplay */
+    GtkStyle * defstyle;
+
+    GtkWidget * box;			/* Top level widget */
 
     GtkRequisition requisition;
     GtkWidget *(*my_box_new) (gboolean, gint);
@@ -72,6 +76,10 @@ struct _Panel{
     int orientation;
     int widthtype, width;
     int heighttype, height;
+    gulong strut_size;			/* Values for WM_STRUT_PARTIAL */
+    gulong strut_lower;
+    gulong strut_upper;
+    int strut_edge;
 
     guint config_changed : 1;
     guint self_destroy : 1;
@@ -83,6 +91,12 @@ struct _Panel{
     guint background : 1;
     guint spacing;
 
+    guint autohide : 1;
+    guint visible : 1;
+    int height_when_hidden;
+    guint hide_timeout;
+    int icon_size;			/* Icon size */
+
     int desknum;
     int curdesk;
     guint32 *workarea;
@@ -90,15 +104,21 @@ struct _Panel{
 
     char* background_file;
 
-    int plug_num;
-    GList *plugins;
+    GList * plugins;			/* List of all plugins */
+    GSList * system_menus;		/* List of plugins having menus */
 
-    GSList* system_menus;
+    GtkWidget* plugin_pref_dialog;	/* Plugin preference dialog */
+    GtkWidget* pref_dialog;		/* preference dialog */
+    GtkWidget* margin_control;		/* Margin control in preference dialog */
+    GtkWidget* height_label;		/* Label of height control */
+    GtkWidget* width_label;		/* Label of width control */
+    GtkWidget* alignment_left_label;	/* Label of alignment: left control */
+    GtkWidget* alignment_right_label;	/* Label of alignment: right control */
+    GtkWidget* height_control;		/* Height control in preference dialog */
+    GtkWidget* width_control;		/* Width control in preference dialog */
+} Panel;
 
-    GtkWidget* pref_dialog; /* preference dialog */
-};
-
-
+/* Decoded value of WM_STATE property. */
 typedef struct {
     unsigned int modal : 1;
     unsigned int sticky : 1;
@@ -113,6 +133,7 @@ typedef struct {
     unsigned int below : 1;
 } NetWMState;
 
+/* Decoded value of _NET_WM_WINDOW_TYPE property. */
 typedef struct {
     unsigned int desktop : 1;
     unsigned int dock : 1;
@@ -180,6 +201,11 @@ extern Atom a_NET_WM_STRUT_PARTIAL;
 extern Atom a_NET_WM_ICON;
 extern Atom a_KDE_NET_WM_SYSTEM_TRAY_WINDOW_FOR;
 
+extern Atom a_NET_SYSTEM_TRAY_OPCODE;
+extern Atom a_NET_SYSTEM_TRAY_MESSAGE_DATA;
+extern Atom a_NET_SYSTEM_TRAY_ORIENTATION;
+extern Atom a_MANAGER;
+
 extern Atom a_LXPANEL_CMD; /* for private client message */
 
 extern int verbose;
@@ -188,11 +214,20 @@ extern FbEv *fbev;
 
 #define FBPANEL_WIN(win)  gdk_window_lookup(win)
 
-void panel_destroy(Panel *p);
-void panel_set_wm_strut(Panel *p);
-void panel_set_dock_type(Panel *p);
-void panel_set_orientation(Panel *p);
-void panel_update_background( Panel* p );
+extern void panel_apply_icon(GtkWindow *w);
+extern void panel_destroy(Panel *p);
+extern void panel_adjust_geometry_terminology(Panel *p);
+extern void panel_determine_background_pixmap(Panel * p, GtkWidget * widget, GdkWindow * window);
+extern void panel_draw_label_text(Panel * p, GtkWidget * label, char * text, gboolean bold, gboolean custom_color);
+extern void panel_establish_autohide(Panel *p);
+extern void panel_image_set_from_file(Panel * p, GtkWidget * image, char * file);
+extern void panel_set_wm_strut(Panel *p);
+extern void panel_set_dock_type(Panel *p);
+extern void panel_set_panel_configuration_changed(Panel *p);
+extern void panel_update_background( Panel* p );
+
+extern int panel_handle_x_error(Display * d, XErrorEvent * ev);
+extern int panel_handle_x_error_swallow_BadWindow_BadDrawable(Display * d, XErrorEvent * ev);
 
 extern const char* lxpanel_get_file_manager();
 extern const char* lxpanel_get_terminal();

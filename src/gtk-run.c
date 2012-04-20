@@ -1,6 +1,6 @@
 /*
  * gtk-run.c: Little application launcher
- * Copyright (C) 2006 Hong Jen Tee (PCMan) pcman.tw(AT)gmail.com
+ * Copyright (C) 2006 Hong Jen Yee (PCMan) pcman.tw(AT)gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -20,13 +20,22 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <string.h>
+#include <unistd.h>
+
 #include "misc.h"
 #include <menu-cache.h>
 
-extern Panel *p;	/* FIXME: this should be removed */
+static GtkWidget* win = NULL; /* the run dialog */
+static GSList* app_list = NULL; /* all known apps in menu cache */
 
-static GtkWidget* win = NULL;
-static GSList* app_list = NULL;
+typedef struct _ThreadData
+{
+    gboolean cancel; /* is the loading cancelled */
+    GSList* files; /* all executable files found */
+    GtkEntry* entry;
+}ThreadData;
+
+static ThreadData* thread_data = NULL; /* thread data used to load availble programs in PATH */
 
 static MenuCacheApp* match_app_by_exec(const char* exec)
 {
@@ -121,17 +130,15 @@ static MenuCacheApp* match_app_by_exec(const char* exec)
             }
         }
     }
-    
+
     g_free(exec_path);
     return ret;
 }
 
-static gboolean setup_auto_complete( gpointer entry )
+static void setup_auto_complete_with_data(ThreadData* data)
 {
     GtkListStore* store;
-    GList *list = NULL, *l;
-    gchar **dirname;
-    gchar **dirnames = g_strsplit( g_getenv("PATH"), ":", 0 );
+    GSList *l;
     GtkEntryCompletion* comp = gtk_entry_completion_new();
     gtk_entry_completion_set_minimum_key_length( comp, 2 );
     gtk_entry_completion_set_inline_completion( comp, TRUE );
@@ -139,21 +146,64 @@ static gboolean setup_auto_complete( gpointer entry )
     gtk_entry_completion_set_popup_set_width( comp, TRUE );
     gtk_entry_completion_set_popup_single_match( comp, FALSE );
 #endif
-     store = gtk_list_store_new( 1, G_TYPE_STRING );
+    store = gtk_list_store_new( 1, G_TYPE_STRING );
 
-    for( dirname = dirnames; *dirname; ++dirname )
+    for( l = data->files; l; l = l->next )
+    {
+        const char *name = (const char*)l->data;
+        GtkTreeIter it;
+        gtk_list_store_append( store, &it );
+        gtk_list_store_set( store, &it, 0, name, -1 );
+    }
+
+    gtk_entry_completion_set_model( comp, (GtkTreeModel*)store );
+    g_object_unref( store );
+    gtk_entry_completion_set_text_column( comp, 0 );
+    gtk_entry_set_completion( (GtkEntry*)data->entry, comp );
+
+    /* trigger entry completion */
+    gtk_entry_completion_complete(comp);
+    g_object_unref( comp );
+}
+
+void thread_data_free(ThreadData* data)
+{
+    g_slist_foreach(data->files, (GFunc)g_free, NULL);
+    g_slist_free(data->files);
+    g_slice_free(ThreadData, data);
+}
+
+static gboolean on_thread_finished(ThreadData* data)
+{
+    /* don't setup entry completion if the thread is already cancelled. */
+    if( !data->cancel )
+        setup_auto_complete_with_data(thread_data);
+    thread_data_free(data);
+    thread_data = NULL; /* global thread_data pointer */
+    return FALSE;
+}
+
+static gpointer thread_func(ThreadData* data)
+{
+    GSList *list = NULL, *l;
+    gchar **dirname;
+    gchar **dirnames = g_strsplit( g_getenv("PATH"), ":", 0 );
+
+    for( dirname = dirnames; !thread_data->cancel && *dirname; ++dirname )
     {
         GDir *dir = g_dir_open( *dirname, 0, NULL );
         const char *name;
         if( ! dir )
             continue;
-        while( ( name = g_dir_read_name( dir ) ) )
+        while( !thread_data->cancel && (name = g_dir_read_name(dir)) )
         {
             char* filename = g_build_filename( *dirname, name, NULL );
             if( g_file_test( filename, G_FILE_TEST_IS_EXECUTABLE ) )
             {
-                if( !g_list_find_custom( list, name, (GCompareFunc)strcmp ) )
-                    list = g_list_prepend( list, g_strdup( name ) );
+                if(thread_data->cancel)
+                    break;
+                if( !g_slist_find_custom( list, name, (GCompareFunc)strcmp ) )
+                    list = g_slist_prepend( list, g_strdup( name ) );
             }
             g_free( filename );
         }
@@ -161,34 +211,29 @@ static gboolean setup_auto_complete( gpointer entry )
     }
     g_strfreev( dirnames );
 
-    for( l = list; l; l = l->next )
-    {
-        GtkTreeIter it;
-        gtk_list_store_append( store, &it );
-        gtk_list_store_set( store, &it, 0, l->data, -1 );
-        g_free( l->data );
-    }
-    g_list_free( list );
+    data->files = list;
+    /* install an idle handler to free associated data */
+    g_idle_add((GSourceFunc)on_thread_finished, data);
 
-    gtk_entry_completion_set_model( comp, (GtkTreeModel*)store );
-    g_object_unref( store );
-    gtk_entry_completion_set_text_column( comp, 0 );
-    gtk_entry_set_completion( (GtkEntry*)entry, comp );
-    g_object_unref( G_OBJECT(comp) );
-    return FALSE;
+    return NULL;
 }
 
-/*
-static void show_error( GtkWindow* parent_win, const char* msg )
+static void setup_auto_complete( GtkEntry* entry )
 {
-    GtkWidget* dlg = gtk_message_dialog_new( parent_win,
-                                             GTK_DIALOG_MODAL,
-                                             GTK_MESSAGE_ERROR,
-                                             GTK_BUTTONS_OK, msg );
-    gtk_dialog_run( (GtkDialog*)dlg );
-    gtk_widget_destroy( dlg );
+    gboolean cache_is_available = FALSE;
+    /* FIXME: consider saving the list of commands as on-disk cache. */
+    if( cache_is_available )
+    {
+        /* load cached program list */
+    }
+    else
+    {
+        /* load in another working thread */
+        thread_data = g_slice_new0(ThreadData); /* the data will be freed in idle handler later. */
+        thread_data->entry = entry;
+        g_thread_create((GThreadFunc)thread_func, thread_data, FALSE, NULL);
+    }
 }
-*/
 
 static void on_response( GtkDialog* dlg, gint response, gpointer user_data )
 {
@@ -204,7 +249,11 @@ static void on_response( GtkDialog* dlg, gint response, gpointer user_data )
             return;
         }
     }
-    g_source_remove_by_user_data( entry ); /* remove timeout */
+
+    /* cancel running thread if needed */
+    if( thread_data ) /* the thread is still running */
+        thread_data->cancel = TRUE; /* cancel the thread */
+
     gtk_widget_destroy( (GtkWidget*)dlg );
     win = NULL;
 
@@ -226,7 +275,7 @@ static void on_entry_changed( GtkEntry* entry, GtkImage* img )
         int w, h;
         GdkPixbuf* pix;
         gtk_icon_size_lookup(GTK_ICON_SIZE_DIALOG, &w, &h);
-        pix = lxpanel_load_icon(menu_cache_item_get_icon(MENU_CACHE_ITEM(app)), MAX(w, h), TRUE);
+        pix = lxpanel_load_icon(menu_cache_item_get_icon(MENU_CACHE_ITEM(app)), w, h, TRUE);
         gtk_image_set_from_pixbuf(img, pix);
         g_object_unref(pix);
     }
@@ -250,14 +299,13 @@ void gtk_run()
     win = gtk_dialog_new_with_buttons( _("Run"),
                                        NULL,
                                        GTK_DIALOG_NO_SEPARATOR,
-                                       GTK_STOCK_OK, GTK_RESPONSE_OK,
                                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                       GTK_STOCK_OK, GTK_RESPONSE_OK,
                                        NULL );
+    gtk_dialog_set_alternative_button_order((GtkDialog*)win, 
+                            GTK_RESPONSE_OK, GTK_RESPONSE_CANCEL, -1);
     gtk_dialog_set_default_response( (GtkDialog*)win, GTK_RESPONSE_OK );
     entry = gtk_entry_new();
-
-    /* fix background */
-    //gtk_widget_set_style(win, p->defstyle);
 
     gtk_entry_set_activates_default( (GtkEntry*)entry, TRUE );
     gtk_box_pack_start( (GtkBox*)((GtkDialog*)win)->vbox,
@@ -274,8 +322,8 @@ void gtk_run()
     gtk_window_set_position( (GtkWindow*)win, GTK_WIN_POS_CENTER );
     gtk_window_set_default_size( (GtkWindow*)win, 360, -1 );
     gtk_widget_show_all( win );
-    /* g_timeout_add( 500, setup_auto_complete, entry ); */
-    setup_auto_complete( entry );
+
+    setup_auto_complete( (GtkEntry*)entry );
     gtk_widget_show( win );
 
     g_signal_connect(entry ,"changed", G_CALLBACK(on_entry_changed), img);

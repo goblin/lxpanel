@@ -24,80 +24,75 @@
 
 #include "dbg.h"
 
-static gboolean on_btn_press( GtkWidget* w, GdkEventButton* evt, Plugin* plugin )
-{
-    if( evt->button == 3 )
-    {
-        GtkMenu* popup = lxpanel_get_panel_menu
-                ( plugin->panel, plugin, FALSE );
-        gtk_menu_popup( popup, NULL, NULL, NULL, NULL, evt->button, evt->time );
-    }
-    return TRUE;
-}
+static int separator_constructor(Plugin * p, char ** fp);
+static void separator_destructor(Plugin * p);
+static void separator_panel_configuration_changed(Plugin * p);
 
-static int
-separator_constructor(Plugin *p, char **fp)
+/* Plugin constructor. */
+static int separator_constructor(Plugin * p, char ** fp)
 {
-    GtkWidget *sep, *eb;
+    /* Load parameters from the configuration file. */
     line s;
-
-    ENTER;
     s.len = 256;
-    if( fp )
+    if (fp != NULL)
     {
-        while (lxpanel_get_line(fp, &s) != LINE_BLOCK_END) {
+        while (lxpanel_get_line(fp, &s) != LINE_BLOCK_END)
+        {
             ERR( "separator: illegal in this context %s\n", s.str);
-            RET(0);
+            return 0;
         }
     }
-    p->pwid = eb = gtk_event_box_new();
-    GTK_WIDGET_SET_FLAGS( eb, GTK_NO_WINDOW );
-    gtk_widget_add_events( p->pwid, GDK_BUTTON_PRESS_MASK );
-    g_signal_connect( p->pwid, "button-press-event", G_CALLBACK( on_btn_press ), p );
 
-    gtk_container_set_border_width(GTK_CONTAINER(eb), 1);
-    gtk_widget_show(eb);
+    /* Allocate top level widget and set into Plugin widget pointer. */
+    p->pwid = gtk_event_box_new();
+    GTK_WIDGET_SET_FLAGS(p->pwid, GTK_NO_WINDOW);
+    gtk_widget_add_events(p->pwid, GDK_BUTTON_PRESS_MASK);
+    gtk_container_set_border_width(GTK_CONTAINER(p->pwid), 1);
 
-    sep = p->panel->my_separator_new();
-    gtk_widget_show(sep);
-    gtk_container_add (GTK_CONTAINER (eb), sep);
-    p->priv = eb; /* just to alloc smth */
+    /* Allocate separator as a child of top level. */
+    GtkWidget * sep = p->panel->my_separator_new();
+    gtk_container_add(GTK_CONTAINER(p->pwid), sep);
 
-    RET(1);
+    /* Connect signals. */
+    g_signal_connect(p->pwid, "button-press-event", G_CALLBACK(plugin_button_press_event), p);
+
+    /* Show the widget and return. */
+    gtk_widget_show_all(p->pwid);
+    return 1;
 }
 
-static void
-separator_destructor(Plugin *p)
+/* Plugin destructor. */
+static void separator_destructor(Plugin * p)
 {
-    ENTER;
-/* The widget is destroyed in plugin_stop().
-    GtkWidget* eb = GTK_WIDGET((GtkEventBox*)p->priv);
-    gtk_widget_destroy( eb );
-*/
-    RET();
 }
 
-static void orientation_changed( Plugin* p )
+/* Callback when panel configuration changes. */
+static void separator_panel_configuration_changed(Plugin * p)
 {
-    GtkWidget* eb = GTK_WIDGET((GtkEventBox*)p->priv);
-    GtkWidget* sep = gtk_bin_get_child( GTK_BIN(eb) );
-    if( GTK_IS_VSEPARATOR(sep) ) {
-        if( p->panel->orientation == GTK_ORIENTATION_HORIZONTAL )
+    /* Determine if the orientation changed in a way that requires action. */
+    GtkWidget * sep = gtk_bin_get_child(GTK_BIN(p->pwid));
+    if (GTK_IS_VSEPARATOR(sep))
+    {
+        if (p->panel->orientation == GTK_ORIENTATION_HORIZONTAL)
             return;
     }
-    else {
-        if( p->panel->orientation == GTK_ORIENTATION_VERTICAL )
+    else
+    {
+        if (p->panel->orientation == GTK_ORIENTATION_VERTICAL)
             return;
     }
-    gtk_widget_destroy( sep );
+
+    /* If the orientation changed, recreate the separator. */
+    gtk_widget_destroy(sep);
     sep = p->panel->my_separator_new();
     gtk_widget_show(sep);
-    gtk_container_add (GTK_CONTAINER (eb), sep);
+    gtk_container_add(GTK_CONTAINER(p->pwid), sep);
 }
 
+/* Plugin descriptor. */
 PluginClass separator_plugin_class = {
-    fname: NULL,
-    count: 0,
+
+    PLUGINCLASS_VERSIONING,
 
     type : "separator",
     name : N_("Separator"),
@@ -108,5 +103,5 @@ PluginClass separator_plugin_class = {
     destructor  : separator_destructor,
     config : NULL,
     save : NULL,
-    orientation : orientation_changed
+    panel_configuration_changed : separator_panel_configuration_changed
 };

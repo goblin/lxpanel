@@ -19,6 +19,7 @@
 #define TRIP_CRITICAL "critical (S5):"
 
 typedef struct {
+    Plugin * plugin;
     GtkWidget *main;
     GtkWidget *namew;
     GtkTooltips *tip;
@@ -35,22 +36,6 @@ typedef struct {
              cl_warning1,
              cl_warning2;
 } thermal;
-
-static  gboolean
-clicked( GtkWidget *widget, GdkEventButton* evt, Plugin* plugin)
-{
-
-    ENTER2;
-    if( evt->button == 3 )  /* right button */
-    {
-        GtkMenu* popup = (GtkMenu*)lxpanel_get_panel_menu
-                ( plugin->panel, plugin, FALSE );
-        gtk_menu_popup( popup, NULL, NULL, NULL, NULL, evt->button, evt->time );
-        return TRUE;
-    }
-
-    RET2(TRUE);
-}
 
 static gint
 get_critical(thermal *th){
@@ -134,11 +119,13 @@ update_display(thermal *th)
 
     ENTER;
     if(temp == -1)
-        n = sprintf(buffer, "<span color=\"#%06x\"><b>NA</b></span>", 0xffffff);
+        panel_draw_label_text(th->plugin->panel, th->namew, "NA", TRUE, TRUE);
     else
+    {
         n = sprintf(buffer, "<span color=\"#%06x\"><b>%02d</b></span>", gcolor2rgb24(&color), temp);
+        gtk_label_set_markup (GTK_LABEL(th->namew), buffer) ;
+    }
 
-    gtk_label_set_markup (GTK_LABEL(th->namew), buffer) ;
     RET(TRUE);
 }
 
@@ -175,11 +162,10 @@ static int
 thermal_constructor(Plugin *p, char** fp)
 {
     thermal *th;
-    GtkWidget *button;
 
     ENTER;
     th = g_new0(thermal, 1);
-    g_return_val_if_fail(th != NULL, 0);
+    th->plugin = p;
     p->priv = th;
 
     p->pwid = gtk_event_box_new();
@@ -193,7 +179,7 @@ thermal_constructor(Plugin *p, char** fp)
     th->tip  = gtk_tooltips_new();
 
     g_signal_connect (G_OBJECT (p->pwid), "button_press_event",
-          G_CALLBACK (clicked), (gpointer) p);
+          G_CALLBACK (plugin_button_press_event), (gpointer) p);
 
     line s;
     s.len = 256;
@@ -224,7 +210,6 @@ thermal_constructor(Plugin *p, char** fp)
                     th->warning2 = atoi(s.t[1]);
                 }else {
                     ERR( "thermal: unknown var %s\n", s.t[0]);
-                    continue;
                 }
             }
             else {
@@ -263,7 +248,6 @@ thermal_constructor(Plugin *p, char** fp)
     RET(TRUE);
 
 error:
-    destructor( p );
     RET(FALSE);
 }
 
@@ -341,8 +325,8 @@ static void save_config( Plugin* p, FILE* fp )
 }
 
 PluginClass thermal_plugin_class = {
-    fname: NULL,
-    count: 0,
+
+    PLUGINCLASS_VERSIONING,
 
     type : "thermal",
     name : N_("Temperature Monitor"),
