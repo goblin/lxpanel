@@ -1,3 +1,17 @@
+lxpanel (0.5.5-4) unstable; urgency=high
+
+  * Added some backport patches to close bugs on BTS and fix a potential 
+    buffer overflow problem.
+    - sort_dirmenu.patch - sort directory menu (Closes:#493256)
+    - batt_status.patch - battery status display (Closes:#580509)
+    - kbled.patch - keyboard LDE status (Closes:#563186)
+    - panel_draw_label_text.patch - potential buffer overflow
+  * Use DH7
+  * Apply libtool-fix.patch fix FTBFS with binutils-gold. (Close:#555575)
+  * Set urgency=high for buffer overflow fix
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Tue, 25 May 2010 23:24:29 +0800
+
 lxpanel (0.5.5-3) unstable; urgency=high
 
   * Applied patch to solve a FTBFS problem. (Closes:#580475)

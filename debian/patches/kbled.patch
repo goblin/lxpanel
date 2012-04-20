@@ -1,0 +1,21 @@
+commit 30932cc7e76cd3f3dcb54867f573a4879befebc0
+Author: Marty Jack <martyj@linux.local>
+Date:   Mon Apr 5 18:23:12 2010 -0400
+
+    Fix handling of "visible" flag in icon_grid_add (Bug2977158)
+    - KBLED is the only place that sometimes passes FALSE here
+
+diff --git a/src/icon-grid.c b/src/icon-grid.c
+index 922057a..23f25d5 100644
+--- a/src/icon-grid.c
++++ b/src/icon-grid.c
+@@ -306,7 +306,8 @@ void icon_grid_add(IconGrid * ig, GtkWidget * child, gboolean visible)
+     }
+ 
+     /* Add the widget to the layout container. */
+-    gtk_widget_show(ige->widget);
++    if (visible)
++        gtk_widget_show(ige->widget);
+     gtk_fixed_put(GTK_FIXED(ig->widget), ige->widget, 0, 0);
+     g_signal_connect(G_OBJECT(child), "size-request", G_CALLBACK(icon_grid_element_size_request), (gpointer) ige);
+ 

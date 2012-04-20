@@ -1,0 +1,3 @@
+debian/lxde-x-terminal-emulator.desktop usr/share/applications
+debian/lxde-x-www-browser.desktop usr/share/applications
+debian/lxpanel.lintian-overrides usr/share/lintian/overrides 
