@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src/plugins/cpu
+subdir = src/plugins/cpufreq
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
@@ -69,12 +69,12 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(moduledir)"
 LTLIBRARIES = $(module_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-cpu_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am_cpu_la_OBJECTS = cpu.lo
-cpu_la_OBJECTS = $(am_cpu_la_OBJECTS)
-cpu_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(cpu_la_LDFLAGS) \
-	$(LDFLAGS) -o $@
+cpufreq_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_cpufreq_la_OBJECTS = cpufreq.lo
+cpufreq_la_OBJECTS = $(am_cpufreq_la_OBJECTS)
+cpufreq_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(cpufreq_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -88,8 +88,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(cpu_la_SOURCES)
-DIST_SOURCES = $(cpu_la_SOURCES)
+SOURCES = $(cpufreq_la_SOURCES)
+DIST_SOURCES = $(cpufreq_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -244,17 +244,18 @@ INCLUDES = \
 	-I. \
 	-I$(top_srcdir)/src \
 	$(PACKAGE_CFLAGS) \
+	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	$(G_CAST_CHECKS)
 
-module_LTLIBRARIES = cpu.la
+module_LTLIBRARIES = cpufreq.la
 moduledir = $(libdir)/lxpanel/plugins
-cpu_la_SOURCES = \
-	cpu.c
+cpufreq_la_SOURCES = \
+	cpufreq.c
 
-cpu_la_LIBADD = \
+cpufreq_la_LIBADD = \
 	$(PACKAGE_LIBS)
 
-cpu_la_LDFLAGS = \
+cpufreq_la_LDFLAGS = \
 	-module \
 	@LXPANEL_MODULE@
 
@@ -271,9 +272,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/plugins/cpu/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/plugins/cpufreq/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/plugins/cpu/Makefile
+	  $(AUTOMAKE) --gnu src/plugins/cpufreq/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -323,8 +324,8 @@ clean-moduleLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-cpu.la: $(cpu_la_OBJECTS) $(cpu_la_DEPENDENCIES) 
-	$(cpu_la_LINK) -rpath $(moduledir) $(cpu_la_OBJECTS) $(cpu_la_LIBADD) $(LIBS)
+cpufreq.la: $(cpufreq_la_OBJECTS) $(cpufreq_la_DEPENDENCIES) 
+	$(cpufreq_la_LINK) -rpath $(moduledir) $(cpufreq_la_OBJECTS) $(cpufreq_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -332,7 +333,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpufreq.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

@@ -5,175 +5,187 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: lxpanel\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-12-13 12:49+0800\n"
-"PO-Revision-Date: 2009-09-21 09:19+0200\n"
-"Last-Translator: Julius Vitkauskas <zadintuvas@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2009-10-09 15:54+0200\n"
+"Last-Translator: Rossen Karpuzov <gustav cointech net>\n"
+"Language-Team: Mandriva User Group - Bulgaria <mandriva-bg@googlegroups."
+"com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%"
-"100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Pootle 1.1.0\n"
+"X-Poedit-Language: Bulgarian\n"
+"X-Poedit-Country: BULGARIA\n"
 
 #: ../data/ui/panel-pref.glade.h:2
-#, no-c-format
+#, fuzzy, no-c-format
 msgid "% Percent"
-msgstr "% procentų"
+msgstr "&Процент:"
 
 #: ../data/ui/panel-pref.glade.h:3
+#, fuzzy
 msgid "<b>Automatic hiding</b>"
-msgstr "<b>Automatinis paslėpimas</b>"
+msgstr "Автоматичен режим"
 
 #: ../data/ui/panel-pref.glade.h:4
 msgid "<b>Background</b>"
-msgstr "<b>Fonas</b>"
+msgstr "<b>Фон</b>"
 
 #: ../data/ui/panel-pref.glade.h:5
 msgid "<b>Font</b>"
-msgstr "<b>Šriftas</b>"
+msgstr "<b>Шрифт</b>"
 
 #: ../data/ui/panel-pref.glade.h:6
+#, fuzzy
 msgid "<b>Icon</b>"
-msgstr "<b>Piktograma</b>"
+msgstr "Икона"
 
 #: ../data/ui/panel-pref.glade.h:7
 msgid "<b>Position</b>"
-msgstr "<b>Pozicija</b>"
+msgstr "<b>Позиция</b>"
 
 #: ../data/ui/panel-pref.glade.h:8
+#, fuzzy
 msgid "<b>Properties</b>"
-msgstr "<b>Savybės</b>"
+msgstr "&Информация"
 
 #: ../data/ui/panel-pref.glade.h:9
 msgid "<b>Set Preferred Applications</b>"
-msgstr "<b>Nustatyti pageidaujamas programas</b>"
+msgstr ""
 
 #: ../data/ui/panel-pref.glade.h:10
 msgid "<b>Size</b>"
-msgstr "<b>Dydis</b>"
+msgstr "<b>Размер</b>"
 
 #: ../data/ui/panel-pref.glade.h:11
 msgid "Advanced"
-msgstr "Sudėtingesni"
+msgstr "Допълнителни"
 
 #: ../data/ui/panel-pref.glade.h:12
 msgid "Alignment:"
-msgstr "Lygiavimas:"
+msgstr "Подравняване:"
 
 #: ../data/ui/panel-pref.glade.h:13
+#, fuzzy
 msgid "Appearance"
-msgstr "Išvaizda"
+msgstr "Системен панел"
 
 #: ../data/ui/panel-pref.glade.h:14 ../src/panel.c:1002
 msgid "Bottom"
-msgstr "Apačia"
+msgstr "Долу"
 
 #: ../data/ui/panel-pref.glade.h:15
 msgid "Center"
-msgstr "Centras"
+msgstr "Центрирано"
 
 #: ../data/ui/panel-pref.glade.h:16
 msgid "Custom color"
-msgstr "Pasirinktinė spalva"
+msgstr "Потребителски цвят"
 
 #: ../data/ui/panel-pref.glade.h:17
+#, fuzzy
 msgid "Dynamic"
-msgstr "Dinaminis"
+msgstr "_Динамично:"
 
 #: ../data/ui/panel-pref.glade.h:18
+#, fuzzy
 msgid "Edge:"
-msgstr "Kampas:"
+msgstr "Контур"
 
 #: ../data/ui/panel-pref.glade.h:19
 msgid "File Manager:"
-msgstr "Failų tvarkytuvė:"
+msgstr "Файлов браузър"
 
 #: ../data/ui/panel-pref.glade.h:20
 msgid "Geometry"
-msgstr "Geometrija"
+msgstr "Геометрия"
 
 #: ../data/ui/panel-pref.glade.h:21 ../src/panel.c:992 ../src/panel.c:1000
 msgid "Height:"
-msgstr "Aukštis:"
+msgstr "Височина:"
 
 #: ../data/ui/panel-pref.glade.h:22
 msgid "Image"
-msgstr "Paveikslėlis"
+msgstr "Изображение"
 
 #: ../data/ui/panel-pref.glade.h:23 ../src/panel.c:994
 msgid "Left"
-msgstr "Kairė"
+msgstr "Ляво"
 
 #: ../data/ui/panel-pref.glade.h:24
+#, fuzzy
 msgid "Logout Command:"
-msgstr "Atsijungimo komanda:"
+msgstr "Команда за изход"
 
 #: ../data/ui/panel-pref.glade.h:25
 msgid "Make window managers treat the panel as dock"
-msgstr "Padaryti, kad langų tvarkytuvai matytų skydelį kaip doką"
+msgstr ""
 
 #: ../data/ui/panel-pref.glade.h:26
+#, fuzzy
 msgid "Margin:"
-msgstr "Paraštė:"
+msgstr "Граница"
 
 #: ../data/ui/panel-pref.glade.h:27
 msgid "Minimize panel when not in use"
-msgstr "Sumažinti skydelį kai jis nenaudojamas"
+msgstr ""
 
 #: ../data/ui/panel-pref.glade.h:28
+#, fuzzy
 msgid "Panel Applets"
-msgstr "Skydelio priedai"
+msgstr "Добавяне на аплети..."
 
 #: ../data/ui/panel-pref.glade.h:29
+#, fuzzy
 msgid "Panel Preferences"
-msgstr "Skydelio nustatymai"
+msgstr "Настройки на сесията"
 
 #: ../data/ui/panel-pref.glade.h:30
 msgid "Pixels"
-msgstr "Pikseliai"
+msgstr "Пиксели"
 
 #: ../data/ui/panel-pref.glade.h:31
 msgid "Reserve space, and not covered by maximized windows"
-msgstr "Rezervuota vieta, neuždengta išdidintų langų"
+msgstr ""
 
 #: ../data/ui/panel-pref.glade.h:32 ../src/panel.c:995
 msgid "Right"
-msgstr "Dešinė"
+msgstr "Дясно"
 
 #: ../data/ui/panel-pref.glade.h:33
 msgid "Select an image file"
-msgstr "Pasirinkite paveiksliuką"
+msgstr "Избор на файл с изображение"
 
 #: ../data/ui/panel-pref.glade.h:34
 msgid "Size when minimized"
-msgstr "Dydis sumažinus"
+msgstr ""
 
 #: ../data/ui/panel-pref.glade.h:35
 msgid "Solid color (with opacity)"
-msgstr "Spalva (su permatomumu)"
+msgstr ""
 
 #: ../data/ui/panel-pref.glade.h:36
+#, fuzzy
 msgid "System theme"
-msgstr "Sistemos tema"
+msgstr "Премахване на тема"
 
 #: ../data/ui/panel-pref.glade.h:37
+#, fuzzy
 msgid "Terminal Emulator:"
-msgstr "Terminalo emuliatorius:"
+msgstr "Терминална емулация"
 
 #: ../data/ui/panel-pref.glade.h:38 ../src/panel.c:1001
 msgid "Top"
-msgstr "Viršus"
+msgstr "Горе"
 
 #: ../data/ui/panel-pref.glade.h:39 ../src/panel.c:993 ../src/panel.c:999
 msgid "Width:"
-msgstr "Plotis:"
+msgstr "Ширина:"
 
 #: ../data/ui/panel-pref.glade.h:40
 msgid "pixels"
-msgstr "pikselių"
+msgstr "пиксели"
 
 #: ../data/ui/netstatus.glade.h:2
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:2
@@ -183,265 +195,296 @@ msgstr "0%"
 
 #: ../data/ui/netstatus.glade.h:3
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:3
+#, fuzzy
 msgid "<b>Activity</b>"
-msgstr "<b>Aktyvumas</b>"
+msgstr "Дейност"
 
 #: ../data/ui/netstatus.glade.h:4
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:4
+#, fuzzy
 msgid "<b>Connection</b>"
-msgstr "<b>Ryšys</b>"
+msgstr "Връзка"
 
 #: ../data/ui/netstatus.glade.h:5
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:5
 msgid "<b>Internet Protocol (IPv4)</b>"
-msgstr "<b>Interneto protokolas (IPv4)</b>"
+msgstr ""
 
 #: ../data/ui/netstatus.glade.h:6
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:6
 msgid "<b>Internet Protocol (IPv6)</b>"
-msgstr "<b>Interneto protokolas (IPv6)</b>"
+msgstr ""
 
 #: ../data/ui/netstatus.glade.h:7
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:7
+#, fuzzy
 msgid "<b>Network Device</b>"
-msgstr "<b>Tinklo įrenginys</b>"
+msgstr "Стандартно мрежово устройство"
 
 #: ../data/ui/netstatus.glade.h:8
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:8
+#, fuzzy
 msgid "<b>Signal Strength</b>"
-msgstr "<b>Signalo stiprumas</b>"
+msgstr "Сила на сигнала"
 
 #: ../data/ui/netstatus.glade.h:9
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:9
 msgid "Address:"
-msgstr "Adresas:"
+msgstr "Адрес:"
 
 #: ../data/ui/netstatus.glade.h:10 ../src/plugins/netstat/netstat.c:319
 #: ../src/plugins/netstat/netstat.c:330
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:10
 msgid "Broadcast:"
-msgstr "Transliacija:"
+msgstr "Разпръскване:"
 
 #: ../data/ui/netstatus.glade.h:11
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:11
+#, fuzzy
 msgid "Con_figure"
-msgstr "Kon_figūruoti"
+msgstr "&Настройване..."
 
 #: ../data/ui/netstatus.glade.h:12
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:12
+#, fuzzy
 msgid "Destination:"
-msgstr "Paskirtis:"
+msgstr "Целева директория:"
 
 #: ../data/ui/netstatus.glade.h:13
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:13
+#, fuzzy
 msgid "General"
-msgstr "Bendra"
+msgstr "Общи"
 
 #: ../data/ui/netstatus.glade.h:14
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:14
+#, fuzzy
 msgid "Received:"
-msgstr "Gauta:"
+msgstr "получено: "
 
 #: ../data/ui/netstatus.glade.h:15
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:15
+#, fuzzy
 msgid "Scope:"
-msgstr "Apimtis:"
+msgstr "Обсег:"
 
 #: ../data/ui/netstatus.glade.h:16
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:16
 msgid "Sent:"
-msgstr "Išsiųsta:"
+msgstr "Изпратени:"
 
 #: ../data/ui/netstatus.glade.h:17
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:17
+#, fuzzy
 msgid "Status:"
-msgstr "Būsena:"
+msgstr "Състояние:"
 
 #: ../data/ui/netstatus.glade.h:18
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:18
 msgid "Subnet Mask:"
-msgstr "Potinklio kaukė:"
+msgstr "Маска на подмрежа:"
 
 #: ../data/ui/netstatus.glade.h:19
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:19
 msgid "Support"
-msgstr "Palaikymas"
+msgstr "Поддръжка"
 
 #: ../data/ui/netstatus.glade.h:20
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:20
 msgid "Type:"
-msgstr "Tipas:"
+msgstr "Тип:"
 
 #: ../data/ui/netstatus.glade.h:21
 #: ../src/plugins/netstatus/gnome-netstatus.glade.h:21
 msgid "_Name:"
-msgstr "Pavadi_nimas:"
+msgstr "_Име:"
 
 #: ../data/ui/launchbar.glade.h:1 ../src/plugins/launchbar.c:831
+#, fuzzy
 msgid "Application Launch Bar"
-msgstr "Programų paleidimo juosta"
+msgstr "Неуспех при стартирането на програмата"
 
 #: ../data/ui/launchbar.glade.h:2
 msgid "Applications"
-msgstr "Programos"
+msgstr "Програми"
 
 #: ../data/ui/launchbar.glade.h:3
+#, fuzzy
 msgid "Available Applications"
-msgstr "Prieinamos programos"
+msgstr "Основни програми"
 
 #: ../src/configurator.c:54 ../src/gtk-run.c:299
 msgid "Run"
-msgstr "Vykdyti komandą..."
+msgstr "Изпълнение"
 
 #: ../src/configurator.c:56
 msgid "Restart"
-msgstr "Perkrauti"
+msgstr "Рестартиране"
 
 #: ../src/configurator.c:57
 msgid "Logout"
-msgstr "Atsijungti"
+msgstr "Излез"
 
 #: ../src/configurator.c:448
+#, fuzzy
 msgid "Currently loaded plugins"
-msgstr "Šiuo metu įkrauti priedai"
+msgstr "Приставките са заредени"
 
 #: ../src/configurator.c:457
+#, fuzzy
 msgid "Stretch"
-msgstr "Ištempti"
+msgstr "Разтягане"
 
 #: ../src/configurator.c:562
+#, fuzzy
 msgid "Add plugin to panel"
-msgstr "Įdėti priedą į skydelį"
+msgstr "Добавяне на този стартер към _панела"
 
 #: ../src/configurator.c:590
+#, fuzzy
 msgid "Available plugins"
-msgstr "Prieinami priedai"
+msgstr "&Налични приставки:"
 
 #: ../src/configurator.c:1143
+#, fuzzy
 msgid "Logout command is not set"
-msgstr "Atsijungimo komanda nenustatyta"
+msgstr "Не е зададена команда."
 
 #: ../src/configurator.c:1196
+#, fuzzy
 msgid "Select a directory"
-msgstr "Pasirinkite aplanką"
+msgstr "Изберете директория"
 
 #: ../src/configurator.c:1196 ../src/configurator.c:1287
+#, fuzzy
 msgid "Select a file"
-msgstr "Pasirinkite failą"
+msgstr "Изберете файл"
 
 #: ../src/configurator.c:1314
+#, fuzzy
 msgid "_Browse"
-msgstr "N_aršyti"
+msgstr "_Разглеждане"
 
 #: ../src/panel.c:634
 msgid ""
 "Really delete this panel?\n"
 "<b>Warning: This can not be recovered.</b>"
 msgstr ""
-"Ar tikrai norite ištrinti šį skydelį?\n"
-"<b>Įspėjimas: skydelis negalės būti atkurtas.</b>"
 
 #: ../src/panel.c:636
+#, fuzzy
 msgid "Confirm"
-msgstr "Patvirtinti"
+msgstr "Потвърждение"
 
 #. TRANSLATORS: Replace this string with your names, one name per line.
 #: ../src/panel.c:668
+#, fuzzy
 msgid "translator-credits"
-msgstr "Julius Vitkauskas <zadintuvas@gmail.com>"
+msgstr ""
+"Ясен Праматаров <turin@fsa-bg.org>\n"
+"Владимир Петков <vpetkov@i-space.org>\n"
+"Ростислав „zbrox“ Райков <zbrox@i-space.org>\n"
+"Александър Шопов <ash@contact.bg>\n"
+"\n"
+"Проектът за превод на GNOME има нужда от подкрепа.\n"
+"Научете повече за нас на http://gnome.cult.bg\n"
+"Докладвайте за грешки на http://gnome.cult.bg/bugs"
 
 #: ../src/panel.c:673
 msgid "LXPanel"
 msgstr "LXPanel"
 
 #: ../src/panel.c:675
+#, fuzzy
 msgid "Copyright (C) 2008-2009"
-msgstr "Autorinės teisės (C) 2008-2009"
+msgstr "Права за разпространение (C) 2007 - 2009"
 
 #: ../src/panel.c:676
 msgid "Desktop panel for LXDE project"
-msgstr "LXDE projekto darbastalio skydelis"
+msgstr ""
 
 #: ../src/panel.c:699
 msgid "Add / Remove Panel Items"
-msgstr "Pridėti/pašalinti skydelio elementus"
+msgstr ""
 
 #: ../src/panel.c:707
-#, c-format
+#, fuzzy, c-format
 msgid "Remove \"%s\" From Panel"
-msgstr "Pašalinti \"%s\" iš skydelio"
+msgstr "_Премахване от панела"
 
 #: ../src/panel.c:719
 msgid "Panel Settings"
-msgstr "Skydelio nustatymai"
+msgstr "Настройки на панела"
 
 #: ../src/panel.c:725
+#, fuzzy
 msgid "Create New Panel"
-msgstr "Sukurti naują skydelį"
+msgstr "Създаване на нов профил"
 
 #: ../src/panel.c:736
+#, fuzzy
 msgid "Delete This Panel"
-msgstr "Ištrinti šį skydelį"
+msgstr "Премахване на този панел?"
 
 #: ../src/panel.c:747
 msgid "About"
-msgstr "Apie"
+msgstr "Относно"
 
 #: ../src/panel.c:755
+#, fuzzy
 msgid "Panel"
-msgstr "Skydelis"
+msgstr "Системен панел"
 
 #: ../src/panel.c:768
-#, c-format
+#, fuzzy, c-format
 msgid "\"%s\" Settings"
-msgstr "\"%s\" nustatymai"
+msgstr "Настройки"
 
 #: ../src/panel.c:1401
 #, c-format
 msgid "lxpanel %s - lightweight GTK2+ panel for UNIX desktops\n"
-msgstr "lxpanel %s - lengviasvoris GTK2+ skydelis UNIX darbastaliams\n"
+msgstr ""
 
 #: ../src/panel.c:1402
-#, c-format
+#, fuzzy, c-format
 msgid "Command line options:\n"
-msgstr "Komandinės eilutės parametrai:\n"
+msgstr "Ограничи опциите, задавани от командния ред"
 
 #: ../src/panel.c:1403
 #, c-format
 msgid " --help      -- print this help and exit\n"
-msgstr " --help      -- parodyti šią pagalbą ir išeiti\n"
+msgstr "      --help     извежда тази справка и завършва\n"
 
 #: ../src/panel.c:1404
-#, c-format
+#, fuzzy, c-format
 msgid " --version   -- print version and exit\n"
-msgstr " --version   -- parodyti versiją ir išeiti\n"
+msgstr "Изписване на версията и излизане"
 
 #: ../src/panel.c:1405
 #, c-format
 msgid " --log <number> -- set log level 0-5. 0 - none 5 - chatty\n"
 msgstr ""
-" --log <skaičius> -- nustatyti registravimo lygį 0-5. 0 - jokio 5 - chatty\n"
 
 #. g_print(_(" --configure -- launch configuration utility\n"));
 #: ../src/panel.c:1407
 #, c-format
 msgid " --profile name -- use specified profile\n"
-msgstr " --profile pavadinimas -- naudoti nurodytą profilį\n"
+msgstr ""
 
 #: ../src/panel.c:1409
-#, c-format
+#, fuzzy, c-format
 msgid " -h  -- same as --help\n"
-msgstr " -h  -- tas pats kaip --help\n"
+msgstr "същото като pax"
 
 #: ../src/panel.c:1410
-#, c-format
+#, fuzzy, c-format
 msgid " -p  -- same as --profile\n"
-msgstr " -p  -- tas pats kaip --profile\n"
+msgstr "/З_апази профил като..."
 
 #: ../src/panel.c:1411
-#, c-format
+#, fuzzy, c-format
 msgid " -v  -- same as --version\n"
-msgstr " -v  -- tas pats kaip --version\n"
+msgstr "същото като pax"
 
 #. g_print(_(" -C  -- same as --configure\n"));
 #: ../src/panel.c:1413
@@ -451,37 +494,36 @@ msgid ""
 "Visit http://lxde.org/ for detail.\n"
 "\n"
 msgstr ""
-"\n"
-"Aplankykite http://lxde.org/ norėdami gauti daugiau informacijos.\n"
-"\n"
 
 #: ../src/gtk-run.c:312
 msgid "Enter the command you want to execute:"
-msgstr "Įveskite komandą, kurią norite įvykdyti:"
+msgstr ""
 
 #: ../src/plugins/cpu/cpu.c:268
 msgid "CPU Usage Monitor"
-msgstr "CPU apkrovimo stebėjimo priemonė"
+msgstr "Мониторинг на употребата на CPU"
 
 #: ../src/plugins/cpu/cpu.c:270
 msgid "Display CPU usage"
-msgstr "Rodo CPU apkrovimą"
+msgstr "Показва ползването на CPU"
 
 #: ../src/plugins/deskno/deskno.c:207 ../src/plugins/dclock.c:314
+#, fuzzy
 msgid "Bold font"
-msgstr "Paryškintas šriftas"
+msgstr "Редактиране на шрифт..."
 
 #: ../src/plugins/deskno/deskno.c:208
 msgid "Display desktop names"
 msgstr ""
 
 #: ../src/plugins/deskno/deskno.c:235
+#, fuzzy
 msgid "Desktop Number / Workspace Name"
-msgstr "Darbastalio numeris / Darbo vietos pavadinimas"
+msgstr "Плот № / Работен плот Име"
 
 #: ../src/plugins/deskno/deskno.c:237
 msgid "Display workspace number, by cmeury@users.sf.net"
-msgstr "Rodo darbastalio numerį. Parašė cmeury@users.sf.net"
+msgstr "Показване на номер на работен плот от cmeury@users.sf.net"
 
 #: ../src/plugins/image.c:177
 msgid "Display Image and Tooltip"
@@ -489,125 +531,135 @@ msgstr ""
 
 #: ../src/plugins/launchbar.c:833
 msgid "Bar with buttons to launch application"
-msgstr "Juosta su mygtukais, skirtais paleisti programoms"
+msgstr ""
 
 #. Add Raise menu item.
 #: ../src/plugins/taskbar.c:1696
+#, fuzzy
 msgid "_Raise"
-msgstr "Pa_rodyti"
+msgstr "Издигане"
 
 #. Add Restore menu item.
 #: ../src/plugins/taskbar.c:1701
+#, fuzzy
 msgid "R_estore"
-msgstr "At_statyti"
+msgstr "_Възстановяване на настройките…"
 
 #. Add Maximize menu item.
 #: ../src/plugins/taskbar.c:1706
 msgid "Ma_ximize"
-msgstr "Iš_didinti"
+msgstr "_Максимизиране"
 
 #. Add Iconify menu item.
 #: ../src/plugins/taskbar.c:1711
+#, fuzzy
 msgid "Ico_nify"
-msgstr "Su_mažinti"
+msgstr "Форматът за изображения ICO"
 
 #: ../src/plugins/taskbar.c:1730
-#, c-format
+#, fuzzy, c-format
 msgid "Workspace _%d"
-msgstr "Darbo vieta _%d"
+msgstr "Работен плот %d"
 
 #: ../src/plugins/taskbar.c:1735
 #, c-format
 msgid "Workspace %d"
-msgstr "Darbo vieta %d"
+msgstr "Работен плот %d"
 
 #. Add "move to all workspaces" item.  This causes the window to be visible no matter what desktop is active.
 #: ../src/plugins/taskbar.c:1749
+#, fuzzy
 msgid "_All workspaces"
-msgstr "Visos d_arbo vietos"
+msgstr "всички работни плотове"
 
 #. Add Move to Workspace menu item as a submenu.
 #: ../src/plugins/taskbar.c:1755
+#, fuzzy
 msgid "_Move to Workspace"
-msgstr "Per_kelti į darbo vietą"
+msgstr "Преместване на др_уг работен плот"
 
 #. Add Close menu item.  By popular demand, we place this menu item closest to the cursor.
 #: ../src/plugins/taskbar.c:1761
+#, fuzzy
 msgid "_Close Window"
-msgstr "_Uždaryti langą"
+msgstr "Зат_варяне на този прозорец"
 
 #: ../src/plugins/taskbar.c:1966
 msgid "Show tooltips"
-msgstr ""
+msgstr "Показване на подсказки"
 
 #: ../src/plugins/taskbar.c:1967
 msgid "Icons only"
-msgstr "Tik piktogramos"
+msgstr "Само икони"
 
 #: ../src/plugins/taskbar.c:1968
+#, fuzzy
 msgid "Flat buttons"
-msgstr "Plokšti mygtukai"
+msgstr "Открояване на бутоните"
 
 #: ../src/plugins/taskbar.c:1969
+#, fuzzy
 msgid "Show windows from all desktops"
-msgstr "Rodyti langus iš visų darbastalių"
+msgstr "Показване на п&розорците от всички работни плотове"
 
 #: ../src/plugins/taskbar.c:1970
+#, fuzzy
 msgid "Use mouse wheel"
-msgstr "Naudoti pelės ratuką"
+msgstr "Безжична мишка с колелце"
 
 #: ../src/plugins/taskbar.c:1971
 msgid "Flash when there is any window requiring attention"
-msgstr "Sumirksėti, kai langas reikalauja dėmesio"
+msgstr ""
 
 #: ../src/plugins/taskbar.c:1972
 msgid "Combine multiple application windows into a single button"
-msgstr "Sujungti tos pačios programos langus į vieną mygtuką"
+msgstr ""
 
 #: ../src/plugins/taskbar.c:1973
 msgid "Maximum width of task button"
-msgstr "Maksimalus paleistos programos mygtuko plotis"
+msgstr ""
 
 #: ../src/plugins/taskbar.c:1974
 msgid "Spacing"
-msgstr "Tarpai"
+msgstr "Разредка"
 
 #: ../src/plugins/taskbar.c:2031
 msgid "Task Bar (Window List)"
-msgstr "Užduočių juosta (langų sąrašas)"
+msgstr ""
 
 #: ../src/plugins/taskbar.c:2033
 msgid ""
 "Taskbar shows all opened windows and allow to iconify them, shade or get "
 "focus"
 msgstr ""
-"Užduočių juosta rodo visus atidarytus langus ir leidžia juos sumažinti bei "
-"išdidinti"
 
 #: ../src/plugins/dclock.c:310
+#, fuzzy
 msgid "Clock Format"
-msgstr "Laikrodžio formatas"
+msgstr "Личен формат на времето"
 
 #: ../src/plugins/dclock.c:311
+#, fuzzy
 msgid "Tooltip Format"
-msgstr ""
+msgstr "Лента с инструменти за форматиране"
 
 #: ../src/plugins/dclock.c:312
-#, fuzzy
 msgid "Format codes: man 3 strftime; \\n for line break"
-msgstr "Formatų kodai: man 3 strftime"
+msgstr ""
 
 #: ../src/plugins/dclock.c:313
 msgid "Action when clicked (default: display calendar)"
-msgstr "Veiksmas paspaudus (numatyta: rodyti kalendorių)"
-
-#: ../src/plugins/dclock.c:315
-msgid "Tooltip only"
 msgstr ""
 
+#: ../src/plugins/dclock.c:315
+#, fuzzy
+msgid "Tooltip only"
+msgstr "Редактирането е разрешено."
+
 #: ../src/plugins/dclock.c:343
+#, fuzzy
 msgid "Digital Clock"
-msgstr "Skaitmeninis laikrodis"
+msgstr "&Часовникът на дядо"
 
 #: ../src/plugins/dclock.c:345
 msgid "Display digital clock and tooltip"
@@ -615,179 +667,190 @@ msgstr ""
 
 #: ../src/plugins/menu.c:373
 msgid "Add to desktop"
-msgstr "Pridėti į darbastalį"
+msgstr "Добави към Плота"
 
 #: ../src/plugins/menu.c:383
+#, fuzzy
 msgid "Properties"
-msgstr "Savybės"
+msgstr "Информация"
 
 #: ../src/plugins/menu.c:993 ../src/plugins/dirmenu.c:367
 msgid "Icon"
-msgstr "Piktograma"
+msgstr "Икона"
 
 #: ../src/plugins/menu.c:1010
 msgid "Menu"
-msgstr "Meniu"
+msgstr "Меню"
 
 #: ../src/plugins/menu.c:1012
+#, fuzzy
 msgid "Application Menu"
-msgstr "Programos meniu"
+msgstr "Главно меню (K)"
 
 #: ../src/plugins/separator.c:98
+#, fuzzy
 msgid "Separator"
-msgstr "Skirtukas"
+msgstr "Разделител"
 
 #: ../src/plugins/separator.c:100
+#, fuzzy
 msgid "Add a separator to the panel"
-msgstr "Įdėti skirtuką į skydelį"
+msgstr "Разделител, с който да организирате обектите върху панела"
 
 #: ../src/plugins/pager.c:797
+#, fuzzy
 msgid "Desktop Pager"
-msgstr "Darbastalio puslapiuotojas"
+msgstr "Извън превключвателя"
 
 #: ../src/plugins/pager.c:799
 msgid "Simple pager plugin"
-msgstr "Paprastas puslapiuotojas"
+msgstr ""
 
 #: ../src/plugins/space.c:121 ../src/plugins/batt/batt.c:590
 msgid "Size"
-msgstr "Dydis"
+msgstr "Размер"
 
 #: ../src/plugins/space.c:139
 msgid "Spacer"
-msgstr "Tarpiklis"
+msgstr "Отстояние"
 
 #: ../src/plugins/space.c:141
+#, fuzzy
 msgid "Allocate space"
-msgstr "Atlaisvina vietą"
+msgstr "Цветово пространство:"
 
 #: ../src/plugins/tray.c:702
 msgid "System Tray"
-msgstr "Sistemos dėklas"
+msgstr "Системен панел"
 
 #: ../src/plugins/tray.c:704
 msgid "System tray"
-msgstr "Sistemos dėklas"
+msgstr "Системен панел"
 
 #: ../src/plugins/xkb/xkb-plugin.c:283
+#, fuzzy
 msgid "Configure Keyboard Layout Switcher"
-msgstr "Konfigūruoti klaviatūros išdėstymų perjungimo priemonę"
+msgstr "Клавиатурни подредби"
 
 #: ../src/plugins/xkb/xkb-plugin.c:298
+#, fuzzy
 msgid "Show layout as"
-msgstr "Rodyti išdėstymą kaip"
+msgstr "Да се показвам като"
 
 #: ../src/plugins/xkb/xkb-plugin.c:313
 msgid "image"
-msgstr "paveiksliuką"
+msgstr "изображение"
 
 #: ../src/plugins/xkb/xkb-plugin.c:314
 msgid "text"
-msgstr "tekstą"
+msgstr "текст"
 
 #: ../src/plugins/xkb/xkb-plugin.c:321
+#, fuzzy
 msgid "Per application settings"
-msgstr "Individualūs nustatymai programoms"
+msgstr "Настройки за %1"
 
 #. Create a check button as the child of the vertical box.
 #: ../src/plugins/xkb/xkb-plugin.c:336
 msgid "_Remember layout for each application"
-msgstr "Atsiminti išdėstymą kiekvienai prog_ramai"
+msgstr ""
 
 #. Create a label as the child of the horizontal box.
 #: ../src/plugins/xkb/xkb-plugin.c:346
+#, fuzzy
 msgid "Default layout:"
-msgstr "Numatytas išdėstymas:"
+msgstr "Подредба по подразбиране:"
 
 #: ../src/plugins/xkb/xkb-plugin.c:397
+#, fuzzy
 msgid "Keyboard Layout Switcher"
-msgstr "Klaviatūros išdėstymų perjungimo priemonė"
+msgstr "Клавиатурни подредби"
 
 #: ../src/plugins/xkb/xkb-plugin.c:399
 msgid "Switch between available keyboard layouts"
-msgstr "Leidžia perjungti prieinamus klaviatūros išdėstymus"
+msgstr ""
 
 #: ../src/plugins/wincmd.c:204
 msgid "Left click to iconify all windows.  Middle click to shade them."
 msgstr ""
-"Kairysis pelės mygtukas sumažina visus langus.  Vidurinysis suskleidžia juos."
 
 #: ../src/plugins/wincmd.c:234
 msgid "Alternately iconify/shade and raise"
 msgstr ""
 
 #: ../src/plugins/wincmd.c:263
+#, fuzzy
 msgid "Minimize All Windows"
-msgstr "Sumažinti visus langus"
+msgstr "/Прозорци/_Всички докове"
 
 #: ../src/plugins/wincmd.c:265
 msgid ""
 "Sends commands to all desktop windows.\n"
 "Supported commands are 1) iconify and 2) shade"
 msgstr ""
-"Nusiunčia komandas visiems darbastalio langams.\n"
-"Palaikomos komandos yra 1) sumažinti ir 2) suskleisti"
 
 #: ../src/plugins/dirmenu.c:200
+#, fuzzy
 msgid "Open in _Terminal"
-msgstr "Atverti _terminale"
+msgstr "&Стартиране в терминал"
 
 #: ../src/plugins/dirmenu.c:365
 msgid "Directory"
-msgstr "Aplankas"
+msgstr "Директория"
 
 #: ../src/plugins/dirmenu.c:366
 msgid "Label"
-msgstr "Etiketė"
+msgstr "Етикет"
 
 #: ../src/plugins/dirmenu.c:397
+#, fuzzy
 msgid "Directory Menu"
-msgstr "Aplanko meniu"
+msgstr "Редактирай меню"
 
 #: ../src/plugins/dirmenu.c:399
 msgid "Browse directory tree via menu (Author: PCMan)"
-msgstr "Naršyti aplankus per meniu (Autorius: PCMan)"
+msgstr ""
 
 #: ../src/plugins/thermal/thermal.c:304
 msgid "Normal"
-msgstr "Normalus"
+msgstr "Нормално"
 
 #: ../src/plugins/thermal/thermal.c:305
 msgid "Warning1"
-msgstr "Perspėjimas 1"
+msgstr "Внимание1"
 
 #: ../src/plugins/thermal/thermal.c:306
 msgid "Warning2"
-msgstr "Perspėjimas 2"
+msgstr "Внимание2"
 
 #: ../src/plugins/thermal/thermal.c:307
 msgid "Automatic sensor location"
-msgstr "Automatinė sensoriaus vieta"
+msgstr ""
 
 #: ../src/plugins/thermal/thermal.c:308
 msgid "Sensor"
-msgstr "Sensorius"
+msgstr "Сензор"
 
 #: ../src/plugins/thermal/thermal.c:309
 msgid "Automatic temperature levels"
-msgstr "Automatiniai temperatūros lygiai"
+msgstr "Автоматични нива на температура"
 
 #: ../src/plugins/thermal/thermal.c:310
 msgid "Warning1 Temperature"
-msgstr "\"Perspėjimas 1\" temperatūra"
+msgstr "Внимание1 Температура"
 
 #: ../src/plugins/thermal/thermal.c:311
 msgid "Warning2 Temperature"
-msgstr "\"Perspėjimas 2\" temperatūra"
+msgstr "Внимание2 Температура"
 
 #: ../src/plugins/thermal/thermal.c:353
 msgid "Temperature Monitor"
-msgstr "Temperatūros stebyklė"
+msgstr "Наблюдение на температура"
 
 #: ../src/plugins/thermal/thermal.c:355
 #, fuzzy
 msgid "Display system temperature"
-msgstr "Rodo sistemos temperatūrą. Parašė kesler.daniel@gmail.com"
+msgstr "Екран на системната температура от kesler.daniel@gmail.com"
 
 #. FIXME: display current level in tooltip. ex: "Volume Control: 80%"
 #. Display current level in tooltip.
@@ -795,118 +858,118 @@ msgstr "Rodo sistemos temperatūrą. Parašė kesler.daniel@gmail.com"
 #: ../src/plugins/volumealsa/volumealsa.c:239
 #: ../src/plugins/volumealsa/volumealsa.c:400
 msgid "Volume control"
-msgstr "Garsumo valdymas"
+msgstr "Контрол на силата на звука"
 
 #: ../src/plugins/volume/volume.c:312
 #: ../src/plugins/volumealsa/volumealsa.c:449
 msgid "Volume Control"
-msgstr "Garsumo valdymas"
+msgstr "Настройки на Звука"
 
 #. Create a frame as the child of the viewport.
 #: ../src/plugins/volume/volume-impl.c:109
 #: ../src/plugins/volumealsa/volumealsa.c:358
 msgid "Volume"
-msgstr "Garsumas"
+msgstr "Сила на звука"
 
 #. Create a check button as the child of the vertical box.
 #: ../src/plugins/volumealsa/volumealsa.c:377
 msgid "Mute"
-msgstr "Nutildyti"
+msgstr "Заглушаване"
 
 #: ../src/plugins/netstat/netstat.c:168
 msgid "<Hidden Access Point>"
-msgstr "<Paslėptas prieigos taškas>"
+msgstr "<скрита точка за достъп>"
 
 #: ../src/plugins/netstat/netstat.c:201
 msgid "Wireless Networks not found in range"
-msgstr "Nerasta jokių bevielio ryšio tinklų"
+msgstr "Няма безжични връзки в диапазона"
 
 #. Repair
 #: ../src/plugins/netstat/netstat.c:235
 msgid "Repair"
-msgstr "Taisyti"
+msgstr "Поправяне"
 
 #. interface down
 #: ../src/plugins/netstat/netstat.c:240
 msgid "Disable"
-msgstr "Išjungti"
+msgstr "Забрана"
 
 #: ../src/plugins/netstat/netstat.c:299
 msgid "Wireless Connection has no connectivity"
-msgstr "Bevielis ryšys neturi jokio junglumo"
+msgstr ""
 
 #: ../src/plugins/netstat/netstat.c:301
 msgid "Network cable is plugged out"
-msgstr "Tinklo kabelis atjungtas"
+msgstr "Мрежовия кабел е изваден"
 
 #: ../src/plugins/netstat/netstat.c:303
 msgid "Connection has limited or no connectivity"
-msgstr "Ryšys ribotas arba nėra junglumo"
+msgstr ""
 
 #: ../src/plugins/netstat/netstat.c:307 ../src/plugins/netstat/netstat.c:318
 #: ../src/plugins/netstat/netstat.c:329
 msgid "IP Address:"
-msgstr "IP adresas:"
+msgstr "IP адрес:"
 
 #: ../src/plugins/netstat/netstat.c:308
 msgid "Remote IP:"
-msgstr "Nuotolinis IP:"
+msgstr "Отдалечено IP: "
 
 #: ../src/plugins/netstat/netstat.c:309 ../src/plugins/netstat/netstat.c:320
 #: ../src/plugins/netstat/netstat.c:331
 msgid "Netmask:"
-msgstr "Tinklo kaukė:"
+msgstr "Мрежова маска:"
 
 #: ../src/plugins/netstat/netstat.c:310 ../src/plugins/netstat/netstat.c:322
 #: ../src/plugins/netstat/netstat.c:333
 msgid "Activity"
-msgstr "Aktyvumas"
+msgstr "Активност"
 
 #: ../src/plugins/netstat/netstat.c:310 ../src/plugins/netstat/netstat.c:322
 #: ../src/plugins/netstat/netstat.c:333
 msgid "Sent"
-msgstr "Išsiųsta"
+msgstr "Изпратени"
 
 #: ../src/plugins/netstat/netstat.c:310 ../src/plugins/netstat/netstat.c:322
 #: ../src/plugins/netstat/netstat.c:333
 msgid "Received"
-msgstr "Gauta"
+msgstr "Получени"
 
 #: ../src/plugins/netstat/netstat.c:311 ../src/plugins/netstat/netstat.c:323
 #: ../src/plugins/netstat/netstat.c:334
 msgid "bytes"
-msgstr "baitų"
+msgstr "байта"
 
 #: ../src/plugins/netstat/netstat.c:312 ../src/plugins/netstat/netstat.c:324
 #: ../src/plugins/netstat/netstat.c:335
 msgid "packets"
-msgstr "paketų"
+msgstr "Пакети"
 
 #: ../src/plugins/netstat/netstat.c:315
 #: ../src/plugins/netstatus/netstatus-iface.c:173
 msgid "Wireless"
-msgstr "Bevielis"
+msgstr "Безжична връзка"
 
 #: ../src/plugins/netstat/netstat.c:317
 msgid "Protocol:"
-msgstr "Protokolas:"
+msgstr "Протокол:"
 
 #: ../src/plugins/netstat/netstat.c:321 ../src/plugins/netstat/netstat.c:332
 msgid "HW Address:"
-msgstr "HW adresas:"
+msgstr "HW адрес :"
 
 #: ../src/plugins/netstat/netstat.c:470
 msgid "Manage Networks"
-msgstr "Tvarkyti tinklus"
+msgstr "Управление на мрежи"
 
 #: ../src/plugins/netstat/netstat.c:472
 msgid "Monitor and Manage networks"
-msgstr "Stebėti ir tvarkyti tinklus"
+msgstr "Наблюдение и управление на мрежи"
 
 #. create dialog
 #: ../src/plugins/netstat/passwd_gui.c:84
 msgid "Setting Encryption Key"
-msgstr "Nustatomas šifravimo raktas"
+msgstr "Задаване на ключ за криптиране"
 
 #. messages
 #: ../src/plugins/netstat/passwd_gui.c:94
@@ -914,105 +977,112 @@ msgid ""
 "This wireless network was encrypted.\n"
 "You must have the encryption key."
 msgstr ""
-"Šis bevielis tinklas yra šifruojamas.\n"
-"Jūs privalote turėti šifravimo raktą."
+"Тази безжична връзка беше криптирана:\n"
+"Трябва да имате криптиращия ключ."
 
 #: ../src/plugins/netstat/passwd_gui.c:99
 msgid "Encryption Key:"
-msgstr "Šifravimo raktas:"
+msgstr "Ключ за криптиране:"
 
 #: ../src/plugins/netstatus/netstatus.c:179
+#, fuzzy
 msgid "Interface to monitor"
-msgstr "Stebėti sąsają"
+msgstr "Процесор, който да се наблюдава"
 
 #: ../src/plugins/netstatus/netstatus.c:180
+#, fuzzy
 msgid "Config tool"
-msgstr "Konfigūracijos įrankis"
+msgstr "Изпълнява инструмент за конфигуриране"
 
 #: ../src/plugins/netstatus/netstatus.c:197
+#, fuzzy
 msgid "Network Status Monitor"
-msgstr "Tinklo būsenos stebėjimo priemonė"
+msgstr "Наблюдение на мрежовите връзки"
 
 #: ../src/plugins/netstatus/netstatus.c:199
+#, fuzzy
 msgid "Monitor network status"
-msgstr "Stebi tinklo būseną"
+msgstr "Състояние на връзката: Няма връзка"
 
 #: ../src/plugins/netstatus/netstatus-dialog.c:51
 #: ../src/plugins/netstatus/netstatus-dialog.c:312
 msgid "Unknown"
-msgstr "Nežinoma"
+msgstr "Неизвестен"
 
 #: ../src/plugins/netstatus/netstatus-dialog.c:116
+#, fuzzy
 msgid "Connection Properties"
-msgstr "Ryšio savybės"
+msgstr "Обща свойства"
 
 #: ../src/plugins/netstatus/netstatus-dialog.c:122
-#, c-format
+#, fuzzy, c-format
 msgid "Connection Properties: %s"
-msgstr "Ryšio savybės: %s"
+msgstr "Обща свойства"
 
 #: ../src/plugins/netstatus/netstatus-dialog.c:135
-#, c-format
+#, fuzzy, c-format
 msgid "%lu packet"
 msgid_plural "%lu packets"
-msgstr[0] "%lu paketas"
-msgstr[1] "%lu paketai"
-msgstr[2] "%lu paketų"
+msgstr[0] "Размер на пакета"
+msgstr[1] ""
 
 #: ../src/plugins/netstatus/netstatus-dialog.c:396
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "There was an error displaying help:\n"
 "%s"
 msgstr ""
-"Įvyko klaida norint parodyti pagalbą:\n"
+"Имаше грешка при показване на помощта:\n"
 "%s"
 
 #: ../src/plugins/netstatus/netstatus-dialog.c:580
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to launch time configuration tool: %s"
-msgstr "Nepavyko paleisti laiko konfigūravimo įrankio: %s"
+msgstr "Инструментът за настройка на времето не може да бъде стартиран: %s"
 
 #: ../src/plugins/netstatus/netstatus-icon.c:379
 #, c-format
 msgid "Network Connection: %s"
-msgstr "Tinklo ryšys: %s"
+msgstr "Мрежова връзка:%s"
 
 #: ../src/plugins/netstatus/netstatus-icon.c:384
 msgid "Network Connection"
-msgstr "Tinklo ryšys"
+msgstr "Мрежова връзка"
 
 #: ../src/plugins/netstatus/netstatus-icon.c:811
 msgid "Interface"
-msgstr "Sąsaja"
+msgstr "Интерфейс"
 
 #: ../src/plugins/netstatus/netstatus-icon.c:812
 msgid "The current interface the icon is monitoring."
-msgstr "Sąsaja, kurią stebi piktograma."
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-icon.c:819
 msgid "Orientation"
-msgstr "Pozicija"
+msgstr "Ориентация"
 
 #: ../src/plugins/netstatus/netstatus-icon.c:820
+#, fuzzy
 msgid "The orientation of the tray."
-msgstr "Sistemos dėklo pozicija"
+msgstr "Ориентация на тавата."
 
 #: ../src/plugins/netstatus/netstatus-icon.c:828
+#, fuzzy
 msgid "Tooltips Enabled"
-msgstr ""
+msgstr "Редактирането е разрешено."
 
 #: ../src/plugins/netstatus/netstatus-icon.c:829
 msgid "Whether or not the icon's tooltips are enabled."
 msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-icon.c:836
+#, fuzzy
 msgid "Show Signal"
-msgstr "Rodyti signalo stiprumą"
+msgstr "%s: неправилен сигнал"
 
 #: ../src/plugins/netstatus/netstatus-icon.c:837
 msgid "Whether or not the signal strength should be displayed."
-msgstr "Rodyti ar nerodyti signalo stiprumo"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-icon.c:950
 #, c-format
@@ -1021,66 +1091,65 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Šiai problemai išspręsti prašome susisiekti su sistemos administratoriumi:\n"
-"\n"
-"%s"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:148
 msgid "Name"
-msgstr "Pavadinimas"
+msgstr "Име"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:149
+#, fuzzy
 msgid "The interface name"
-msgstr "Sąsajos pavadinimas"
+msgstr "Име на профил:"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:156
 msgid "State"
-msgstr "Būsena"
+msgstr "Състояние"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:157
+#, fuzzy
 msgid "The interface state"
-msgstr "Sąsajos būsena"
+msgstr "Промяна на състоянието на интерфейс"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:165
 msgid "Stats"
-msgstr "Statistika"
+msgstr "Статистика"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:166
 msgid "The interface packets/bytes statistics"
-msgstr "Sąsajos paketų/baitų statistika"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:174
 msgid "Whether the interface is a wireless interface"
-msgstr "Ar sąsaja yra bevielė sąsaja"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:181
 msgid "Signal"
-msgstr "Signalas"
+msgstr "Сигнал"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:182
 msgid "Wireless signal strength percentage"
-msgstr "Bevielio signalo stiprumas procentais"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:191
 #: ../src/plugins/netstatus/netstatus-util.c:167
 msgid "Error"
-msgstr "Klaida"
+msgstr "Грешка"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:192
 msgid "The current error condition"
-msgstr "Dabartinė klaidos būsena"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:434
 #: ../src/plugins/netstatus/netstatus-iface.c:1197
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to open socket: %s"
-msgstr "Neįmanoma atidaryti jungties: %s"
+msgstr "Грешка при създаване на сокет"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:496
 #: ../src/plugins/netstatus/netstatus-iface.c:1223
-#, c-format
+#, fuzzy, c-format
 msgid "SIOCGIFFLAGS error: %s"
-msgstr "SIOCGIFFLAGS klaida: %s"
+msgstr "Грешка при създаване на `%s': %s"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:870
 msgid "AMPR NET/ROM"
@@ -1088,7 +1157,7 @@ msgstr "AMPR NET/ROM"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:873
 msgid "Ethernet"
-msgstr "Ethernet"
+msgstr "Локална мрежа (Ethernet)"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:879
 msgid "AMPR AX.25"
@@ -1101,47 +1170,50 @@ msgstr "16/4 Mbps Token Ring"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:891
 msgid "ARCnet"
-msgstr "ARCnet"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:897
 msgid "Frame Relay DLCI"
-msgstr "Frame Relay DLCI"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:903
 msgid "Metricom Starmode IP"
-msgstr "Metricom Starmode IP"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:906
 msgid "Serial Line IP"
-msgstr "Serial Line IP"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:909
 msgid "VJ Serial Line IP"
-msgstr "VJ Serial Line IP"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:912
 msgid "6-bit Serial Line IP"
-msgstr "6-bit Serial Line IP"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:915
 msgid "VJ 6-bit Serial Line IP"
-msgstr "VJ 6-bit Serial Line IP"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:921
 msgid "Adaptive Serial Line IP"
-msgstr "Adaptive Serial Line IP"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:924
+#, fuzzy
 msgid "AMPR ROSE"
-msgstr "AMPR ROSE"
+msgstr "Роза Quinacridone"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:927
+#, fuzzy
 msgid "Generic X.25"
-msgstr "Generic X.25"
+msgstr "25 к/с"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:930
+#, fuzzy
 msgid "Point-to-Point Protocol"
-msgstr "Point-to-Point Protocol"
+msgstr "Добавяне на ъгъл към %1"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:936
 msgid "(Cisco)-HDLC"
@@ -1152,16 +1224,20 @@ msgid "LAPB"
 msgstr "LAPB"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:948
+#, fuzzy
 msgid "IPIP Tunnel"
-msgstr "IPIP tunelis"
+msgstr "Порт на тунела HTTP"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:954
 msgid "Frame Relay Access Device"
 msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:960
+#, fuzzy
 msgid "Local Loopback"
-msgstr "Vietinė grįžtamoji sąsaja"
+msgstr ""
+"Loopback файл(ове):\n"
+"   %s\n"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:966
 msgid "Fiber Distributed Data Interface"
@@ -1169,15 +1245,16 @@ msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-iface.c:972
 msgid "IPv6-in-IPv4"
-msgstr "IPv6-in-IPv4"
+msgstr "IPv6-в-IPv4"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:984
 msgid "HIPPI"
 msgstr "HIPPI"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:987
+#, fuzzy
 msgid "Ash"
-msgstr "Ash"
+msgstr "Вулканична пепел"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:990
 msgid "Econet"
@@ -1188,29 +1265,29 @@ msgid "IrLAP"
 msgstr "IrLAP"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:1155
-#, c-format
+#, fuzzy, c-format
 msgid "SIOCGIFCONF error: %s"
-msgstr "SIOCGIFCONF klaida: %s"
+msgstr "Грешка при създаване на `%s': %s"
 
 #: ../src/plugins/netstatus/netstatus-iface.c:1248
-#, c-format
+#, fuzzy, c-format
 msgid "No network devices found"
-msgstr "Tinklo įrenginiai nerasti"
+msgstr "Не са намерени вх/изх. устройства."
 
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:180
-#, c-format
+#, fuzzy, c-format
 msgid "Cannot open /proc/net/dev: %s"
-msgstr "Negalima atverti /proc/net/dev: %s"
+msgstr "Не може да се отвори /proc/net/unix: %s\n"
 
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:189
 msgid "Could not parse /proc/net/dev. Unknown format."
-msgstr "Negalima apdoroti /proc/net/dev: nežnomas formatas."
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:204
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:330
 #, c-format
 msgid "Could not parse interface name from '%s'"
-msgstr "Negalima apdoroti sąsajos pavadinimo iš '%s'"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:217
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:645
@@ -1219,160 +1296,160 @@ msgid ""
 "Could not parse interface statistics from '%s'. prx_idx = %d; ptx_idx = %d; "
 "brx_idx = %d; btx_idx = %d;"
 msgstr ""
-"Negalima apdoroti sąsajos statistikos iš '%s'. prx_idx = %d; ptx_idx = %d; "
-"brx_idx = %d; btx_idx = %d;"
 
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:314
 msgid "Could not parse /proc/net/wireless. Unknown format."
-msgstr "Negalima apdoroti /proc/net/wireless: nežnomas formatas."
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:341
 #, c-format
 msgid "Could not parse wireless details from '%s'. link_idx = %d;"
-msgstr "Negalima apdoroti bevielio tinklo informacijos iš '%s'. link_idx = %d;"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:414
-#, c-format
+#, fuzzy, c-format
 msgid "Could not connect to interface, '%s'"
-msgstr "Negalima prisijungti prie sąsajos, '%s'"
+msgstr "Не може да се осъществи връзка към сървър."
 
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:420
 #, c-format
 msgid "Could not send ioctl to interface, '%s'"
-msgstr "Negalima nusiųsti ioctl į sąsają, '%s'"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:598
-#, c-format
+#, fuzzy, c-format
 msgid "Could not parse command line '%s': %s"
-msgstr "Negalima apdoroti komandinės eilutės '%s': %s"
+msgstr "Грешка при анализ на скрипта. Ред: %1"
 
 #: ../src/plugins/netstatus/netstatus-sysdeps.c:635
 msgid "Could not parse 'netstat' output. Unknown format"
-msgstr "Negalima apdoroti 'netstat' išvesties: nežinomas formatas"
+msgstr ""
 
 #: ../src/plugins/netstatus/netstatus-util.c:152
 msgid "Disconnected"
-msgstr "Atsijungta"
+msgstr "Несвързан"
 
 #: ../src/plugins/netstatus/netstatus-util.c:155
 msgid "Idle"
-msgstr "Nieko nedaroma"
+msgstr "Неактивен"
 
 #: ../src/plugins/netstatus/netstatus-util.c:158
 msgid "Sending"
-msgstr "Siunčiama"
+msgstr "Изпращане"
 
 #: ../src/plugins/netstatus/netstatus-util.c:161
 msgid "Receiving"
-msgstr "Gaunama"
+msgstr "Получаване"
 
 #: ../src/plugins/netstatus/netstatus-util.c:164
 msgid "Sending/Receiving"
-msgstr "Siunčiama/Gaunama"
+msgstr "Изпращане/Получаване"
 
 #: ../src/plugins/batt/batt.c:131
 msgid "No batteries found"
-msgstr "Nerasta baterijų"
+msgstr "Няма открити батерии"
 
 #: ../src/plugins/batt/batt.c:179
 #, c-format
 msgid "Battery: %d%% charged, %d:%02d until full"
-msgstr "Baterija: %d%% įkrauta, %d:%02d iki pilnumo"
+msgstr "Батерия: %d%% заредена, %d:%02d докато се напълни"
 
 #: ../src/plugins/batt/batt.c:190
 #, c-format
 msgid "Battery: %d%% charged, %d:%02d left"
-msgstr "Baterija: %d%% įkrauta, %d:%02d liko"
+msgstr "Батерия: %d%% заредена, %d:%02d остават"
 
 #: ../src/plugins/batt/batt.c:196
 #, c-format
 msgid "Battery: %d%% charged"
-msgstr "Baterija: %d%% įkrauta"
+msgstr "Батерия: %d%% заредена"
 
 #: ../src/plugins/batt/batt.c:580
 msgid "Hide if there is no battery"
-msgstr "Slėpti, jeigu nėra baterijų"
+msgstr "Скрий ако няма батерия"
 
 #: ../src/plugins/batt/batt.c:582
 msgid "Alarm command"
-msgstr "Įspėjimo komanda"
+msgstr "Команда за сигнализиране"
 
 #: ../src/plugins/batt/batt.c:583
 msgid "Alarm time (minutes left)"
-msgstr "Įspėjimo laikas (liko minučių)"
+msgstr "Време за сигнализиране (оставащи минути)"
 
 #: ../src/plugins/batt/batt.c:584
 msgid "Background color"
-msgstr "Fono spalva"
+msgstr "Цвят на фона"
 
 #: ../src/plugins/batt/batt.c:585
 msgid "Charging color 1"
-msgstr "Įkrovos spalva 1"
+msgstr "Цвят при зареждане 1"
 
 #: ../src/plugins/batt/batt.c:586
 msgid "Charging color 2"
-msgstr "Įkrovos spalva 2"
+msgstr "Цвят при зареждане 2"
 
 #: ../src/plugins/batt/batt.c:587
 msgid "Discharging color 1"
-msgstr "Iškrovos spalva 1"
+msgstr "Цвят при разреждане 1"
 
 #: ../src/plugins/batt/batt.c:588
 msgid "Discharging color 2"
-msgstr "Iškrovos spalva 2"
+msgstr "Цвят при разреждане 2"
 
 #: ../src/plugins/batt/batt.c:589
 msgid "Border width"
-msgstr "Paraštės plotis"
+msgstr "Широчина на рамка"
 
 #: ../src/plugins/batt/batt.c:619
 msgid "Battery Monitor"
-msgstr "Baterijos įkrovos stebyklė"
+msgstr "Датчик за батерията"
 
 #: ../src/plugins/batt/batt.c:621
 msgid "Display battery status using ACPI"
-msgstr "Rodo baterijos įkrovimo lygį naudojant ACPI"
+msgstr "Показва статуса на батерията ползвайки ACPI"
 
 #: ../src/plugins/kbled/kbled.c:230
 msgid "Show CapsLock"
-msgstr "Rodyti CapsLock"
+msgstr "Покажи CapsLock"
 
 #: ../src/plugins/kbled/kbled.c:231
 msgid "Show NumLock"
-msgstr "Rodyti NumLock"
+msgstr "Покажи NumLock"
 
 #: ../src/plugins/kbled/kbled.c:232
 msgid "Show ScrollLock"
-msgstr "Rodyti ScrollLock"
+msgstr "Покажи ScrollLock"
 
 #: ../src/plugins/kbled/kbled.c:267
 msgid "Keyboard LED"
-msgstr "Klaviatūros lemputės"
+msgstr "Клавиатурен индикатор"
 
 #: ../src/plugins/kbled/kbled.c:269
 msgid "Indicators for CapsLock, NumLock, and ScrollLock keys"
-msgstr "Indikatoriai CapsLock, NumLock ir ScrollLock klavišams"
+msgstr "Индикатори за CapsLock, NumLock и ScrollLock клавиши"
 
 #~ msgid "Display system temperature, by kesler.daniel@gmail.com"
-#~ msgstr "Rodo sistemos temperatūrą, parašė kesler.daniel@gmail.com"
+#~ msgstr "Екран на системната температура от kesler.daniel@gmail.com"
 
 #~ msgid "Keyboard Led"
-#~ msgstr "Klaviatūros lemputės"
+#~ msgstr "Клавиатурен индикатор"
 
 #~ msgid "Desktop No / Workspace Name"
-#~ msgstr "Darbastalio Nr / Darbo aplinkos pavadinimas"
+#~ msgstr "Плот № / Работен плот Име"
 
 #~ msgid "Battery: %d%% charged, %s"
-#~ msgstr "Baterija: %d%% įkrauta, %s"
+#~ msgstr "Батерия: %d%% заредена, %s"
 
 #~ msgid "charging finished"
-#~ msgstr "Įkrauti baigta"
+#~ msgstr "зареждането завърши"
 
 #~ msgid "charging"
-#~ msgstr "įkraunama"
+#~ msgstr "зареждане"
 
+#, fuzzy
 #~ msgid "Left\t"
-#~ msgstr "Kairė\t"
+#~ msgstr "Отляво на"
 
+#, fuzzy
 #~ msgid "Top\t"
-#~ msgstr "Viršus\t"
+#~ msgstr "Горе:"

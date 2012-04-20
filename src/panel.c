@@ -89,7 +89,6 @@ static Panel* panel_allocate(void)
 {
     Panel* p = g_new0(Panel, 1);
     p->allign = ALLIGN_CENTER;
-    p->orientation = ORIENT_NONE;
     p->edge = EDGE_NONE;
     p->widthtype = WIDTH_PERCENT;
     p->width = 100;
@@ -281,7 +280,8 @@ panel_event_filter(GdkXEvent *xevent, GdkEvent *event, gpointer not_used)
 
     ENTER;
     DBG("win = 0x%x\n", ev->xproperty.window);
-    if (ev->type != PropertyNotify ) {
+    if (ev->type != PropertyNotify )
+    {
         /* private client message from lxpanelctl */
         if( ev->type == ClientMessage && ev->xproperty.atom == a_LXPANEL_CMD )
         {
@@ -296,26 +296,40 @@ panel_event_filter(GdkXEvent *xevent, GdkEvent *event, gpointer not_used)
 
     at = ev->xproperty.atom;
     win = ev->xproperty.window;
-    if (win == GDK_ROOT_WINDOW()) {
-        if (at == a_NET_CLIENT_LIST) {
-                fb_ev_emit(fbev, EV_CLIENT_LIST);
-        } else if (at == a_NET_CURRENT_DESKTOP) {
+    if (win == GDK_ROOT_WINDOW())
+    {
+        if (at == a_NET_CLIENT_LIST)
+        {
+            fb_ev_emit(fbev, EV_CLIENT_LIST);
+        }
+        else if (at == a_NET_CURRENT_DESKTOP)
+        {
             GSList* l;
             for( l = all_panels; l; l = l->next )
                 ((Panel*)l->data)->curdesk = get_net_current_desktop();
             fb_ev_emit(fbev, EV_CURRENT_DESKTOP);
-        } else if (at == a_NET_NUMBER_OF_DESKTOPS) {
+        }
+        else if (at == a_NET_NUMBER_OF_DESKTOPS)
+        {
             GSList* l;
             for( l = all_panels; l; l = l->next )
                 ((Panel*)l->data)->desknum = get_net_number_of_desktops();
             fb_ev_emit(fbev, EV_NUMBER_OF_DESKTOPS);
-        } else if (at == a_NET_DESKTOP_NAMES) {
+        }
+        else if (at == a_NET_DESKTOP_NAMES)
+        {
             fb_ev_emit(fbev, EV_DESKTOP_NAMES);
-        } else if (at == a_NET_ACTIVE_WINDOW) {
+        }
+        else if (at == a_NET_ACTIVE_WINDOW)
+        {
             fb_ev_emit(fbev, EV_ACTIVE_WINDOW );
-        } else if (at == a_NET_CLIENT_LIST_STACKING) {
+        }
+        else if (at == a_NET_CLIENT_LIST_STACKING)
+        {
             fb_ev_emit(fbev, EV_CLIENT_LIST_STACKING);
-        } else if (at == a_XROOTPMAP_ID) {
+        }
+        else if (at == a_XROOTPMAP_ID)
+        {
             GSList* l;
             for( l = all_panels; l; l = l->next )
             {
@@ -324,7 +338,9 @@ panel_event_filter(GdkXEvent *xevent, GdkEvent *event, gpointer not_used)
                     fb_bg_notify_changed_bg(p->bg);
                 }
             }
-        } else if (at == a_NET_WORKAREA) {
+        }
+        else if (at == a_NET_WORKAREA)
+        {
             GSList* l;
             for( l = all_panels; l; l = l->next )
             {
@@ -333,7 +349,8 @@ panel_event_filter(GdkXEvent *xevent, GdkEvent *event, gpointer not_used)
                 p->workarea = get_xaproperty (GDK_ROOT_WINDOW(), a_NET_WORKAREA, XA_CARDINAL, &p->wa_len);
                 /* print_wmdata(p); */
             }
-        } else
+        }
+        else
             return GDK_FILTER_CONTINUE;
 
         return GDK_FILTER_REMOVE;
@@ -967,7 +984,8 @@ panel_start_gui(Panel *p)
 /* Exchange the "width" and "height" terminology for vertical and horizontal panels. */
 void panel_adjust_geometry_terminology(Panel * p)
 {
-    if ((p->height_label != NULL) && (p->width_label != NULL))
+    if ((p->height_label != NULL) && (p->width_label != NULL)
+    && (p->alignment_left_label != NULL) && (p->alignment_right_label != NULL))
     {
         if ((p->edge == EDGE_TOP) || (p->edge == EDGE_BOTTOM))
         {
@@ -1361,6 +1379,7 @@ Panel* panel_new( const char* config_file, const char* config_name )
         if( fp )
         {
             panel = panel_allocate();
+            panel->orientation = ORIENT_NONE;
             panel->name = g_strdup( config_name );
             pfp = fp;
 
@@ -1511,7 +1530,7 @@ void free_global_config();
 int main(int argc, char *argv[], char *env[])
 {
     int i;
-    const char* session_name;
+    const char* desktop_name;
 
     setlocale(LC_CTYPE, "");
 
@@ -1531,8 +1550,8 @@ int main(int argc, char *argv[], char *env[])
 
     resolve_atoms();
 
-    session_name = g_getenv("DESKTOP_SESSION");
-    is_in_lxde = session_name && (0 == strcmp(session_name, "LXDE"));
+    desktop_name = g_getenv("XDG_CURRENT_DESKTOP");
+    is_in_lxde = desktop_name && (0 == strcmp(desktop_name, "LXDE"));
 
     for (i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
