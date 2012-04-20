@@ -1,3 +1,10 @@
+lxpanel (0.5.5-3) unstable; urgency=high
+
+  * Applied patch to solve a FTBFS problem. (Closes:#580475)
+    Thanks Milan Vancura <milan@ucw.cz>
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Sat, 22 May 2010 17:30:51 +0800
+
 lxpanel (0.5.5-2) unstable; urgency=low
 
   * debian/control:
