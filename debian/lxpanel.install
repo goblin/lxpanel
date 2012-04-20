@@ -1,5 +1,5 @@
-debian/lxde-x-terminal-emulator.desktop usr/share/applications
-debian/lxde-x-www-browser.desktop usr/share/applications
 usr/bin
 usr/lib/lxpanel
 usr/share
+
+debian/desktop/*	/usr/share/applications
