@@ -363,16 +363,20 @@ int netproc_scandevice(int sockfd, int iwsockfd, FILE *fp, NETDEVLIST_PTR *netde
 						bzero(&ifr, sizeof(ifr));
 						strcpy(ifr.ifr_name, devptr->info.ifname);
 						ifr.ifr_name[IF_NAMESIZE - 1] = '\0';
-						ioctl(sockfd, SIOCGIFADDR, &ifr);
-						devptr->info.ipaddr = g_strdup(inet_ntoa(((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr));
+						if (ioctl(sockfd, SIOCGIFADDR, &ifr)<0)
+							devptr->info.ipaddr = g_strdup("0.0.0.0");
+						else
+							devptr->info.ipaddr = g_strdup(inet_ntoa(((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr));
 
 						/* Point-to-Porint Address */
 						if (devptr->info.flags & IFF_POINTOPOINT) {
 							bzero(&ifr, sizeof(ifr));
 							strcpy(ifr.ifr_name, devptr->info.ifname);
 							ifr.ifr_name[IF_NAMESIZE - 1] = '\0';
-							ioctl(sockfd, SIOCGIFDSTADDR, &ifr);
-							devptr->info.dest = g_strdup(inet_ntoa(((struct sockaddr_in*)&ifr.ifr_dstaddr)->sin_addr));
+							if (ioctl(sockfd, SIOCGIFDSTADDR, &ifr)<0)
+								devptr->info.dest = NULL;
+							else
+								devptr->info.dest = g_strdup(inet_ntoa(((struct sockaddr_in*)&ifr.ifr_dstaddr)->sin_addr));
 						}
 
 						/* Broadcast */
@@ -380,31 +384,36 @@ int netproc_scandevice(int sockfd, int iwsockfd, FILE *fp, NETDEVLIST_PTR *netde
 							bzero(&ifr, sizeof(ifr));
 							strcpy(ifr.ifr_name, devptr->info.ifname);
 							ifr.ifr_name[IF_NAMESIZE - 1] = '\0';
-							ioctl(sockfd, SIOCGIFBRDADDR, &ifr);
-							devptr->info.bcast = g_strdup(inet_ntoa(((struct sockaddr_in*)&ifr.ifr_broadaddr)->sin_addr));
+							if (ioctl(sockfd, SIOCGIFBRDADDR, &ifr)<0)
+								devptr->info.bcast = NULL;
+							else
+								devptr->info.bcast = g_strdup(inet_ntoa(((struct sockaddr_in*)&ifr.ifr_broadaddr)->sin_addr));
 						}
 
 						/* Netmask */
 						bzero(&ifr, sizeof(ifr));
 						strcpy(ifr.ifr_name, devptr->info.ifname);
 						ifr.ifr_name[IF_NAMESIZE - 1] = '\0';
-						ioctl(sockfd, SIOCGIFNETMASK, &ifr);
-						devptr->info.mask = g_strdup(inet_ntoa(((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr));
+						if (ioctl(sockfd, SIOCGIFNETMASK, &ifr)<0)
+							devptr->info.mask = NULL;
+						else
+							devptr->info.mask = g_strdup(inet_ntoa(((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr));
 
 						/* Wireless Information */
 						if (devptr->info.wireless) {
 							struct wireless_config wconfig;
 
 							/* get wireless config */
-							iw_get_basic_config(iwsockfd, devptr->info.ifname, &wconfig);
-							/* Protocol */
-							devptr->info.protocol = g_strdup(wconfig.name);
-							/* ESSID */
-							devptr->info.essid = g_strdup(wconfig.essid);
+							if (iw_get_basic_config(iwsockfd, devptr->info.ifname, &wconfig)>=0) {
+								/* Protocol */
+								devptr->info.protocol = g_strdup(wconfig.name);
+								/* ESSID */
+								devptr->info.essid = g_strdup(wconfig.essid);
 
-							/* Signal Quality */
-							iw_get_stats(iwsockfd, devptr->info.ifname, &iws, &iwrange, has_iwrange);
-							devptr->info.quality = (int)rint((log (iws.qual.qual) / log (92)) * 100.0);
+								/* Signal Quality */
+								iw_get_stats(iwsockfd, devptr->info.ifname, &iws, &iwrange, has_iwrange);
+								devptr->info.quality = (int)rint((log (iws.qual.qual) / log (92)) * 100.0);
+							}
 						}
 
 						/* check problem connection */
@@ -463,7 +472,7 @@ void netproc_devicelist_clear(NETDEVLIST_PTR *netdev_list)
 	NETDEVLIST_PTR prev_ptr;
 	NETDEVLIST_PTR del_ptr;
 
-	if (netdev_list==NULL) {
+	if (*netdev_list==NULL) {
 		return;
 	}
 

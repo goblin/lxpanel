@@ -701,7 +701,7 @@ msgid "Protocol:"
 msgstr "Protokoll:"
 
 #: ../src/plugins/netstat/netstat.c:294 ../src/plugins/netstat/netstat.c:305
-msgid "Boradcast:"
+msgid "Broadcast:"
 msgstr "Broadcast:"
 
 #: ../src/plugins/netstat/netstat.c:296 ../src/plugins/netstat/netstat.c:307
@@ -823,10 +823,6 @@ msgstr "Adresse:"
 #: ../src/plugins/netstatus/netstatus-dialog-ui.c:316
 msgid "Destination:"
 msgstr "Ziel:"
-
-#: ../src/plugins/netstatus/netstatus-dialog-ui.c:323
-msgid "Broadcast:"
-msgstr "Broadcast:"
 
 #: ../src/plugins/netstatus/netstatus-dialog-ui.c:330
 msgid "Subnet Mask:"
