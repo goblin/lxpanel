@@ -3,14 +3,14 @@ Section: x11
 Priority: optional
 Maintainer: Andrew Lee <andrew@linux.org.tw>
 Build-Depends: debhelper (>= 5), autotools-dev, libgtk2.0-dev (>=2.6), libglib2.0-dev(>=2.10), libxmu-dev, libxpm-dev, libiw-dev, libasound2-dev, docbook-to-man, dpatch
-Standards-Version: 3.7.3
+Standards-Version: 3.8.0.0
 DM-Upload-Allowed: yes
 Homepage: http://www.gnomefiles.org/app.php/LXPanel
 
 Package: lxpanel
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Suggests: lxsession-lite (>=0.3.5) | lxsession (>=0.3.2) | menu, lxnm (>=0.2)
+Suggests: lxsession-lite (>=0.3.5) | lxsession (>=0.3.2) | menu, lxpanel-netstat-plugin
 Description: a lightweight desktop panel for X
  LXPanel is a lightweight GTK+ 2.x based desktop panel which is a 
  derivative work from fbpanel with following features:
@@ -30,3 +30,15 @@ Description: a lightweight desktop panel for X
     other programs. For example, "lxpanelctl run" will show the Run
     dialog in lxpanel, and "lxpanelctl menu" will show the application
     menu. This is useful in key bindings provided by window managers.
+
+Package: lxpanel-netstat-plugin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, lxpanel (= ${binary:Version}), lxnm (>= 0.2.1)
+Replaces: lxpanel (< 0.3.7)
+Description: network monitor plugin for lxpanel
+ This plugin is a net status monitor, but it also support searching
+ and connecting to wireless networks.
+ .
+ This plugin connects to LXNM(Lightweight X11 Network Manager) and 
+ attempts to make networking configuration and setup as painless and
+ automatic as possible.
