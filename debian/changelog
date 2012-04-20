@@ -1,3 +1,38 @@
+lxpanel (0.5.8-3) unstable; urgency=low
+
+  * Updating maintainer field.
+  * Adding myself to uploaders.
+  * Updating vcs fields.
+  * Updating package to debhelper version 9.
+  * Updating package to standards version 3.9.3.
+  * Rewriting copyright file machine-readable format version 1.0.
+  * Correcting suggests.
+  * Making build-depends unversioned where already fulfiled as of
+    squeeze.
+  * Updating homepage field.
+  * Prefixing debhelper files with package name.
+  * Moving desktop files to desktop subdirectory within packaging.
+  * Moving manpage files to manpages subdirectory within packaging.
+  * Rediffing default-config.patch with common diff options.
+  * Rediffing desktop-number.patch with common diff options.
+  * Rediffing potfiles.patch with common diff options.
+  * Rediffing run-in-background.patch with common diff options.
+  * Decrufting rules file.
+  * Switching to xz compression for both the source and the binary
+    packages.
+  * Rewriting package descriptions.
+  * Trimming readme debian.
+  * Trimming lintian overrides.
+  * Adding back changelog entries for version 0.5.8-1.1 which got
+    dropped in the 0.5.8-2 upload.
+  * Adding back changes from Sébastien Villemot
+    <sebastien.villemot@ens.fr> in 0.5.8-1.1 to use dh-autoreconf
+    (#658001).
+  * Disabling hardening buildflags for the moment.
+  * Updating package for multiarch.
+
+ -- Daniel Baumann <daniel@debian.org>  Fri, 20 Apr 2012 15:42:00 +0200
+
 lxpanel (0.5.8-2) unstable; urgency=low
 
   [ Sergey Slipchenko ]
