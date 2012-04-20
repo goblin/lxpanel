@@ -8,11 +8,7 @@
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- --enable-man 
-
-override_dh_auto_clean:
-	rm -f man/lxpanel.1 man/lxpanelctl.1
-	dh_auto_clean
+	dh_auto_configure -- --enable-man
 
 override_dh_auto_test:
-	:	
+	# Disable: check failed in po/.

@@ -1,4 +1,4 @@
-batt_status.patch
 missing_glades.patch
 default-config.patch
-redefine-alarm-variable.patch
+configure_desktop_number.patch
+10_fix_menu.patch

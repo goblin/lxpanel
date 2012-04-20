@@ -3,7 +3,7 @@ Thu, 21 Feb 2008 21:21:11 +0800.
 
 It was downloaded from http://sourceforge.net/projects/lxde/
 
-Upstream Authors and Copyright Holders: 
+Upstream Authors and Copyright Holders:
 
     Hong Jen Yee (PCMan)  <pcman.tw@gmail.com>
     Jim Huang  <jserv.tw@gmail.com>
@@ -61,7 +61,7 @@ License:
 
     You should have received a copy of the GNU General Public License
     along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
     02110-1301, USA.
 
 The Debian packaging is (C) 2008, Andrew Lee <andrew@linux.org.tw> and

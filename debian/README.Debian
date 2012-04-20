@@ -4,7 +4,7 @@
 shutdown/reboot/suspend/hibernate via HAL or gdm
 ------------------------------------------------
  If you use lxpanel without GDM, the logout dialog would have ability
- to shutdown/reboot/suspend/hibernate via HAL support. 
+ to shutdown/reboot/suspend/hibernate via HAL support.
  Make sure your account have powerdev group permission.
  eg: adduser user powerdev
 
