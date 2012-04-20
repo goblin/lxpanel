@@ -1,7 +1,9 @@
 Author: Sergey Slipchenko <faergeek@gmail.com>
 Description: Remove missing files to pass check target
---- a/po/POTFILES.in
-+++ b/po/POTFILES.in
+
+diff -Naurp lxpanel.orig/po/POTFILES.in lxpanel/po/POTFILES.in
+--- lxpanel.orig/po/POTFILES.in	2011-07-29 14:37:01.000000000 +0200
++++ lxpanel/po/POTFILES.in	2012-04-20 14:37:26.335272042 +0200
 @@ -14,7 +14,6 @@ data/ui/panel-pref.ui
  # Putting translation of plugins in main catalog is not a good idea...
  src/plugins/cpu/cpu.c
