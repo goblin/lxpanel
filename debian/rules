@@ -1,5 +1,8 @@
 #!/usr/bin/make -f
 
+# lxpanel does not build (yet) with hardening
+export DEB_BUILD_MAINT_OPTIONS = hardening=-all
+
 %:
 	dh ${@} --with autoreconf
 
