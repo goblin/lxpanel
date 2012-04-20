@@ -1,3 +1,26 @@
+lxpanel (0.3.6-1) unstable; urgency=low
+
+  * New upstream release
+    - Fixed config dialog's setting can not be saved problem
+    - Add German locale
+    - Add Finnish locale
+    - new kbleb plugin
+    dirmenu plugin: add config dialog for setting icon and label
+    dirmenu plugin: support setting name of menu button with .directory file
+    dirmenu plugin: fixed font color.
+    dirmenu plugin: add label display for dirmenu plugin.
+    batt plugin: support battery information of sysfs for linux 2.6.25
+    batt plugin: fixed left time bug for some battery
+    netstat plugin: improve and fix some bugs for Wireless AP Scanning
+    netstat plugin: fixed a lot of crashes.
+    netstat plugin: hidden AP with encryption will not display
+    netstat plugin: improving IE information handler to support WPA/WPA2 
+  * Added lintian-overrides
+  * Suggests: lxnm 
+  * Minor fix in debian/copyright 
+
+ -- Andrew Lee <andrew@linux.org.tw>  Thu, 29 May 2008 15:52:52 +0800
+
 lxpanel (0.3.5.2+svn20080509-1) unstable; urgency=low
 
   * Initial release (Closes: #466562)

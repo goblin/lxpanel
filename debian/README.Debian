@@ -1,5 +1,6 @@
 lxpanel for Debian
 ------------------
 
+ The netstat plugin's wifi configuration required lxnm daemon.
 
  -- Andrew Lee <andrew@linux.org.tw>  Thu, 21 Feb 2008 21:21:11 +0800

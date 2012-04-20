@@ -33,6 +33,8 @@ File src/plugins/ptk-app-menu.c
     Licensed under the GNU Library General Public License (LGPL)
     Version 2.
 
+On Debian GNU/Linux systems, the complete text of the GNU Library
+General Public License can be found in `/usr/share/common-licenses/LGPL'.
 
 License:
 
