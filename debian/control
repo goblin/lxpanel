@@ -11,8 +11,8 @@ Build-Depends:
  libmenu-cache1-dev (>=0.3.2), libxpm-dev, python, xsltproc
 Standards-Version: 3.9.2
 Homepage: http://lxde.org
-Vcs-Git: git://git.debian.org/git/pkg-lxde/lxpanel.git
-Vcs-Browser: http://git.debian.org/?p=pkg-lxde/lxpanel.git
+Vcs-Browser: http://git.lxde.org/gitweb/?p=debian/lxpanel.git
+Vcs-Git: git://git.lxde.org/git/debian/lxpanel.git
 
 Package: lxpanel
 Architecture: any
