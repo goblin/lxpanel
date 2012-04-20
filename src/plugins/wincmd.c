@@ -27,7 +27,6 @@
 #include "dbg.h"
 
 typedef struct {
-    GtkTooltips *tips;
     char* image;
     int button1, button2;
     int action1, action2;
@@ -153,7 +152,8 @@ clicked (GtkWidget *widget, GdkEventButton *event, Plugin* plugin)
         toggle_shaded(wc, wc->action2);
         DBG("wincmd: shade all\n");
     } else if( event->button == 3 ) { /* right button */
-        GtkMenu* popup = lxpanel_get_panel_menu( plugin->panel, plugin, FALSE );
+        GtkMenu* popup = (GtkMenu*)lxpanel_get_panel_menu
+                ( plugin->panel, plugin, FALSE );
         gtk_menu_popup( popup, NULL, NULL, NULL, NULL, event->button, event->time );
         return TRUE;
     }
@@ -189,16 +189,6 @@ wincmd_constructor(Plugin *p, char **fp)
     wc = g_new0(wincmd, 1);
     g_return_val_if_fail(wc != NULL, 0);
 
-    wc->tips = p->panel->tooltips;
-/*
-    wc->tips = gtk_tooltips_new();
-#if GLIB_CHECK_VERSION( 2, 10, 0 )
-    g_object_ref_sink( wc->tips );
-#else
-    g_object_ref( wc->tips );
-    gtk_object_sink( wc->tips );
-#endif
-*/
     p->priv = wc;
     fname = NULL;
     if( fp )
@@ -238,11 +228,11 @@ wincmd_constructor(Plugin *p, char **fp)
     }
 
     if (p->panel->orientation == ORIENT_HORIZ) {
-        w = 10000;
         h = p->panel->ah;
+        w = h;
     } else {
         w = p->panel->aw;
-        h = 10000;
+        h = w;
     }
     button = fb_button_new_from_file(fname, w, h, 0x202020, TRUE);
     gtk_container_set_border_width(GTK_CONTAINER(button), 0);
@@ -252,7 +242,7 @@ wincmd_constructor(Plugin *p, char **fp)
     gtk_widget_show(button);
 
     g_free(fname);
-    gtk_tooltips_set_tip(GTK_TOOLTIPS (wc->tips), button, _("Left click to iconify all windows. Middle click to shade them"), NULL);
+    gtk_widget_set_tooltip_text( button, _("Left click to iconify all windows. Middle click to shade them") );
 
     /* store the created plugin widget in plugin->pwid */
     p->pwid = button;

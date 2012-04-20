@@ -57,7 +57,6 @@ static int xkb_error_base = 0;
 typedef struct _KbLed{
     GtkWidget *mainw;
     GtkWidget *img[3];
-    GtkTooltips* tooltips;
     int old_state;
     gboolean visible[3];
 } KbLed;
@@ -80,7 +79,7 @@ static void update_display( Plugin* p, unsigned int state )
         {
             char* file = g_build_filename( PACKAGE_DATA_DIR "/lxpanel/images",
                                                     cur ? on_icons[i] : off_icons[i], NULL );
-            gtk_image_set_from_file( kl->img[ i ], file );
+            gtk_image_set_from_file( (GtkImage *)kl->img[ i ], file );
             g_free( file );
         }
     }
@@ -114,7 +113,7 @@ static gboolean on_button_press (GtkWidget* widget, GdkEventButton* evt, Plugin*
 {
     KbLed *kl = (KbLed*)p->priv;
     if( evt->button == 3 ) { /* Right click*/
-        GtkMenu* popup = lxpanel_get_panel_menu( p->panel, p, FALSE );
+        GtkMenu* popup = (GtkMenu*)lxpanel_get_panel_menu( p->panel, p, FALSE );
         gtk_menu_popup( popup, NULL, NULL, NULL, NULL, evt->button, evt->time );
         return TRUE;
     }
@@ -140,8 +139,6 @@ kbled_destructor(Plugin *p)
     KbLed *kl = (KbLed*)p->priv;
 
     gdk_window_remove_filter(NULL, (GdkFilterFunc)event_filter, p);
-
-    g_object_unref( kl->tooltips );
     g_free( kl );
 }
 
@@ -239,7 +236,6 @@ static int kbled_constructor(Plugin *p, char **fp)
     gdk_window_add_filter(NULL, (GdkFilterFunc)event_filter, p );
 
     gtk_widget_show(kl->mainw);
-    kl->tooltips = g_object_ref( p->panel->tooltips );
     //gtk_tooltips_set_tip (vol->tooltips, vol->mainw, _("Volume control"), NULL);
 
     return TRUE;
@@ -254,7 +250,7 @@ static void apply_config( Plugin* p )
         if (kl->visible[i]) {
             char* file = g_build_filename( PACKAGE_DATA_DIR "/lxpanel/images",
                                                     kl->old_state ? on_icons[i] : off_icons[i], NULL );
-            gtk_image_set_from_file(kl->img[ i ], file);
+            gtk_image_set_from_file((GtkImage *)kl->img[ i ], file);
             g_free(file);
             gtk_widget_show(kl->img[i]);
         } else {
@@ -278,9 +274,9 @@ static void kbled_config( Plugin *p, GtkWindow* parent )
     dlg = create_generic_config_dlg( _(p->class->name),
                                      GTK_WIDGET(parent),
                                     (GSourceFunc) apply_config, (gpointer) p,
-                                     _("Show CapsLock"), &kl->visible[0], G_TYPE_BOOLEAN,
-                                     _("Show NumLock"), &kl->visible[1], G_TYPE_BOOLEAN,
-                                     _("Show ScrollLock"), &kl->visible[2], G_TYPE_BOOLEAN,
+                                     _("Show CapsLock"), &kl->visible[0], CONF_TYPE_BOOL,
+                                     _("Show NumLock"), &kl->visible[1], CONF_TYPE_BOOL,
+                                     _("Show ScrollLock"), &kl->visible[2], CONF_TYPE_BOOL,
                                      NULL );
     gtk_window_present( GTK_WINDOW(dlg) );
 }

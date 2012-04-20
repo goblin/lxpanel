@@ -48,7 +48,8 @@ static gboolean on_btn_press( GtkWidget* w, GdkEventButton* evt, Plugin* plugin 
 {
     if( evt->button == 3 )
     {
-        GtkMenu* popup = lxpanel_get_panel_menu( plugin->panel, plugin, FALSE );
+        GtkMenu* popup =(GtkMenu*)lxpanel_get_panel_menu
+                ( plugin->panel, plugin, FALSE );
         gtk_menu_popup( popup, NULL, NULL, NULL, NULL, evt->button, evt->time );
     }
     return TRUE;
@@ -134,7 +135,7 @@ static void space_config(Plugin* p, GtkWindow* parent )
     dlg =  create_generic_config_dlg( _(p->class->name),
                                      GTK_WIDGET(parent),
                                      (GSourceFunc) apply_config, (gpointer) p,
-                                     _("Size"), &sp->size, G_TYPE_INT,  NULL );
+                                     _("Size"), &sp->size, CONF_TYPE_INT,  NULL );
     gtk_window_present( GTK_WINDOW(dlg) );
 }
 

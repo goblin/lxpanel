@@ -27,7 +27,6 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <X11/xpm.h>
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <glib/gi18n.h>
@@ -81,10 +80,8 @@ struct _pager {
 };
 
 
-
-#define TASK_VISIBLE(tk) \
- (!( ((tk)->ws != NormalState) || (tk)->nws.hidden || (tk)->nws.skip_pager ))
-
+#define TASK_VISIBLE(tk)                            \
+ (!( (tk)->nws.hidden || (tk)->nws.skip_pager ))
 //if (t->nws.skip_pager || t->nwwt.desktop /*|| t->nwwt.dock || t->nwwt.splash*/ )
 
 static void pager_rebuild_all(FbEv *ev, pager *pg);
@@ -329,7 +326,8 @@ desk_button_press_event(GtkWidget * widget, GdkEventButton * event, desk *d)
 {
     ENTER;
     if( event->button == 3 ) { /* right button */
-        GtkMenu* popup = lxpanel_get_panel_menu( d->pg->plugin->panel, d->pg->plugin, FALSE );
+        GtkMenu* popup =(GtkMenu*) lxpanel_get_panel_menu
+                ( d->pg->plugin->panel, d->pg->plugin, FALSE );
         gtk_menu_popup( popup, NULL, NULL, NULL, NULL, event->button, event->time );
         return TRUE;
     }
@@ -651,7 +649,7 @@ pager_constructor(Plugin *plug, char **fp)
     pg->htable = g_hash_table_new (g_int_hash, g_int_equal);
 
     pg->box = plug->panel->my_box_new(TRUE, 1);
-    gtk_container_set_border_width (GTK_CONTAINER (pg->box), 0);
+    gtk_container_set_border_width (GTK_CONTAINER (pg->box), 2);
     gtk_widget_show(pg->box);
 
     gtk_container_set_border_width (GTK_CONTAINER (plug->pwid), 1);

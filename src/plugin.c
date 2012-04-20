@@ -95,7 +95,6 @@ register_plugin_class(PluginClass *pc, int dynamic)
 static void
 init_plugin_class_list()
 {
-    ENTER;
 #ifdef STATIC_SEPARATOR
     REGISTER_PLUGIN_CLASS(separator_plugin_class, 0);
 #endif
@@ -135,8 +134,10 @@ init_plugin_class_list()
     REGISTER_PLUGIN_CLASS(tray_plugin_class, 0);
 #endif
 
+#ifndef DISABLE_MENU
 #ifdef STATIC_MENU
     REGISTER_PLUGIN_CLASS(menu_plugin_class, 0);
+#endif
 #endif
 
 #ifdef STATIC_SPACE
@@ -161,7 +162,7 @@ GList* plugin_find_class( const char* type )
 }
 
 static PluginClass*
-plugin_load_dynamic( const char* type, const char* path )
+plugin_load_dynamic( const char* type, const gchar* path )
 {
     PluginClass *pc = NULL;
     GModule *m;
@@ -204,7 +205,8 @@ plugin_load(char *type)
     }
 #ifndef DISABLE_PLUGINS_LOADING
     else if ( g_module_supported() ) {
-        char* path[ PATH_MAX ];
+        gchar path[ PATH_MAX ];
+        
 #if 0   /* put plugins in config dir is too dirty... */
         g_snprintf(path, PATH_MAX, "%s/.lxpanel/plugins/%s.so", getenv("HOME"), type);
         pc = plugin_load_dynamic( type, path );
@@ -267,7 +269,7 @@ plugin_start(Plugin *this, char** fp)
 void plugin_stop(Plugin *this)
 {
     ENTER;
-    DBG("%s\n", this->class->type);
+    /* g_debug("%s\n", this->class->type); */
     this->class->destructor(this);
     this->panel->plug_num--;
     if (!this->class->invisible && this->pwid )
@@ -295,11 +297,15 @@ void plugin_class_unref( PluginClass* pc )
 GList* plugin_get_available_classes()
 {
     GList* classes = NULL;
-    char *path, *dir_path;
+    gchar *path;
+    char *dir_path;
     const char* file;
     GDir* dir;
     GList* l;
     PluginClass *pc;
+
+    if (!pcl)
+        init_plugin_class_list();
 
     for( l = pcl; l; l = l->next ) {
         pc = (PluginClass*)l->data;
@@ -359,7 +365,7 @@ GList* plugin_get_available_classes()
 
 void plugin_class_list_free( GList* classes )
 {
-   g_list_foreach( classes, plugin_class_unref, NULL );
+   g_list_foreach( classes, (GFunc)plugin_class_unref, NULL );
    g_list_free( classes );
 }
 
@@ -405,7 +411,8 @@ plugin_widget_set_background( GtkWidget* w, Panel* p )
     	if( is_tray )
     		in_tray = TRUE;
 
-        gtk_container_foreach( w, plugin_widget_set_background, p );
+        gtk_container_foreach( (GtkContainer*)w, 
+                (GtkCallback)plugin_widget_set_background, p );
 
         if( is_tray )
 			in_tray = FALSE;

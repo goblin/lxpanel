@@ -28,6 +28,14 @@
 #include "panel.h"
 #include "plugin.h"
 
+enum {
+    CONF_TYPE_STR,
+    CONF_TYPE_INT,
+    CONF_TYPE_BOOL,
+    CONF_TYPE_FILE,
+    CONF_TYPE_FILE_ENTRY
+};
+
 enum { LINE_NONE, LINE_BLOCK_START, LINE_BLOCK_END, LINE_VAR };
 
 typedef struct {
@@ -54,9 +62,12 @@ gchar *num2str(pair *p, int num, gchar *defval);
 
 extern int lxpanel_get_line(char **fp, line *s);
 extern int lxpanel_put_line(FILE* fp, const char* format, ...);
-extern int lxpanel_put_str( FILE* fp, const char* name, const char* val );
-extern int lxpanel_put_bool( FILE* fp, const char* name, gboolean val );
-extern int lxpanel_put_int( FILE* fp, const char* name, int val );
+#define lxpanel_put_str(fp, name, val) (G_UNLIKELY( !(val) || !*(val) )) ? 0 : lxpanel_put_line(fp, "%s=%s", name, val)
+#define lxpanel_put_bool(fp, name, val) lxpanel_put_line(fp, "%s=%c", name, (val) ? '1' : '0')
+#define lxpanel_put_int(fp, name, val) lxpanel_put_line(fp, "%s=%d", name, val)
+//extern int lxpanel_put_str( FILE* fp, const char* name, const char* val );
+//extern int lxpanel_put_bool( FILE* fp, const char* name, gboolean val );
+//extern int lxpanel_put_int( FILE* fp, const char* name, int val );
 int get_line_as_is(char **fp, line *s);
 
 void Xclimsg(Window win, long type, long l0, long l1, long l2, long l3, long l4);
@@ -92,6 +103,8 @@ GtkWidget *fb_button_new_from_file_with_label(gchar *fname, int width, int heigh
       gulong hicolor, gboolean keep_ratio, gchar *label);
 GtkWidget *fb_button_new_from_file_with_colorlabel(gchar *fname, int width, int height,
       gulong hicolor, gulong fcolor, gboolean keep_ratio, gchar *name);
+void _gtk_image_set_from_file_scaled( GtkWidget* img, const gchar *file, gint width,
+	gint height, gboolean keep_ratio);
 
 char* translate_exec_to_cmd( const char* exec, const char* icon,
                              const char* title, const char* fpath );
@@ -116,6 +129,12 @@ GtkWidget* create_generic_config_dlg( const char* title, GtkWidget* parent,
 
 char* get_config_file( const char* profile, const char* file_name, gboolean is_global );
 
-extern GtkWidget* lxpanel_get_panel_menu( Panel* panel, Plugin* plugin, gboolean use_sub_menu );
+extern GtkMenu* lxpanel_get_panel_menu( Panel* panel, Plugin* plugin, gboolean use_sub_menu );
+
+extern GdkPixbuf* lxpanel_load_icon( const char* name, int size, gboolean use_fallback );
+
+void fb_button_set_from_file(GtkWidget* btn, const char* img_file);
+
+gboolean lxpanel_launch_app(const char* exec, GList* files, gboolean in_terminal);
 
 #endif

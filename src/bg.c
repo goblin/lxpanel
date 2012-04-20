@@ -123,7 +123,7 @@ fb_bg_init (FbBg *bg)
     ENTER;
     bg->dpy = GDK_DISPLAY();
     bg->xroot = DefaultRootWindow(bg->dpy);
-    bg->id = XInternAtom(bg->dpy, "_XROOTPMAP_ID", False);
+    bg->id = gdk_x11_get_xatom_by_name("_XROOTPMAP_ID");
     bg->pixmap = fb_bg_get_xrootpmap(bg);
     gcv.ts_x_origin = 0;
     gcv.ts_y_origin = 0;
@@ -135,14 +135,6 @@ fb_bg_init (FbBg *bg)
     }
     bg->gc = XCreateGC (bg->dpy, bg->xroot, mask, &gcv) ;
     RET();
-}
-
-
-FbBg *
-fb_bg_new()
-{
-    ENTER;
-    RET(g_object_new (FB_TYPE_BG, NULL));
 }
 
 static void
@@ -264,8 +256,7 @@ fb_bg_changed(FbBg *bg)
     RET();
 }
 
-
-void fb_bg_notify_changed_bg(FbBg *bg)
+inline void fb_bg_notify_changed_bg(FbBg *bg)
 {
     ENTER;
     g_signal_emit (bg, signals [CHANGED], 0);
@@ -278,7 +269,8 @@ FbBg *fb_bg_get_for_display(void)
     if (!default_bg)
     {
         default_bg = fb_bg_new();
-        g_object_add_weak_pointer( default_bg, &default_bg );
+        g_object_add_weak_pointer( G_OBJECT(default_bg), 
+                (gpointer)&default_bg );
     }
     else
         g_object_ref(default_bg);

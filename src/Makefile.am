@@ -6,22 +6,16 @@ bin_PROGRAMS = lxpanel lxpanelctl
 
 INCLUDES = \
 	-I$(top_srcdir) \
+	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src/plugins \
-	-I$(top_srcdir)/src/ptk-ui-xml \
 	-DPACKAGE_LIB_DIR=\""$(libdir)"\" \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_BIN_DIR=\""$(bindir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-	$(PACKAGE_CFLAGS) \
+	$(PACKAGE_CFLAGS)
 	$(G_CAST_CHECKS)
 
 BUILTIN_PLUGINS = $(top_builddir)/src/plugins/libbuiltin_plugins.a
-
-PTK_UI_XML_SOURCES=\
-	ptk-ui-xml/ptk-ui-xml.c \
-        ptk-ui-xml/ptk-ui-xml.h \
-	ptk-ui-xml/ptk-xml-tree.c \
-        ptk-ui-xml/ptk-xml-tree.h
 
 TRAY_SOURCES= \
 	systray/eggmarshalers.c systray/eggmarshalers.h \
@@ -29,8 +23,11 @@ TRAY_SOURCES= \
 	systray/fixedtip.c systray/fixedtip.h \
 	systray/tray.c
 
+if ENABLE_MENU_CACHE
+MENU_SOURCES = gtk-run.c
+endif
+
 lxpanel_SOURCES = \
-	$(PTK_UI_XML_SOURCES) \
 	glib-mem.h \
 	misc.c misc.h \
 	$(TRAY_SOURCES) \
@@ -41,10 +38,12 @@ lxpanel_SOURCES = \
 	gtkbar.h gtkbar.c \
 	panel.c panel.h \
 	plugin.c plugin.h \
-	gtk-run.c
+	$(MENU_SOURCES)
 
 if BUILD_PLUGIN_LOADER
 DYNAMIC_FLAGS = -export-dynamic
+lxpanel_includedir = $(includedir)/lxpanel
+lxpanel_include_HEADERS = $(top_srcdir)/include/lxpanel/plugin.h
 endif
 lxpanel_LDFLAGS = $(DYNAMIC_FLAGS)
 
@@ -55,6 +54,12 @@ lxpanel_LDADD = \
 
 lxpanelctl_SOURCES = lxpanelctl.c lxpanelctl.h
 lxpanelctl_LDADD = -lX11 $(INTLLIBS)
+
+noinst_PROGRAMS=xml-purge
+xml_purge_SOURCES=xml-purge.c
+xml_purge_CFLAGS=@PACKAGE_CFLAGS@
+xml_purge_LDADD=@PACKAGE_LIBS@
+
 
 EXTRA_DIST = \
 	plugins/icon.xpm

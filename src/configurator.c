@@ -1,4 +1,5 @@
 /**
+/**
  * Copyright (c) 2006 LxDE Developers, see the file AUTHORS for details.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,8 +34,6 @@
 
 #include "dbg.h"
 
-#include "ptk-ui-xml.h"
-
 enum{
     COL_NAME,
     COL_EXPAND,
@@ -47,10 +46,13 @@ void restart(void);
 void gtk_run(void);
 void panel_config_save(Panel* panel);
 static void logout(void);
+static void save_global_config();
 
 Command commands[] = {
     //{ "configure", N_("Preferences"), configure },
+#ifndef DISABLE_MENU
     { "run", N_("Run"), gtk_run },
+#endif
     { "restart", N_("Restart"), restart },
     { "logout", N_("Logout"), logout },
     { NULL, NULL },
@@ -70,7 +72,7 @@ void panel_plugin_config_save( Panel* p, FILE *fp);
 static void update_opt_menu(GtkWidget *w, int ind);
 static void update_toggle_button(GtkWidget *w, gboolean n);
 static void modify_plugin( GtkTreeView* view );
-static void on_entry_changed( GtkEditable* edit, gpointer user_data );
+static void on_entry_focus_out( GtkWidget* edit, GdkEventFocus *evt, gpointer user_data );
 
 /* older versions of glib don't provde these API */
 #if ! GLIB_CHECK_VERSION(2, 8, 0)
@@ -131,7 +133,7 @@ response_event(GtkDialog *widget, gint arg1, Panel* panel )
     case GTK_RESPONSE_NONE:
         panel_config_save( panel );
         /* NOTE: NO BREAK HERE*/
-        gtk_widget_destroy(widget);
+        gtk_widget_destroy(GTK_WIDGET(widget));
         break;
     }
     return;
@@ -199,8 +201,7 @@ set_height( GtkSpinButton* spin, Panel* p )
     update_panel_geometry(p);
 }
 
-static void
-set_width_type( GtkWidget *item, Panel* p )
+static void set_width_type( GtkWidget *item, Panel* p )
 {
     GtkWidget* spin;
     int widthtype;
@@ -208,7 +209,7 @@ set_width_type( GtkWidget *item, Panel* p )
     widthtype = gtk_combo_box_get_active(GTK_COMBO_BOX(item)) + 1;
     p->widthtype = widthtype;
 
-    spin = ptk_ui_xml_get_widget( gtk_widget_get_toplevel(item), "width" );
+    spin = (GtkWidget*)g_object_get_data(G_OBJECT(item), "width_spin" );
     t = (widthtype != WIDTH_REQUEST);
     gtk_widget_set_sensitive( spin, t );
     if (widthtype == WIDTH_PERCENT) {
@@ -223,11 +224,10 @@ set_width_type( GtkWidget *item, Panel* p )
     update_panel_geometry(p);
 }
 
-static void
-transparency_toggle( GtkWidget *b, Panel* p)
+static void transparency_toggle( GtkWidget *b, Panel* p)
 {
-    GtkWidget* tr = ptk_ui_xml_get_widget( gtk_widget_get_toplevel(b), "tint_clr");
-	gboolean t;
+    GtkWidget* tr = (GtkWidget*)g_object_get_data(G_OBJECT(b), "tint_clr");
+    gboolean t;
 
     ENTER;
 
@@ -242,15 +242,13 @@ transparency_toggle( GtkWidget *b, Panel* p)
         p->transparent = 1;
         p->background = 0;
         panel_update_background( p );
-        //restart();
     }
     RET();
 }
 
-static void
-background_toggle( GtkWidget *b, Panel* p)
+static void background_toggle( GtkWidget *b, Panel* p)
 {
-    GtkWidget* fc = ptk_ui_xml_get_widget( gtk_widget_get_toplevel(b), "img_file" );
+    GtkWidget* fc = (GtkWidget*)g_object_get_data(G_OBJECT(b), "img_file" );
     gtk_widget_set_sensitive( fc, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b)));
     if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b))) {
         if (!p->background) {
@@ -258,15 +256,13 @@ background_toggle( GtkWidget *b, Panel* p)
             p->background = 1;
             /* Update background immediately. */
             panel_update_background( p );
-            //restart();
         }
     }
 }
 
-static void
-background_changed(GtkFileChooser *file_chooser,  Panel* p )
+static void background_changed(GtkFileChooser *file_chooser,  Panel* p )
 {
-    GtkWidget* btn = ptk_ui_xml_get_widget( p->pref_dialog, "bg_image" );
+    GtkWidget* btn = (GtkWidget*)g_object_get_data( G_OBJECT(file_chooser), "bg_image" );
     char* file;
 
     file = g_strdup(gtk_file_chooser_get_filename(file_chooser));
@@ -319,7 +315,7 @@ on_font_color_set( GtkColorButton* clr,  Panel* p )
 static void
 on_use_font_color_toggled( GtkToggleButton* btn,   Panel* p )
 {
-    GtkWidget* clr = (GtkWidget*)g_object_get_data( btn, "clr" );
+    GtkWidget* clr = (GtkWidget*)g_object_get_data( G_OBJECT(btn), "clr" );
     if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn)))
         gtk_widget_set_sensitive( clr, TRUE );
     else
@@ -380,13 +376,13 @@ on_plugin_expand_toggled(GtkCellRendererToggle* render, char* path, GtkTreeView*
         gtk_tree_model_get( model, &it, COL_DATA, &pl, COL_EXPAND, &expand, -1 );
 
         /* query the old packing of the plugin widget */
-        gtk_box_query_child_packing( pl->panel->box, pl->pwid, &old_expand, &fill, &padding, &pack_type );
+        gtk_box_query_child_packing( GTK_BOX(pl->panel->box), pl->pwid, &old_expand, &fill, &padding, &pack_type );
 
         expand = ! expand;
         pl->expand = expand;
         gtk_list_store_set( (GtkListStore*)model, &it, COL_EXPAND, expand, -1 );
         /* apply the new packing with only "expand" modified. */
-        gtk_box_set_child_packing( pl->panel->box, pl->pwid, expand, fill, padding, pack_type );
+        gtk_box_set_child_packing( GTK_BOX(pl->panel->box), pl->pwid, expand, fill, padding, pack_type );
     }
     gtk_tree_path_free( tp );
 }
@@ -400,7 +396,7 @@ static void init_plugin_list( Panel* p, GtkTreeView* view, GtkWidget* label )
     GList* l;
     GtkTreeIter it;
 
-    g_object_set_data( view, "panel", p );
+    g_object_set_data( G_OBJECT(view), "panel", p );
 
     render = gtk_cell_renderer_text_new();
     col = gtk_tree_view_column_new_with_attributes(
@@ -444,7 +440,7 @@ static void on_add_plugin_response( GtkDialog* dlg,
                                     int response,
                                     GtkTreeView* _view )
 {
-    Panel* p = (Panel*) g_object_get_data( _view, "panel" );
+    Panel* p = (Panel*) g_object_get_data( G_OBJECT(_view), "panel" );
     if( response == GTK_RESPONSE_OK )
     {
         GtkTreeView* view;
@@ -506,7 +502,7 @@ static void on_add_plugin( GtkButton* btn, GtkTreeView* _view )
     GtkListStore* list;
     GtkTreeSelection* tree_sel;
 
-    Panel* p = (Panel*) g_object_get_data( _view, "panel" );
+    Panel* p = (Panel*) g_object_get_data( G_OBJECT(_view), "panel" );
 
     classes = plugin_get_available_classes();
 
@@ -532,7 +528,7 @@ static void on_add_plugin( GtkButton* btn, GtkTreeView* _view )
     gtk_box_pack_start( (GtkBox*)GTK_DIALOG(dlg)->vbox, scroll,
                          TRUE, TRUE, 4 );
     view = (GtkTreeView*)gtk_tree_view_new();
-    gtk_container_add( (GtkContainer*)scroll, view );
+    gtk_container_add( (GtkContainer*)scroll, GTK_WIDGET(view) );
     tree_sel = gtk_tree_view_get_selection( view );
     gtk_tree_selection_set_mode( tree_sel, GTK_SELECTION_BROWSE );
 
@@ -563,9 +559,9 @@ static void on_add_plugin( GtkButton* btn, GtkTreeView* _view )
     g_object_unref( list );
 
     g_signal_connect( dlg, "response",
-                      on_add_plugin_response, _view );
-    g_object_set_data( dlg, "avail-plugins", view );
-    g_object_weak_ref( dlg, plugin_class_list_free, classes );
+                      G_CALLBACK(on_add_plugin_response), _view );
+    g_object_set_data( G_OBJECT(dlg), "avail-plugins", view );
+    g_object_weak_ref( G_OBJECT(dlg), plugin_class_list_free, classes );
 
     gtk_window_set_default_size( (GtkWindow*)dlg, 320, 400 );
     gtk_widget_show_all( dlg );
@@ -579,7 +575,7 @@ static void on_remove_plugin( GtkButton* btn, GtkTreeView* view )
     GtkTreeSelection* tree_sel = gtk_tree_view_get_selection( view );
     Plugin* pl;
 
-    Panel* p = (Panel*) g_object_get_data( view, "panel" );
+    Panel* p = (Panel*) g_object_get_data( G_OBJECT(view), "panel" );
 
     if( gtk_tree_selection_get_selected( tree_sel, &model, &it ) )
     {
@@ -635,7 +631,7 @@ static void on_moveup_plugin(  GtkButton* btn, GtkTreeView* view )
     GtkTreeSelection* tree_sel = gtk_tree_view_get_selection( view );
     int i;
 
-    Panel* panel = (Panel*) g_object_get_data( view, "panel" );
+    Panel* panel = (Panel*) g_object_get_data( G_OBJECT(view), "panel" );
 
     if( ! gtk_tree_model_get_iter_first( model, &it ) )
         return;
@@ -677,7 +673,7 @@ static void on_movedown_plugin(  GtkButton* btn, GtkTreeView* view )
     Plugin* pl;
     int i;
 
-    Panel* panel = (Panel*) g_object_get_data( view, "panel" );
+    Panel* panel = (Panel*) g_object_get_data( G_OBJECT(view), "panel" );
 
     if( ! gtk_tree_selection_get_selected( tree_sel, &model, &it ) )
         return;
@@ -738,11 +734,10 @@ update_toggle_button(GtkWidget *w, gboolean n)
     RET();
 }
 
-void
-panel_configure( Panel* p, int sel_page  )
+void panel_configure( Panel* p, int sel_page )
 {
-    PtkUIXml* xml;
-    GtkWidget *w, *w2;
+    GtkBuilder* builder;
+    GtkWidget *w, *w2, *width, *tint_clr, *img_file;
 
     if( p->pref_dialog )
     {
@@ -750,28 +745,34 @@ panel_configure( Panel* p, int sel_page  )
         return;
     }
 
-    p->pref_dialog = ptk_ui_xml_create_widget_from_file( PACKAGE_DATA_DIR "/lxpanel/ui/panel-pref.glade" );
-    g_signal_connect(p->pref_dialog, "response",     (GCallback) response_event, p);
-    g_object_add_weak_pointer( p->pref_dialog, &p->pref_dialog );
+    builder = gtk_builder_new();
+    if( !gtk_builder_add_from_file(builder, PACKAGE_DATA_DIR "/lxpanel/ui/panel-pref.ui", NULL) )
+    {
+        g_object_unref(builder);
+        return;
+    }
+
+    p->pref_dialog = (GtkWidget*)gtk_builder_get_object( builder, "panel_pref" );
+    g_signal_connect(p->pref_dialog, "response", (GCallback) response_event, p);
+    g_object_add_weak_pointer( G_OBJECT(p->pref_dialog), &p->pref_dialog );
     gtk_window_set_position( (GtkWindow*)p->pref_dialog, GTK_WIN_POS_CENTER );
 
-    xml = ptk_ui_xml_get( p->pref_dialog );
     /* position */
-    w = ptk_ui_xml_lookup( xml, "edge" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "edge" );
     update_opt_menu( w, p->edge - 1 );
     g_signal_connect( w, "changed", G_CALLBACK(set_edge), p);
 
-    w = ptk_ui_xml_lookup( xml, "align" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "align" );
     update_opt_menu( w, p->allign - 1 );
     g_signal_connect( w, "changed", G_CALLBACK(set_allign), p);
 
-    w = ptk_ui_xml_lookup( xml, "margin" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "margin" );
     gtk_spin_button_set_value( (GtkSpinButton*)w, p->margin );
     g_signal_connect( w, "value-changed",
                       G_CALLBACK(set_margin), p);
 
     /* size */
-    w = ptk_ui_xml_lookup( xml, "width" );
+    width = w = (GtkWidget*)gtk_builder_get_object( builder, "width" );
     gtk_widget_set_sensitive( w, p->widthtype != WIDTH_REQUEST );
     if( p->widthtype == WIDTH_PERCENT) {
         gtk_spin_button_set_range( (GtkSpinButton*)w, 0, 100 );
@@ -781,16 +782,17 @@ panel_configure( Panel* p, int sel_page  )
     gtk_spin_button_set_value( (GtkSpinButton*)w, p->width );
     g_signal_connect( w, "value-changed", G_CALLBACK(set_width), p );
 
-    w = ptk_ui_xml_lookup( xml, "width_unit" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "width_unit" );
     update_opt_menu( w, p->widthtype - 1 );
+    g_object_set_data(G_OBJECT(w), "width_spin", width );
     g_signal_connect( w, "changed",
                      G_CALLBACK(set_width_type), p);
 
-    w = ptk_ui_xml_lookup( xml, "height" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "height" );
     gtk_spin_button_set_value( (GtkSpinButton*)w, p->height );
     g_signal_connect( w, "value-changed", G_CALLBACK(set_height), p );
 
-    w = ptk_ui_xml_lookup( xml, "height_unit" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "height_unit" );
     update_opt_menu( w, HEIGHT_PIXEL - 1);
     //g_signal_connect( w, "changed", G_CALLBACK(set_height_type), NULL);
 
@@ -803,7 +805,7 @@ panel_configure( Panel* p, int sel_page  )
         lightweight window managers. These dockapps are probably being
         treated in some special way.
     */
-    w = ptk_ui_xml_lookup( xml, "as_dock" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "as_dock" );
     update_toggle_button( w, p->setdocktype );
     g_signal_connect( w, "toggled",
                       G_CALLBACK(set_dock_type), p );
@@ -817,13 +819,13 @@ panel_configure( Panel* p, int sel_page  )
         be accessed by other applications.
         GNOME Panel acts this way, too.
     */
-    w = ptk_ui_xml_lookup( xml, "reserve_space" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "reserve_space" );
     update_toggle_button( w, p->setstrut );
     g_signal_connect( w, "toggled",
                       G_CALLBACK(set_struct), p );
 
     /* transparancy */
-    w = ptk_ui_xml_lookup( xml, "tint_clr" );
+    tint_clr = w = (GtkWidget*)gtk_builder_get_object( builder, "tint_clr" );
     gtk_color_button_set_color((GtkColorButton*)w, &p->gtintcolor);
     gtk_color_button_set_alpha((GtkColorButton*)w, 256*p->alpha);
     if ( ! p->transparent )
@@ -833,14 +835,11 @@ panel_configure( Panel* p, int sel_page  )
     {
         GtkWidget* none, *trans, *img;
         GSList* group;
-        none = ptk_ui_xml_lookup( xml, "bg_none" );
-        trans = ptk_ui_xml_lookup( xml, "bg_transparency" );
-        img = ptk_ui_xml_lookup( xml, "bg_image" );
+        none = (GtkWidget*)gtk_builder_get_object( builder, "bg_none" );
+        trans = (GtkWidget*)gtk_builder_get_object( builder, "bg_transparency" );
+        img = (GtkWidget*)gtk_builder_get_object( builder, "bg_image" );
 
-        group = gtk_radio_button_get_group( (GtkRadioButton*)none );
-        gtk_radio_button_set_group( (GtkRadioButton*)trans, group );
-        group = gtk_radio_button_get_group( (GtkRadioButton*)trans );
-        gtk_radio_button_set_group( (GtkRadioButton*)img, group );
+        g_object_set_data(G_OBJECT(trans), "tint_clr", tint_clr);
 
         if (p->background)
             gtk_toggle_button_set_active( (GtkToggleButton*)img, TRUE);
@@ -853,88 +852,87 @@ panel_configure( Panel* p, int sel_page  )
         g_signal_connect(trans, "toggled", G_CALLBACK(transparency_toggle), p);
         g_signal_connect(img, "toggled", G_CALLBACK(background_toggle), p);
 
-        w = ptk_ui_xml_lookup( xml, "img_file" );
+        img_file = w = (GtkWidget*)gtk_builder_get_object( builder, "img_file" );
+        g_object_set_data(G_OBJECT(img), "img_file", img_file);
         gtk_file_chooser_set_current_folder( (GtkFileChooser*)w, PACKAGE_DATA_DIR "/lxpanel/images");
         if (p->background_file)
             gtk_file_chooser_set_filename( (GtkFileChooser*)w, p->background_file);
 
         if (!p->background)
             gtk_widget_set_sensitive( w, FALSE);
-
-        /* NOTE: Important!! */
-        /* "file-set" signal of GtkFileChooserButton is only available in gtk+ >= 2.12 */
-        /* So we use some dirty tricks here and make things more complicated. :-( */
-        g_signal_connect( w, "selection-changed", G_CALLBACK (background_changed), p);
-        /* g_signal_connect( w, "file-set", G_CALLBACK (background_changed), p); */
+        g_object_set_data( G_OBJECT(w), "bg_image", img );
+        g_signal_connect( w, "file-set", G_CALLBACK (background_changed), p);
     }
 
     /* font color */
-    w = ptk_ui_xml_lookup( xml, "font_clr" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "font_clr" );
     gtk_color_button_set_color( (GtkColorButton*)w, &p->gfontcolor );
     g_signal_connect( w, "color-set", G_CALLBACK( on_font_color_set ), p );
 
-    w2 = ptk_ui_xml_lookup( xml, "use_font_clr" );
+    w2 = (GtkWidget*)gtk_builder_get_object( builder, "use_font_clr" );
     gtk_toggle_button_set_active( (GtkToggleButton*)w2, p->usefontcolor );
-    g_object_set_data( w2, "clr", w );
+    g_object_set_data( G_OBJECT(w2), "clr", w );
     g_signal_connect(w2, "toggled", G_CALLBACK(on_use_font_color_toggled), p);
     if( ! p->usefontcolor )
         gtk_widget_set_sensitive( w, FALSE );
 
     /* plugin list */
     {
-        GtkWidget* plugin_list = ptk_ui_xml_lookup( xml, "plugin_list" );
+        GtkWidget* plugin_list = (GtkWidget*)gtk_builder_get_object( builder, "plugin_list" );
 
         /* buttons used to edit plugin list */
-        w = ptk_ui_xml_lookup( xml, "add_btn" );
+        w = (GtkWidget*)gtk_builder_get_object( builder, "add_btn" );
         g_signal_connect( w, "clicked", G_CALLBACK(on_add_plugin), plugin_list );
 
-        w = ptk_ui_xml_lookup( xml, "edit_btn" );
+        w = (GtkWidget*)gtk_builder_get_object( builder, "edit_btn" );
         g_signal_connect_swapped( w, "clicked", G_CALLBACK(modify_plugin), plugin_list );
         g_object_set_data( G_OBJECT(plugin_list), "edit_btn", w );
 
-        w = ptk_ui_xml_lookup( xml, "remove_btn" );
+        w = (GtkWidget*)gtk_builder_get_object( builder, "remove_btn" );
         g_signal_connect( w, "clicked", G_CALLBACK(on_remove_plugin), plugin_list );
-        w = ptk_ui_xml_lookup( xml, "moveup_btn" );
+        w = (GtkWidget*)gtk_builder_get_object( builder, "moveup_btn" );
         g_signal_connect( w, "clicked", G_CALLBACK(on_moveup_plugin), plugin_list );
-        w = ptk_ui_xml_lookup( xml, "movedown_btn" );
+        w = (GtkWidget*)gtk_builder_get_object( builder, "movedown_btn" );
         g_signal_connect( w, "clicked", G_CALLBACK(on_movedown_plugin), plugin_list );
 
-        w = ptk_ui_xml_lookup( xml, "plugin_desc" );
+        w = (GtkWidget*)gtk_builder_get_object( builder, "plugin_desc" );
         init_plugin_list( p, (GtkTreeView*)plugin_list, w );
     }
     /* advanced, applications */
-    w = ptk_ui_xml_lookup( xml, "file_manager" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "file_manager" );
     if (file_manager_cmd)
         gtk_entry_set_text( (GtkEntry*)w, file_manager_cmd );
-    g_signal_connect( w, "changed",
-                      G_CALLBACK(on_entry_changed),
+    g_signal_connect( w, "focus-out-event",
+                      G_CALLBACK(on_entry_focus_out),
                       &file_manager_cmd);
 
-    w = ptk_ui_xml_lookup( xml, "term" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "term" );
     if (terminal_cmd)
         gtk_entry_set_text( (GtkEntry*)w, terminal_cmd );
-    g_signal_connect( w, "changed",
-                      G_CALLBACK(on_entry_changed),
+    g_signal_connect( w, "focus-out-event",
+                      G_CALLBACK(on_entry_focus_out),
                       &terminal_cmd);
 
     /* If we are under LXSession, setting logout command is not necessary. */
-    w = ptk_ui_xml_lookup( xml, "logout" );
+    w = (GtkWidget*)gtk_builder_get_object( builder, "logout" );
     if( getenv("_LXSESSION_PID") ) {
         gtk_widget_hide( w );
-        w = ptk_ui_xml_lookup( xml, "logout_label" );
+        w = (GtkWidget*)gtk_builder_get_object( builder, "logout_label" );
         gtk_widget_hide( w );
     }
     else {
         if(logout_cmd)
             gtk_entry_set_text( (GtkEntry*)w, logout_cmd );
-        g_signal_connect( w, "changed",
-                        G_CALLBACK(on_entry_changed),
+        g_signal_connect( w, "focus-out-event",
+                        G_CALLBACK(on_entry_focus_out),
                         &logout_cmd);
     }
 
-    gtk_widget_show((GtkWindow*)p->pref_dialog);
-    w = ptk_ui_xml_get_widget( p->pref_dialog, "notebook" );
+    gtk_widget_show(GTK_WIDGET((GtkWindow*)p->pref_dialog));
+    w = (GtkWidget*)gtk_builder_get_object( builder, "notebook" );
     gtk_notebook_set_current_page( (GtkNotebook*)w, sel_page );
+
+    g_object_unref(builder);
 }
 
 void
@@ -954,9 +952,7 @@ panel_global_config_save( Panel* p, FILE *fp)
     lxpanel_put_bool(fp, "transparent", p->transparent );
 //    gtk_color_button_get_color(GTK_COLOR_BUTTON(tr_colorb), &c);
     lxpanel_put_line(fp, "tintcolor=#%06x", gcolor2rgb24(&p->gtintcolor));
-//    lxpanel_put_int(fp, "alpha", gtk_color_button_get_alpha(GTK_COLOR_BUTTON(tr_colorb)) * 0xff / 0xffff);
-/* FIXME: is this correct?? */
-    lxpanel_put_int(fp, "alpha", p->alpha * 0xff / 0xffff);
+    lxpanel_put_int(fp, "alpha", p->alpha);
     lxpanel_put_bool(fp, "setdocktype", p->setdocktype);
     lxpanel_put_bool(fp, "setpartialstrut", p->setstrut);
     lxpanel_put_bool(fp, "usefontcolor", p->usefontcolor);
@@ -1037,14 +1033,14 @@ void restart(void)
 
 void logout(void)
 {
-    const char* logout_cmd = logout_cmd;
+    const char* l_logout_cmd = logout_cmd;
     /* If LXSession is running, _LXSESSION_PID will be set */
-    if( ! logout_cmd && getenv("_LXSESSION_PID") )
-        logout_cmd = "lxsession-logout";
+    if( ! l_logout_cmd && getenv("_LXSESSION_PID") )
+        l_logout_cmd = "lxsession-logout";
 
-    if( logout_cmd ) {
+    if( l_logout_cmd ) {
         GError* err = NULL;
-        if( ! g_spawn_command_line_async( logout_cmd, &err ) ) {
+        if( ! g_spawn_command_line_async( l_logout_cmd, &err ) ) {
             show_error( NULL, err->message );
             g_error_free( err );
         }
@@ -1065,14 +1061,14 @@ static void notify_apply_config( GtkWidget* widget )
         apply_func( g_object_get_data(G_OBJECT(dlg), "plugin") );
 }
 
-static void on_entry_changed( GtkEditable* edit, gpointer user_data )
+static void on_entry_focus_out( GtkWidget* edit, GdkEventFocus *evt, gpointer user_data )
 {
     char** val = (char**)user_data;
     const char *new_val;
     g_free( *val );
-    new_val = gtk_entry_get_text(GTK_ENTRY(edit));
+    new_val = gtk_entry_get_text((GtkEntry*)edit);
     *val = (new_val && *new_val) ? g_strdup( new_val ) : NULL;
-    notify_apply_config( GTK_WIDGET(edit) );
+    notify_apply_config( edit );
 }
 
 static void on_spin_changed( GtkSpinButton* spin, gpointer user_data )
@@ -1089,8 +1085,38 @@ static void on_toggle_changed( GtkToggleButton* btn, gpointer user_data )
     notify_apply_config( GTK_WIDGET(btn) );
 }
 
-void generic_config_dlg_save(Panel *panel)
+static void on_file_chooser_btn_file_set(GtkFileChooser* btn, char** val)
 {
+    g_free( *val );
+    *val = gtk_file_chooser_get_filename(btn);
+    notify_apply_config( GTK_WIDGET(btn) );
+}
+
+static void on_browse_btn_clicked(GtkButton* btn, GtkEntry* entry)
+{
+    char* file;
+    GtkWidget* fc = gtk_file_chooser_dialog_new(_("Select a file"),
+					(GtkWindow*)g_object_get_data(G_OBJECT(btn), "dlg"),
+                                        GTK_FILE_CHOOSER_ACTION_OPEN,
+                                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                        GTK_STOCK_OK, GTK_RESPONSE_OK,
+                                        NULL);
+    gtk_dialog_set_alternative_button_order(GTK_DIALOG(fc), GTK_RESPONSE_OK, GTK_RESPONSE_CANCEL, -1);
+    file = (char*)gtk_entry_get_text(entry);
+    if( file && *file )
+        gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(fc), file );
+    if( gtk_dialog_run(GTK_DIALOG(fc)) == GTK_RESPONSE_OK )
+    {
+        file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(fc));
+        gtk_entry_set_text(entry, file);
+        g_free(file);
+    }
+    gtk_widget_destroy(fc);
+}
+
+inline void generic_config_dlg_save(gpointer panel_gpointer,GObject *where_the_object_was)
+{
+    Panel *panel = (Panel *)(panel_gpointer);
     panel_config_save(panel);
 }
 
@@ -1101,18 +1127,14 @@ GtkWidget* create_generic_config_dlg( const char* title, GtkWidget* parent,
 {
     va_list args;
     Panel* p = ((Plugin*)plugin)->panel;
-    GtkWidget* dlg = gtk_dialog_new_with_buttons( title, GTK_WINDOW(parent), 0,
+    GtkWidget* dlg = gtk_dialog_new_with_buttons( title, NULL, 0,
                                                   GTK_STOCK_CLOSE,
                                                   GTK_RESPONSE_CLOSE,
                                                   NULL );
 
-    /* fix background */
-//    if (p->background)
-//        gtk_widget_set_style(dlg, p->defstyle);
-
     /* this is a dirty hack.  We need to check if this response is GTK_RESPONSE_CLOSE or not. */
     g_signal_connect( dlg, "response", G_CALLBACK(gtk_widget_destroy), NULL );
-    g_object_weak_ref(dlg, generic_config_dlg_save, p);
+    g_object_weak_ref(G_OBJECT(dlg), generic_config_dlg_save, p);
     if( apply_func )
         g_object_set_data( G_OBJECT(dlg), "apply_func", apply_func );
     if( plugin )
@@ -1129,14 +1151,15 @@ GtkWidget* create_generic_config_dlg( const char* title, GtkWidget* parent,
         GType type = va_arg( args, GType );
         switch( type )
         {
-            case G_TYPE_STRING:
+            case CONF_TYPE_STR:
+            case CONF_TYPE_FILE_ENTRY: /* entry with a button to browse for files. */
                 entry = gtk_entry_new();
                 if( *(char**)val )
                     gtk_entry_set_text( GTK_ENTRY(entry), *(char**)val );
-                g_signal_connect( entry, "changed",
-                  G_CALLBACK(on_entry_changed), val );
+                g_signal_connect( entry, "focus-out-event",
+                  G_CALLBACK(on_entry_focus_out), val );
                 break;
-            case G_TYPE_INT:
+            case CONF_TYPE_INT:
             {
                 /* FIXME: the range shouldn't be hardcoded */
                 entry = gtk_spin_button_new_with_range( 0, 1000, 1 );
@@ -1145,17 +1168,23 @@ GtkWidget* create_generic_config_dlg( const char* title, GtkWidget* parent,
                   G_CALLBACK(on_spin_changed), val );
                 break;
             }
-            case G_TYPE_BOOLEAN:
+            case CONF_TYPE_BOOL:
                 entry = gtk_check_button_new();
                 gtk_container_add( GTK_CONTAINER(entry), label );
                 gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON(entry), *(gboolean*)val );
                 g_signal_connect( entry, "toggled",
                   G_CALLBACK(on_toggle_changed), val );
                 break;
+            case CONF_TYPE_FILE:
+                entry = gtk_file_chooser_button_new(_("Select a file"), GTK_FILE_CHOOSER_ACTION_OPEN);
+                if( *(char**)val )
+                    gtk_file_chooser_set_filename( GTK_FILE_CHOOSER(entry), *(char**)val );
+                g_signal_connect( entry, "file-set",
+                  G_CALLBACK(on_file_chooser_btn_file_set), val );
         }
         if( entry )
         {
-            if( type == G_TYPE_BOOLEAN )
+            if( type == CONF_TYPE_BOOL )
                 gtk_box_pack_start( GTK_BOX(GTK_DIALOG(dlg)->vbox), entry, FALSE, FALSE, 2 );
             else
             {
@@ -1163,6 +1192,13 @@ GtkWidget* create_generic_config_dlg( const char* title, GtkWidget* parent,
                 gtk_box_pack_start( GTK_BOX(hbox), label, FALSE, FALSE, 2 );
                 gtk_box_pack_start( GTK_BOX(hbox), entry, TRUE, TRUE, 2 );
                 gtk_box_pack_start( GTK_BOX(GTK_DIALOG(dlg)->vbox), hbox, FALSE, FALSE, 2 );
+                if( type == CONF_TYPE_FILE_ENTRY )
+                {
+                    GtkWidget* browse = gtk_button_new_with_mnemonic(_("_Browse"));
+                    gtk_box_pack_start( GTK_BOX(hbox), browse, TRUE, TRUE, 2 );
+                    g_object_set_data(G_OBJECT(browse), "dlg", dlg);
+                    g_signal_connect( browse, "clicked", G_CALLBACK(on_browse_btn_clicked), entry );
+                }
             }
         }
         name = va_arg( args, const char* );
@@ -1219,7 +1255,7 @@ void load_global_config()
     g_key_file_free( kf );
 }
 
-void save_global_config()
+static void save_global_config()
 {
     char* file = get_config_file( cprofile, "config", FALSE );
     FILE* f = fopen( file, "w" );
@@ -1252,6 +1288,6 @@ lxpanel_get_file_manager()
 extern const char*
 lxpanel_get_terminal()
 {
-    return terminal_cmd ? terminal_cmd : "xterm -e";
+    return terminal_cmd ? terminal_cmd : "xterm -e %s";
 }
 

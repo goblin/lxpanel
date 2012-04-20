@@ -43,6 +43,9 @@ enum { POS_NONE, POS_START, POS_END };
 #define PANEL_HEIGHT_MAX      200
 #define PANEL_HEIGHT_MIN      16
 
+/* to check if we are in LXDE */
+extern gboolean is_in_lxde;
+
 typedef struct _Panel Panel;
 
 struct _Panel{
@@ -51,6 +54,7 @@ struct _Panel{
     Window topxwin;               /* and it X window   */
     GtkStyle *defstyle;
     GtkWidget *box;              /* primary layout box which contains all plugins */
+
     GtkRequisition requisition;
     GtkWidget *(*my_box_new) (gboolean, gint);
     GtkWidget *(*my_separator_new) ();
@@ -91,8 +95,6 @@ struct _Panel{
 
     GSList* system_menus;
 
-    /* tooltip controller shared by many plugins */
-    GtkTooltips *tooltips;
     GtkWidget* pref_dialog; /* preference dialog */
 };
 
@@ -186,6 +188,7 @@ extern FbEv *fbev;
 
 #define FBPANEL_WIN(win)  gdk_window_lookup(win)
 
+void panel_destroy(Panel *p);
 void panel_set_wm_strut(Panel *p);
 void panel_set_dock_type(Panel *p);
 void panel_set_orientation(Panel *p);

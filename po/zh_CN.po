@@ -1,0 +1,1444 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# ideal <05281253@bjtu.edu.cn>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: lxpanel 0.3.8.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-05-01 15:28+0200\n"
+"PO-Revision-Date: 2008-10-05 09:20+0800\n"
+"Last-Translator: 冷罡华 <hiweed@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=;\n"
+
+#: ../data/ui/panel-pref.glade.h:1
+msgid "<b>Background</b>"
+msgstr "<b>背景</b>"
+
+#: ../data/ui/panel-pref.glade.h:2
+msgid "<b>Font</b>"
+msgstr "<b>字体</b>"
+
+#: ../data/ui/panel-pref.glade.h:3
+msgid "<b>Position</b>"
+msgstr "<b>位置</b>"
+
+#: ../data/ui/panel-pref.glade.h:4
+msgid "<b>Properties</b>"
+msgstr "<b>属性</b>"
+
+#: ../data/ui/panel-pref.glade.h:5
+msgid "<b>Set Preferred Applications</b>"
+msgstr "<b>设置最喜爱的应用程序</b>"
+
+#: ../data/ui/panel-pref.glade.h:6
+msgid "<b>Size</b>"
+msgstr "<b>大小</b>"
+
+#: ../data/ui/panel-pref.glade.h:7
+msgid "Advanced"
+msgstr "高级"
+
+#: ../data/ui/panel-pref.glade.h:8
+msgid "Alignment:"
+msgstr "排列方式："
+
+#: ../data/ui/panel-pref.glade.h:9
+msgid "Custom Color"
+msgstr "定制色彩"
+
+#: ../data/ui/panel-pref.glade.h:11
+#, no-c-format
+msgid ""
+"Dynamic\n"
+"Pixels\n"
+"% Percent"
+msgstr ""
+"动态\n"
+"像素 (pixels)\n"
+"% 百分比"
+
+#: ../data/ui/panel-pref.glade.h:14
+msgid "Edge:"
+msgstr "吸附边缘："
+
+#: ../data/ui/panel-pref.glade.h:15
+msgid "Enable Image:"
+msgstr "启用背景图："
+
+#: ../data/ui/panel-pref.glade.h:16
+msgid "Enable Transparency"
+msgstr "启用透明效果"
+
+#: ../data/ui/panel-pref.glade.h:17
+msgid "File Manager:"
+msgstr "文件管理器："
+
+#: ../data/ui/panel-pref.glade.h:18
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:13
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:276
+msgid "General"
+msgstr "一般"
+
+#: ../data/ui/panel-pref.glade.h:19
+msgid "Height:"
+msgstr "高度："
+
+#: ../data/ui/panel-pref.glade.h:20
+msgid ""
+"Left\n"
+"Center\n"
+"Right"
+msgstr ""
+"靠左\n"
+"置中\n"
+"靠右"
+
+#: ../data/ui/panel-pref.glade.h:23
+msgid ""
+"Left\n"
+"Right\n"
+"Top\n"
+"Bottom"
+msgstr ""
+"左\n"
+"右\n"
+"上\n"
+"下"
+
+#: ../data/ui/panel-pref.glade.h:27
+msgid "Logout Command:"
+msgstr "注销命令："
+
+#: ../data/ui/panel-pref.glade.h:28
+msgid "Make window managers treat the panel as dock"
+msgstr "让窗口管理器把面板当成 Dock 处理"
+
+#: ../data/ui/panel-pref.glade.h:29
+msgid "Margin:"
+msgstr "留空："
+
+#: ../data/ui/panel-pref.glade.h:30
+msgid "None (Use system theme)"
+msgstr "无 (使用系统布景主题)"
+
+#: ../data/ui/panel-pref.glade.h:31
+msgid "Panel Applets"
+msgstr "面板元件"
+
+#: ../data/ui/panel-pref.glade.h:32
+msgid "Panel Preferences"
+msgstr "面板偏好设置"
+
+#: ../data/ui/panel-pref.glade.h:33
+msgid "Pixels"
+msgstr "像素 (pixels)"
+
+#: ../data/ui/panel-pref.glade.h:34
+msgid "Reserve space, and not covered by maximized windows"
+msgstr "保留空间，不被最大化窗口覆盖"
+
+#: ../data/ui/panel-pref.glade.h:35
+msgid "Select an image file"
+msgstr "选择图片文件"
+
+#: ../data/ui/panel-pref.glade.h:36
+msgid "Terminal Emulator:"
+msgstr "终端机："
+
+#: ../data/ui/panel-pref.glade.h:37
+msgid "Tint color:"
+msgstr "色彩："
+
+#: ../data/ui/panel-pref.glade.h:38
+msgid "Width:"
+msgstr "宽度："
+
+#: ../src/configurator.c:54 ../src/gtk-run.c:250
+msgid "Run"
+msgstr "运行"
+
+#: ../src/configurator.c:56
+msgid "Restart"
+msgstr "重新启动"
+
+#: ../src/configurator.c:57
+msgid "Logout"
+msgstr "注销"
+
+#: ../src/configurator.c:403
+msgid "Currently loaded plugins"
+msgstr "目前载入的插件"
+
+#: ../src/configurator.c:412
+msgid "Stretch"
+msgstr "延展"
+
+#: ../src/configurator.c:510 ../src/panel.c:522
+msgid "Add plugin to panel"
+msgstr "新增插件到面板"
+
+#: ../src/configurator.c:537 ../src/panel.c:545
+msgid "Available plugins"
+msgstr "可选用的插件"
+
+#: ../src/configurator.c:1049
+msgid "Logout command is not set"
+msgstr "注销命令尚未设置"
+
+#: ../src/configurator.c:1098 ../src/configurator.c:1179
+#, fuzzy
+msgid "Select a file"
+msgstr "选择图片文件"
+
+#: ../src/configurator.c:1197
+msgid "_Browse"
+msgstr ""
+
+#: ../src/panel.c:630
+msgid "Left"
+msgstr "左"
+
+#: ../src/panel.c:630
+msgid "Right"
+msgstr "右"
+
+#: ../src/panel.c:630
+msgid "Top"
+msgstr "上"
+
+#: ../src/panel.c:630
+msgid "Bottom"
+msgstr "下"
+
+#: ../src/panel.c:632 ../src/panel.c:758
+msgid "Create New Panel"
+msgstr "建立新面板"
+
+#: ../src/panel.c:638
+msgid "Where to put the panel?"
+msgstr "要把面板放到哪里？"
+
+#: ../src/panel.c:696
+msgid ""
+"Really delete this panel?\n"
+"<b>Warning: This can not be recovered.</b>"
+msgstr ""
+"确定要删除这个面板？\n"
+"<b>警告： 这个动作没办法复原。</b>"
+
+#: ../src/panel.c:697
+msgid "Confirm"
+msgstr "确认"
+
+#: ../src/panel.c:732
+msgid "Add / Remove Panel Items"
+msgstr "新增/移除面板项目"
+
+#: ../src/panel.c:740
+#, c-format
+msgid "Remove \"%s\" From Panel"
+msgstr "从面板移除 \"%s\""
+
+#: ../src/panel.c:752
+msgid "Panel Settings"
+msgstr "设置面板"
+
+#: ../src/panel.c:769
+msgid "Delete This Panel"
+msgstr "删除这个面板"
+
+#: ../src/panel.c:779
+msgid "Panel"
+msgstr "面板"
+
+#: ../src/panel.c:792
+#, c-format
+msgid "\"%s\" Settings"
+msgstr "设置 \"%s\""
+
+#: ../src/panel.c:1250
+#, c-format
+msgid "lxpanel %s - lightweight GTK2+ panel for UNIX desktops\n"
+msgstr "lxpanel %s - UNIX 桌面的轻量级 GTK2+ 面板\n"
+
+#: ../src/panel.c:1251
+#, c-format
+msgid "Command line options:\n"
+msgstr "命令列选项：\n"
+
+#: ../src/panel.c:1252
+#, c-format
+msgid " --help      -- print this help and exit\n"
+msgstr " --help      -- 显示使用说明并离开\n"
+
+#: ../src/panel.c:1253
+#, c-format
+msgid " --version   -- print version and exit\n"
+msgstr " --version   -- 显示版本信息并离开\n"
+
+#: ../src/panel.c:1254
+#, c-format
+msgid " --log <number> -- set log level 0-5. 0 - none 5 - chatty\n"
+msgstr " --log <数值>   -- 设置程序运作纪录的层级 (0-5). 0 - 无, 5 - 全部\n"
+
+#: ../src/panel.c:1255
+#, c-format
+msgid " --configure -- launch configuration utility\n"
+msgstr " --configure -- 运行设置工具\n"
+
+#: ../src/panel.c:1256
+#, c-format
+msgid " --profile name -- use specified profile\n"
+msgstr " --profile name -- 指定使用其他设置文件\n"
+
+#: ../src/panel.c:1258
+#, c-format
+msgid " -h  -- same as --help\n"
+msgstr " -h  -- 和 --help 作用相同\n"
+
+#: ../src/panel.c:1259
+#, c-format
+msgid " -p  -- same as --profile\n"
+msgstr " -p  -- 和 --profile 作用相同\n"
+
+#: ../src/panel.c:1260
+#, c-format
+msgid " -v  -- same as --version\n"
+msgstr " -v  -- 和 --version 作用相同\n"
+
+#: ../src/panel.c:1261
+#, c-format
+msgid " -C  -- same as --configure\n"
+msgstr " -C  -- 和 --configure 作用相同\n"
+
+#: ../src/panel.c:1262
+#, c-format
+msgid ""
+"\n"
+"Visit http://lxde.org/ for detail.\n"
+"\n"
+msgstr ""
+"\n"
+"详细信息请参观 http://lxde.org/\n"
+"\n"
+
+#: ../src/gtk-run.c:264
+msgid "Enter the command you want to execute:"
+msgstr "输入你要想运行的命令："
+
+#: ../src/systray/tray.c:211
+msgid "System Tray"
+msgstr "系统托盘 (通知区域)"
+
+#: ../src/systray/tray.c:213
+msgid "Old KDE/GNOME Tray"
+msgstr "KDE/GNOME 系统托盘"
+
+#: ../src/plugins/cpu/cpu.c:226
+msgid "CPU Usage Monitor"
+msgstr "CPU 监视器"
+
+#: ../src/plugins/cpu/cpu.c:228
+msgid "Display CPU usage"
+msgstr "显示 CPU 使用情况"
+
+#: ../src/plugins/deskno/deskno.c:99 ../src/plugins/deskno/deskno2.c:129
+msgid "Desktop No / Workspace Name"
+msgstr "桌面编号 / 工作区名称"
+
+#: ../src/plugins/deskno/deskno.c:101 ../src/plugins/deskno/deskno2.c:131
+msgid "Display workspace number, by cmeury@users.sf.net"
+msgstr "显示工作区编号，由 cmeury@users.sf.net 撰写"
+
+#: ../src/plugins/image.c:177
+#, fuzzy
+msgid "Display Image and Tooltip"
+msgstr "显示图标及工具提示"
+
+#: ../src/plugins/launchbar.c:146
+msgid "Add Button"
+msgstr "新增按钮"
+
+#: ../src/plugins/launchbar.c:148
+msgid "Button Properties"
+msgstr "按钮属性"
+
+#.
+#. title = g_strdup_printf( _("Remove \"%s\""), b-> );
+#. item = gtk_image_menu_item_new_with_label( _("Remove ") );
+#.
+#: ../src/plugins/launchbar.c:154
+msgid "Remove Button"
+msgstr "移除按钮"
+
+#. FIXME: We should have a better interface for this in the fututure.
+#. 1. We can borrow the menu from menu plugin (PtkAppMenu).
+#. 2. We can borrow the app chooser from PCManFM.
+#.
+#: ../src/plugins/launchbar.c:530
+msgid "Select Application"
+msgstr "选择应用程序"
+
+#: ../src/plugins/launchbar.c:682
+msgid "Buttons"
+msgstr "按钮"
+
+#: ../src/plugins/launchbar.c:799
+msgid "Application Launch Bar"
+msgstr "快速启动栏"
+
+#: ../src/plugins/launchbar.c:801
+msgid "Bar with buttons to launch application"
+msgstr "用以快速启动应用程序的工具栏"
+
+#: ../src/plugins/taskbar.c:1407
+msgid "Raise"
+msgstr "移到最上层"
+
+#: ../src/plugins/taskbar.c:1411
+msgid "Restore"
+msgstr "复原"
+
+#: ../src/plugins/taskbar.c:1415
+msgid "Maximize"
+msgstr "最大化"
+
+#: ../src/plugins/taskbar.c:1419
+msgid "Iconify"
+msgstr "最小化"
+
+#: ../src/plugins/taskbar.c:1428
+#, c-format
+msgid "Workspace %d"
+msgstr "工作区 %d"
+
+#: ../src/plugins/taskbar.c:1436
+msgid "All workspaces"
+msgstr "所有工作区"
+
+#: ../src/plugins/taskbar.c:1443
+msgid "Move to Workspace"
+msgstr "移动到工作区"
+
+#. we want this item to be farest from mouse pointer
+#: ../src/plugins/taskbar.c:1451
+msgid "Close Window"
+msgstr "关闭窗口"
+
+#: ../src/plugins/taskbar.c:1691
+msgid "Show tooltips"
+msgstr "显示工具提示"
+
+#: ../src/plugins/taskbar.c:1692
+msgid "Icons only"
+msgstr "只显示图标"
+
+#: ../src/plugins/taskbar.c:1693
+msgid "Flat Buttons"
+msgstr "平面按钮"
+
+#: ../src/plugins/taskbar.c:1694
+msgid "Accept SkipPager"
+msgstr "接受 SkipPager Hint"
+
+#: ../src/plugins/taskbar.c:1695
+msgid "Show Iconified windows"
+msgstr "显示最小化的窗口"
+
+#: ../src/plugins/taskbar.c:1696
+msgid "Show mapped windows"
+msgstr "显示已被映射的窗口"
+
+#: ../src/plugins/taskbar.c:1697
+msgid "Show windows from all desktops"
+msgstr "显示来自所有桌面的窗口"
+
+#: ../src/plugins/taskbar.c:1698
+msgid "Use mouse wheel"
+msgstr "使用鼠标滚轮"
+
+#: ../src/plugins/taskbar.c:1699
+msgid "Flash when there is any window requiring attention"
+msgstr "当有窗口要求用户注意时，闪烁面板"
+
+#: ../src/plugins/taskbar.c:1700
+msgid "Max width of task button"
+msgstr "面板按钮最大宽度"
+
+#: ../src/plugins/taskbar.c:1701
+msgid "Spacing"
+msgstr "间距"
+
+#: ../src/plugins/taskbar.c:1779
+msgid "Task Bar (Window List)"
+msgstr "面板 (窗口清单)"
+
+#: ../src/plugins/taskbar.c:1781
+msgid ""
+"Taskbar shows all opened windows and allow to iconify them, shade or get "
+"focus"
+msgstr "面板显示所有开启的窗口，并让能窗口最小化、折叠、或取得焦点"
+
+#: ../src/plugins/dclock.c:279
+msgid "Clock Format"
+msgstr "时钟格式"
+
+#: ../src/plugins/dclock.c:280
+msgid "Tooltip Format"
+msgstr "工具提示格式"
+
+#: ../src/plugins/dclock.c:281
+msgid "Action"
+msgstr "动作"
+
+#: ../src/plugins/dclock.c:282
+msgid "Bold font"
+msgstr "粗体字型"
+
+#: ../src/plugins/dclock.c:317
+msgid "Digital Clock"
+msgstr "数字时钟"
+
+#: ../src/plugins/dclock.c:319
+msgid "Display Digital clock and Tooltip"
+msgstr "显示数字时钟并显示日期"
+
+#.
+#. item = gtk_menu_item_new_with_label(_("Add to desktop panel"));
+#. g_signal_connect(item, "activate", G_CALLBACK(on_add_menu_item_to_panel), data);
+#. gtk_menu_shell_append(p, item);
+#.
+#: ../src/plugins/menu.c:370
+msgid "Add to desktop"
+msgstr ""
+
+#: ../src/plugins/menu.c:380
+#, fuzzy
+msgid "Properties"
+msgstr "<b>属性</b>"
+
+#: ../src/plugins/menu.c:1030
+#, fuzzy
+msgid "Icon"
+msgstr "最小化"
+
+#: ../src/plugins/menu.c:1041
+msgid "Menu"
+msgstr "菜单"
+
+#: ../src/plugins/menu.c:1043
+msgid "Provide Menu"
+msgstr "提供菜单"
+
+#: ../src/plugins/netstatus/glade-support.c:91
+#: ../src/plugins/netstatus/glade-support.c:115
+#, c-format
+msgid "Couldn't find pixmap file: %s"
+msgstr ""
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:2
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:272
+#, no-c-format
+msgid "0%"
+msgstr "0%"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:3
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:194
+msgid "<b>Activity</b>"
+msgstr "<b>活动</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:4
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:131
+msgid "<b>Connection</b>"
+msgstr "<b>连接</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:5
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:289
+msgid "<b>Internet Protocol (IPv4)</b>"
+msgstr "<b>网络协议 (IPv4)</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:6
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:376
+msgid "<b>Internet Protocol (IPv6)</b>"
+msgstr "<b>网络协议 (IPv6)</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:7
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:432
+msgid "<b>Network Device</b>"
+msgstr "<b>网络设备</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:8
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:250
+msgid "<b>Signal Strength</b>"
+msgstr "<b>信号强度</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:9
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:309
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:396
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:452
+msgid "Address:"
+msgstr "地址："
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:10
+#: ../src/plugins/netstat/netstat.c:319 ../src/plugins/netstat/netstat.c:330
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:323
+msgid "Broadcast:"
+msgstr "广播地址："
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:11
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:513
+msgid "Con_figure"
+msgstr "设置(_F)"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:12
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:316
+msgid "Destination:"
+msgstr "目的地："
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:14
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:232
+msgid "Received:"
+msgstr "接收："
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:15
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:403
+msgid "Scope:"
+msgstr "范围："
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:16
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:239
+msgid "Sent:"
+msgstr "发送："
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:17
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:155
+msgid "Status:"
+msgstr "状态："
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:18
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:330
+msgid "Subnet Mask:"
+msgstr "子网掩码："
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:19
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:484
+msgid "Support"
+msgstr "支持"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:20
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:477
+msgid "Type:"
+msgstr "类型："
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:21
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:171
+msgid "_Name:"
+msgstr "名称(_N)："
+
+#: ../src/plugins/netstatus/netstatus-iface.c:148
+#, fuzzy
+msgid "Name"
+msgstr "名称(_N)："
+
+#: ../src/plugins/netstatus/netstatus-iface.c:149
+msgid "The interface name"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:156
+#, fuzzy
+msgid "State"
+msgstr "状态："
+
+#: ../src/plugins/netstatus/netstatus-iface.c:157
+msgid "The interface state"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:165
+#, fuzzy
+msgid "Stats"
+msgstr "状态："
+
+#: ../src/plugins/netstatus/netstatus-iface.c:166
+msgid "The interface packets/bytes statistics"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:173
+#: ../src/plugins/netstat/netstat.c:315
+msgid "Wireless"
+msgstr "无线网络"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:174
+msgid "Whether the interface is a wireless interface"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:181
+#, fuzzy
+msgid "Signal"
+msgstr "显示信号"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:182
+msgid "Wireless signal strength percentage"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:191
+#: ../src/plugins/netstatus/netstatus-util.c:167
+msgid "Error"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:192
+#, fuzzy
+msgid "The current error condition"
+msgstr "目前正在监控的接口"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:434
+#: ../src/plugins/netstatus/netstatus-iface.c:1197
+#, c-format
+msgid "Unable to open socket: %s"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:496
+#: ../src/plugins/netstatus/netstatus-iface.c:1223
+#, c-format
+msgid "SIOCGIFFLAGS error: %s"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:870
+msgid "AMPR NET/ROM"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:873
+#, fuzzy
+msgid "Ethernet"
+msgstr "其他"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:879
+msgid "AMPR AX.25"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:888
+#: ../src/plugins/netstatus/netstatus-iface.c:1008
+msgid "16/4 Mbps Token Ring"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:891
+msgid "ARCnet"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:897
+msgid "Frame Relay DLCI"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:903
+msgid "Metricom Starmode IP"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:906
+msgid "Serial Line IP"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:909
+msgid "VJ Serial Line IP"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:912
+msgid "6-bit Serial Line IP"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:915
+msgid "VJ 6-bit Serial Line IP"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:921
+msgid "Adaptive Serial Line IP"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:924
+msgid "AMPR ROSE"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:927
+msgid "Generic X.25"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:930
+msgid "Point-to-Point Protocol"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:936
+msgid "(Cisco)-HDLC"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:939
+msgid "LAPB"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:948
+msgid "IPIP Tunnel"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:954
+msgid "Frame Relay Access Device"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:960
+msgid "Local Loopback"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:966
+msgid "Fiber Distributed Data Interface"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:972
+msgid "IPv6-in-IPv4"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:984
+msgid "HIPPI"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:987
+msgid "Ash"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:990
+#, fuzzy
+msgid "Econet"
+msgstr "最小化"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:993
+msgid "IrLAP"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:1155
+#, c-format
+msgid "SIOCGIFCONF error: %s"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-iface.c:1248
+#, fuzzy, c-format
+msgid "No network devices found"
+msgstr "没有电池"
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:180
+#, c-format
+msgid "Cannot open /proc/net/dev: %s"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:189
+msgid "Could not parse /proc/net/dev. Unknown format."
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:204
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:330
+#, c-format
+msgid "Could not parse interface name from '%s'"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:217
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:645
+#, c-format
+msgid ""
+"Could not parse interface statistics from '%s'. prx_idx = %d; ptx_idx = %d; "
+"brx_idx = %d; btx_idx = %d;"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:314
+msgid "Could not parse /proc/net/wireless. Unknown format."
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:341
+#, c-format
+msgid "Could not parse wireless details from '%s'. link_idx = %d;"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:414
+#, c-format
+msgid "Could not connect to interface, '%s'"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:420
+#, c-format
+msgid "Could not send ioctl to interface, '%s'"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:598
+#, c-format
+msgid "Could not parse command line '%s': %s"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:635
+msgid "Could not parse 'netstat' output. Unknown format"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-util.c:152
+msgid "Disconnected"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-util.c:155
+msgid "Idle"
+msgstr ""
+
+#: ../src/plugins/netstatus/netstatus-util.c:158
+#, fuzzy
+msgid "Sending"
+msgstr "设置"
+
+#: ../src/plugins/netstatus/netstatus-util.c:161
+#, fuzzy
+msgid "Receiving"
+msgstr "已接收"
+
+#: ../src/plugins/netstatus/netstatus-util.c:164
+msgid "Sending/Receiving"
+msgstr ""
+
+#: ../src/plugins/separator.c:103
+msgid "Separator"
+msgstr "---分隔线---"
+
+#: ../src/plugins/separator.c:105
+msgid "Add a separator to the panel"
+msgstr "在面板上增加分隔线"
+
+#: ../src/plugins/pager.c:707
+msgid "Desktop Pager"
+msgstr "切换桌面"
+
+#: ../src/plugins/pager.c:709
+msgid "Simple pager plugin"
+msgstr "简易的桌面切换插件"
+
+#: ../src/plugins/space.c:138 ../src/plugins/batt/batt.c:892
+msgid "Size"
+msgstr "大小"
+
+#: ../src/plugins/space.c:153
+msgid "<Space>"
+msgstr "<---空白分隔--->"
+
+#: ../src/plugins/space.c:155
+msgid "Allocate space"
+msgstr "配置空间"
+
+#: ../src/plugins/xkb/xkb-plugin.c:241
+#, fuzzy
+msgid "Keyboard Layout Switcher"
+msgstr "键盘指示灯"
+
+#: ../src/plugins/xkb/xkb-plugin.c:247
+msgid ""
+"Allows you to switch the keyboard layout and\n"
+"displays the currently selected layout."
+msgstr ""
+
+#: ../src/plugins/xkb/xkb-plugin.c:252
+msgid "Other plugins available here"
+msgstr ""
+
+#: ../src/plugins/xkb/xkb-plugin.c:385
+msgid "Configure Keyboard Layout Switcher"
+msgstr ""
+
+#: ../src/plugins/xkb/xkb-plugin.c:398
+msgid "Show layout as"
+msgstr ""
+
+#: ../src/plugins/xkb/xkb-plugin.c:413
+msgid "image"
+msgstr ""
+
+#: ../src/plugins/xkb/xkb-plugin.c:414
+msgid "text"
+msgstr ""
+
+#: ../src/plugins/xkb/xkb-plugin.c:418
+#, fuzzy
+msgid "Per application settings"
+msgstr "应用程序"
+
+#: ../src/plugins/xkb/xkb-plugin.c:432
+msgid "_Remember layout for each application"
+msgstr ""
+
+#: ../src/plugins/xkb/xkb-plugin.c:441
+msgid "Default layout:"
+msgstr ""
+
+#: ../src/plugins/xkb/xkb-plugin.c:499
+msgid "Kayboard Layout switcher"
+msgstr ""
+
+#: ../src/plugins/xkb/xkb-plugin.c:501
+msgid "Switch between available keyboard layouts"
+msgstr ""
+
+#: ../src/plugins/wincmd.c:245
+msgid "Left click to iconify all windows. Middle click to shade them"
+msgstr "按左键最小化所有窗口 / 中键折叠所有窗口"
+
+#: ../src/plugins/wincmd.c:274
+msgid "Minimize All Windows"
+msgstr "最小化所有窗口"
+
+#: ../src/plugins/wincmd.c:276
+msgid ""
+"Sends commands to all desktop windows.\n"
+"Supported commnds are 1)toggle iconify and 2) toggle shade"
+msgstr ""
+"发送命令给所有桌面窗口\n"
+"支持的命令  1) 最小化  2) 折叠"
+
+#: ../src/plugins/dirmenu.c:218
+msgid "Open in _Terminal"
+msgstr "在终端机内开启(_T)"
+
+#: ../src/plugins/dirmenu.c:383
+msgid "Directory Menu"
+msgstr "目录菜单"
+
+#: ../src/plugins/dirmenu.c:385
+msgid "Browse directory tree via menu (Author: PCMan)"
+msgstr "使用菜单浏览目录 (作者：PCMan)"
+
+#: ../src/plugins/thermal/thermal.c:299
+msgid "Normal"
+msgstr ""
+
+#: ../src/plugins/thermal/thermal.c:300
+#, fuzzy
+msgid "Warning1"
+msgstr "充电中"
+
+#: ../src/plugins/thermal/thermal.c:301
+#, fuzzy
+msgid "Warning2"
+msgstr "充电中"
+
+#: ../src/plugins/thermal/thermal.c:302
+msgid "Automatic sensor location"
+msgstr ""
+
+#: ../src/plugins/thermal/thermal.c:303
+#, fuzzy
+msgid "Sensor"
+msgstr "复原"
+
+#: ../src/plugins/thermal/thermal.c:304
+msgid "Automatic temperature levels"
+msgstr ""
+
+#: ../src/plugins/thermal/thermal.c:305
+msgid "Warning1 Temperature"
+msgstr ""
+
+#: ../src/plugins/thermal/thermal.c:306
+msgid "Warning2 Temperature"
+msgstr ""
+
+#: ../src/plugins/thermal/thermal.c:348
+#, fuzzy
+msgid "Temperature Monitor"
+msgstr "网络状态监视器"
+
+#: ../src/plugins/thermal/thermal.c:350
+msgid "Display system temperature, by kesler.daniel@gmail.com"
+msgstr ""
+
+#. FIXME: display current level in tooltip. ex: "Volume Control: 80%"
+#: ../src/plugins/volume/volume.c:305
+#: ../src/plugins/volumealsa/volumealsa.c:400
+msgid "Volume control"
+msgstr "音量控制"
+
+#: ../src/plugins/volume/volume.c:317
+#: ../src/plugins/volumealsa/volumealsa.c:414
+msgid "Volume Control"
+msgstr "音量控制"
+
+#. create frame
+#: ../src/plugins/volume/volume-impl.c:109
+#: ../src/plugins/volumealsa/volumealsa.c:310
+msgid "Volume"
+msgstr "音量"
+
+#: ../src/plugins/volumealsa/volumealsa.c:327
+msgid "Mute"
+msgstr "静音"
+
+#: ../src/plugins/netstat/netstat.c:168
+msgid "<Hidden Access Point>"
+msgstr "<隐藏的无线存取点>"
+
+#: ../src/plugins/netstat/netstat.c:201
+msgid "Wireless Networks not found in range"
+msgstr "范围内找不到无线网络"
+
+#. Repair
+#: ../src/plugins/netstat/netstat.c:235
+msgid "Repair"
+msgstr "修复网络连接"
+
+#. interface down
+#: ../src/plugins/netstat/netstat.c:240
+msgid "Disable"
+msgstr "停用"
+
+#: ../src/plugins/netstat/netstat.c:299
+#, fuzzy
+msgid "Wireless Connection has no connectivity"
+msgstr "连接受限或无法连接"
+
+#: ../src/plugins/netstat/netstat.c:301
+msgid "Network cable is plugged out"
+msgstr "网络线已拔除"
+
+#: ../src/plugins/netstat/netstat.c:303
+msgid "Connection has limited or no connectivity"
+msgstr "连接受限或无法连接"
+
+#: ../src/plugins/netstat/netstat.c:307 ../src/plugins/netstat/netstat.c:318
+#: ../src/plugins/netstat/netstat.c:329
+msgid "IP Address:"
+msgstr "IP 地址："
+
+#: ../src/plugins/netstat/netstat.c:308
+msgid "Remote IP:"
+msgstr "远端 IP 地址："
+
+#: ../src/plugins/netstat/netstat.c:309 ../src/plugins/netstat/netstat.c:320
+#: ../src/plugins/netstat/netstat.c:331
+msgid "Netmask:"
+msgstr "子网掩码："
+
+#: ../src/plugins/netstat/netstat.c:310 ../src/plugins/netstat/netstat.c:322
+#: ../src/plugins/netstat/netstat.c:333
+msgid "Activity"
+msgstr "活动"
+
+#: ../src/plugins/netstat/netstat.c:310 ../src/plugins/netstat/netstat.c:322
+#: ../src/plugins/netstat/netstat.c:333
+msgid "Sent"
+msgstr "已传送"
+
+#: ../src/plugins/netstat/netstat.c:310 ../src/plugins/netstat/netstat.c:322
+#: ../src/plugins/netstat/netstat.c:333
+msgid "Received"
+msgstr "已接收"
+
+#: ../src/plugins/netstat/netstat.c:311 ../src/plugins/netstat/netstat.c:323
+#: ../src/plugins/netstat/netstat.c:334
+msgid "bytes"
+msgstr "字节"
+
+#: ../src/plugins/netstat/netstat.c:312 ../src/plugins/netstat/netstat.c:324
+#: ../src/plugins/netstat/netstat.c:335
+msgid "packets"
+msgstr "数据包"
+
+#: ../src/plugins/netstat/netstat.c:317
+msgid "Protocol:"
+msgstr "通讯协议："
+
+#: ../src/plugins/netstat/netstat.c:321 ../src/plugins/netstat/netstat.c:332
+msgid "HW Address:"
+msgstr "硬件地址："
+
+#: ../src/plugins/netstat/netstat.c:471
+#, fuzzy
+msgid "Manage Networks"
+msgstr "网络"
+
+#: ../src/plugins/netstat/netstat.c:473
+#, fuzzy
+msgid "Monitor and Manage networks"
+msgstr "监控网络状态"
+
+#. create dialog
+#: ../src/plugins/netstat/passwd_gui.c:84
+msgid "Setting Encryption Key"
+msgstr "设置加密密钥"
+
+#. messages
+#: ../src/plugins/netstat/passwd_gui.c:94
+msgid ""
+"This wireless network was encrypted.\n"
+"You must have the encryption key."
+msgstr ""
+"这是经过加密的无线网络连接。\n"
+"你必须要有加密密钥。"
+
+#: ../src/plugins/netstat/passwd_gui.c:99
+msgid "Encryption Key:"
+msgstr "加密密钥："
+
+#: ../src/plugins/netstatus/netstatus.c:163
+msgid "Interface to monitor"
+msgstr "要监控的接口"
+
+#: ../src/plugins/netstatus/netstatus.c:164
+msgid "Config tool"
+msgstr "设置工具"
+
+#: ../src/plugins/netstatus/netstatus.c:181
+msgid "Net Status Monitor"
+msgstr "网络状态监视器"
+
+#: ../src/plugins/netstatus/netstatus.c:183
+msgid "Monitor network status"
+msgstr "监控网络状态"
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:52
+#: ../src/plugins/netstatus/netstatus-dialog.c:311
+msgid "Unknown"
+msgstr "未知"
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:115
+msgid "Connection Properties"
+msgstr "连接属性"
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:121
+#, c-format
+msgid "Connection Properties: %s"
+msgstr "连接属性 %s"
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:134
+#, c-format
+msgid "%lu packet"
+msgid_plural "%lu packets"
+msgstr[0] "%lu 数据包"
+msgstr[1] ""
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:395
+#, c-format
+msgid ""
+"There was an error displaying help:\n"
+"%s"
+msgstr ""
+"显示说明时发生错误：\n"
+"%s"
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:579
+#, c-format
+msgid "Failed to launch time configuration tool: %s"
+msgstr "运行设置工具 %s 失败"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:379
+#, c-format
+msgid "Network Connection: %s"
+msgstr "网络连接：%s"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:384
+msgid "Network Connection"
+msgstr "网络连接"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:811
+msgid "Interface"
+msgstr "接口"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:812
+msgid "The current interface the icon is monitoring."
+msgstr "目前正在监控的接口"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:819
+msgid "Orientation"
+msgstr "方向"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:820
+msgid "The orientation of the tray."
+msgstr "系统列的排列方向"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:828
+msgid "Tooltips Enabled"
+msgstr "显示工具提示"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:829
+msgid "Whether or not the icon's tooltips are enabled."
+msgstr "是否使用图标的工具提示"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:836
+msgid "Show Signal"
+msgstr "显示信号"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:837
+msgid "Whether or not the signal strength should be displayed."
+msgstr "是否显示信号强度"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:950
+#, c-format
+msgid ""
+"Please contact your system administrator to resolve the following problem:\n"
+"\n"
+"%s"
+msgstr ""
+"请联络你的系统管理员解决下列问题：\n"
+"\n"
+"%s"
+
+#: ../src/plugins/batt/batt.c:384
+#, c-format
+msgid "Battery: %d%% charged, %d:%02d until full"
+msgstr "电池：剩余电量 %d%%，充满还需 %d:%02d"
+
+#: ../src/plugins/batt/batt.c:393
+#, c-format
+msgid "Battery: %d%% charged, %s"
+msgstr "电池：剩余电量 %d%%，%s"
+
+#: ../src/plugins/batt/batt.c:395
+msgid "charging finished"
+msgstr "充电完成"
+
+#: ../src/plugins/batt/batt.c:395
+msgid "charging"
+msgstr "充电中"
+
+#: ../src/plugins/batt/batt.c:400
+#, c-format
+msgid "Battery: %d%% charged, %d:%02d left"
+msgstr "电池：剩余电量 %d%%，剩余可用时间 %d:%02d"
+
+#: ../src/plugins/batt/batt.c:406
+#, c-format
+msgid "Battery: %d%% charged"
+msgstr "电池：剩余电量 %d%%"
+
+#: ../src/plugins/batt/batt.c:454
+#, c-format
+msgid "No batteries found"
+msgstr "没有电池"
+
+#: ../src/plugins/batt/batt.c:882
+msgid "Hide if there is no battery"
+msgstr "没有电池时隐藏"
+
+#: ../src/plugins/batt/batt.c:884
+msgid "Alarm command"
+msgstr "发出警告时要运行的命令"
+
+#: ../src/plugins/batt/batt.c:885
+msgid "Alarm time (minutes left)"
+msgstr "电池剩余时间低于此数值时警告 (分钟)"
+
+#: ../src/plugins/batt/batt.c:886
+msgid "Background color"
+msgstr "背景颜色"
+
+#: ../src/plugins/batt/batt.c:887
+msgid "Charging color 1"
+msgstr "充电显示颜色 1"
+
+#: ../src/plugins/batt/batt.c:888
+msgid "Charging color 2"
+msgstr "充电显示颜色 2"
+
+#: ../src/plugins/batt/batt.c:889
+msgid "Discharging color 1"
+msgstr "放电显示颜色 1"
+
+#: ../src/plugins/batt/batt.c:890
+msgid "Discharging color 2"
+msgstr "放电显示颜色 2"
+
+#: ../src/plugins/batt/batt.c:891
+msgid "Border width"
+msgstr "边框宽度"
+
+#: ../src/plugins/batt/batt.c:922
+msgid "Battery Monitor"
+msgstr "电池电量显示"
+
+#: ../src/plugins/batt/batt.c:924
+msgid "Display battery status using ACPI"
+msgstr "通过 ACPI 显示电池状态"
+
+#: ../src/plugins/kbled/kbled.c:277
+msgid "Show CapsLock"
+msgstr ""
+
+#: ../src/plugins/kbled/kbled.c:278
+msgid "Show NumLock"
+msgstr ""
+
+#: ../src/plugins/kbled/kbled.c:279
+msgid "Show ScrollLock"
+msgstr ""
+
+#: ../src/plugins/kbled/kbled.c:289
+msgid "Keyboard Led"
+msgstr "键盘指示灯"
+
+#: ../src/plugins/kbled/kbled.c:291
+msgid "Indicators for CapsLock, NumLock, and ScrollLock keys"
+msgstr "显示 CapsLock、NumLock、及 ScrollLock 键的状态"
+
+#~ msgid "Center"
+#~ msgstr "置中"
+
+#, fuzzy
+#~ msgid "Dynamic"
+#~ msgstr "动态"
+
+#, fuzzy
+#~ msgid "Add to desktop panel"
+#~ msgstr "新增插件到面板"
+
+#~ msgid "Game"
+#~ msgstr "游戏"
+
+#~ msgid "Education"
+#~ msgstr "教育"
+
+#~ msgid "Development"
+#~ msgstr "开发"
+
+#~ msgid "Audio & Video"
+#~ msgstr "多媒体"
+
+#~ msgid "Graphics"
+#~ msgstr "绘图"
+
+#~ msgid "System Tools"
+#~ msgstr "系统工具"
+
+#~ msgid "Office"
+#~ msgstr "办公软件"
+
+#~ msgid "Accessories"
+#~ msgstr "附件"
+
+#~ msgid "not charging"
+#~ msgstr "未充电"
+
+#~ msgid "pixels"
+#~ msgstr "像素 (pixels)"
+
+#~ msgid "% of edge"
+#~ msgstr "% 百分比"
+
+#~ msgid "Select a background image file"
+#~ msgstr "选择背景图片"
+
+#~ msgid "Appearance"
+#~ msgstr "外观"
+
+#~ msgid "Plugins"
+#~ msgstr "插件"
+
+#, fuzzy
+#~ msgid "Logout Command"
+#~ msgstr "注销命令："
+
+#~ msgid "lxpanel configurator"
+#~ msgstr "lxpanel 设置"
+
+#~ msgid "Background"
+#~ msgstr "背景"
+
+#~ msgid "Update interval (seconds)"
+#~ msgstr "更新频率 (秒)"

@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Disable menu related routines */
+#undef DISABLE_MENU
+
 /* Disable plugin loading */
 #undef DISABLE_PLUGINS_LOADING
 

@@ -38,7 +38,6 @@ typedef struct {
     GtkWidget *mainw;
     GtkWidget *tray_icon;
     GtkWidget *dlg;
-    GtkTooltips* tooltips;
     GtkWidget *vscale;
     guint vscale_handler;
     GtkWidget* mute_check;
@@ -81,9 +80,9 @@ static void update_display(volume_t* vol)
     snd_mixer_selem_get_playback_switch(vol->master_element, 0, &vol->mute);
 
     if (vol->mute==0)
-        gtk_image_set_from_file(vol->tray_icon, ICONS_MUTE);
+        gtk_image_set_from_file(GTK_IMAGE(vol->tray_icon), ICONS_MUTE);
     else
-        gtk_image_set_from_file(vol->tray_icon, ICONS_VOLUME);
+        gtk_image_set_from_file(GTK_IMAGE(vol->tray_icon), ICONS_VOLUME);
 
     g_signal_handler_block( vol->mute_check, vol->mute_handler );
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(vol->mute_check), !vol->mute );
@@ -126,8 +125,9 @@ static gboolean reset_mixer_evt_idle( volume_t* vol )
     return FALSE;
 }
 
-static gboolean on_mixer_event( GIOChannel* channel, GIOCondition cond, volume_t *vol )
+static gboolean on_mixer_event( GIOChannel* channel, GIOCondition cond, gpointer vol_gpointer)
 {
+    volume_t *vol = (volume_t *)(vol_gpointer);
     if( 0 == vol->mixer_evt_idle )
     {
         vol->mixer_evt_idle = g_idle_add_full( G_PRIORITY_DEFAULT, (GSourceFunc)reset_mixer_evt_idle, vol, NULL );
@@ -257,12 +257,12 @@ static void click_mute(GtkWidget *widget, volume_t *vol)
     int chn;
 
     if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget))) {
-        gtk_image_set_from_file(vol->tray_icon, ICONS_MUTE);
+        gtk_image_set_from_file(GTK_IMAGE(vol->tray_icon), ICONS_MUTE);
         for (chn = 0; chn <= SND_MIXER_SCHN_LAST; chn++) {
             snd_mixer_selem_set_playback_switch(vol->master_element, chn, 0);
         }
     } else {
-        gtk_image_set_from_file(vol->tray_icon, ICONS_VOLUME);
+        gtk_image_set_from_file(GTK_IMAGE(vol->tray_icon), ICONS_VOLUME);
         for (chn = 0; chn <= SND_MIXER_SCHN_LAST; chn++) {
             snd_mixer_selem_set_playback_switch(vol->master_element, chn, 1);
         }
@@ -396,16 +396,8 @@ volumealsa_constructor(Plugin *p, char **fp)
 
     gtk_widget_show_all(vol->mainw);
 
-    vol->tooltips = p->panel->tooltips;;
-#if GLIB_CHECK_VERSION( 2, 10, 0 )
-    g_object_ref_sink( vol->tooltips );
-#else
-    g_object_ref( vol->tooltips );
-    gtk_object_sink( vol->tooltips );
-#endif
-
     /* FIXME: display current level in tooltip. ex: "Volume Control: 80%"  */
-    gtk_tooltips_set_tip (vol->tooltips, vol->mainw, _("Volume control"), NULL);
+    gtk_widget_set_tooltip_text( vol->mainw, _("Volume control"));
 
     /* store the created plugin widget in plugin->pwid */
     p->pwid = vol->mainw;

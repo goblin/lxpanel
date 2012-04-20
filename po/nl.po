@@ -1,0 +1,1373 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-05-13 08:30+0200\n"
+"PO-Revision-Date: 2009-05-19 13:31+0200\n"
+"Last-Translator: Sander De Voogdt <celettu@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 1.1.0\n"
+
+#: ../data/ui/panel-pref.glade.h:1
+msgid "<b>Background</b>"
+msgstr "<b>Achtergrond</b>"
+
+#: ../data/ui/panel-pref.glade.h:2
+msgid "<b>Font</b>"
+msgstr "<b>Lettertype</b>"
+
+#: ../data/ui/panel-pref.glade.h:3
+msgid "<b>Position</b>"
+msgstr "<b>Plaatsing</b>"
+
+#: ../data/ui/panel-pref.glade.h:4
+msgid "<b>Properties</b>"
+msgstr "<b>Eigenschappen</b>"
+
+#: ../data/ui/panel-pref.glade.h:5
+msgid "<b>Set Preferred Applications</b>"
+msgstr "<b>Stel voorkeursapplicatie in</b>"
+
+#: ../data/ui/panel-pref.glade.h:6
+msgid "<b>Size</b>"
+msgstr "<b>Grootte</b>"
+
+#: ../data/ui/panel-pref.glade.h:7
+msgid "Advanced"
+msgstr "Geavanceerd"
+
+#: ../data/ui/panel-pref.glade.h:8
+msgid "Alignment:"
+msgstr "Uitlijning"
+
+#: ../data/ui/panel-pref.glade.h:9
+msgid "Custom Color"
+msgstr "Aangepaste kleur"
+
+#: ../data/ui/panel-pref.glade.h:11
+#, no-c-format
+msgid ""
+"Dynamic\n"
+"Pixels\n"
+"% Percent"
+msgstr ""
+"Dynamisch\n"
+"Pixels\n"
+"% Percent"
+
+#: ../data/ui/panel-pref.glade.h:14
+msgid "Edge:"
+msgstr "Rand:"
+
+#: ../data/ui/panel-pref.glade.h:15
+msgid "Enable Image:"
+msgstr "Gebruik afbeelding:"
+
+#: ../data/ui/panel-pref.glade.h:16
+msgid "Enable Transparency"
+msgstr "Gebruik transparantie"
+
+#: ../data/ui/panel-pref.glade.h:17
+msgid "File Manager:"
+msgstr "Bestandsbeheerder"
+
+#: ../data/ui/panel-pref.glade.h:18
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:13
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:276
+msgid "General"
+msgstr "Algemeen"
+
+#: ../data/ui/panel-pref.glade.h:19
+msgid "Height:"
+msgstr "Hoogte:"
+
+#: ../data/ui/panel-pref.glade.h:20
+msgid ""
+"Left\n"
+"Center\n"
+"Right"
+msgstr ""
+"Links\n"
+"Centraal\n"
+"Rechts"
+
+#: ../data/ui/panel-pref.glade.h:23
+msgid ""
+"Left\n"
+"Right\n"
+"Top\n"
+"Bottom"
+msgstr ""
+"Links\n"
+"Rechts\n"
+"Boven\n"
+"Onder"
+
+#: ../data/ui/panel-pref.glade.h:27
+msgid "Logout Command:"
+msgstr "Commando voor uitloggen: "
+
+#: ../data/ui/panel-pref.glade.h:28
+msgid "Make window managers treat the panel as dock"
+msgstr "Window managers behandelen paneel als dock"
+
+#: ../data/ui/panel-pref.glade.h:29
+msgid "Margin:"
+msgstr "Marge: "
+
+#: ../data/ui/panel-pref.glade.h:30
+msgid "None (Use system theme)"
+msgstr "Geen (Gebruik systeemthema)"
+
+#: ../data/ui/panel-pref.glade.h:31
+msgid "Panel Applets"
+msgstr "Paneel applets"
+
+#: ../data/ui/panel-pref.glade.h:32
+msgid "Panel Preferences"
+msgstr "Paneelvoorkeuren"
+
+#: ../data/ui/panel-pref.glade.h:33
+msgid "Pixels"
+msgstr "Pixels"
+
+#: ../data/ui/panel-pref.glade.h:34
+msgid "Reserve space, and not covered by maximized windows"
+msgstr "Ruimte die niet overlapt wordt door gemaximeliseerde vensters"
+
+#: ../data/ui/panel-pref.glade.h:35
+msgid "Select an image file"
+msgstr "Kies een afbeelding"
+
+#: ../data/ui/panel-pref.glade.h:36
+msgid "Terminal Emulator:"
+msgstr "Terminal Emulator:"
+
+#: ../data/ui/panel-pref.glade.h:37
+msgid "Tint color:"
+msgstr "Tintkleur:"
+
+#: ../data/ui/panel-pref.glade.h:38
+msgid "Width:"
+msgstr "Breedte"
+
+#: ../src/configurator.c:54 ../src/gtk-run.c:250
+msgid "Run"
+msgstr "Run"
+
+#: ../src/configurator.c:56
+msgid "Restart"
+msgstr "Herstart"
+
+#: ../src/configurator.c:57
+msgid "Logout"
+msgstr "Uitloggen"
+
+#: ../src/configurator.c:403
+msgid "Currently loaded plugins"
+msgstr "Momenteel geladen plugins"
+
+#: ../src/configurator.c:412
+msgid "Stretch"
+msgstr "Rek"
+
+#: ../src/configurator.c:510 ../src/panel.c:522
+msgid "Add plugin to panel"
+msgstr "Plugin toevoegen aan paneel"
+
+#: ../src/configurator.c:537 ../src/panel.c:545
+msgid "Available plugins"
+msgstr "Beschikbare plugins"
+
+#: ../src/configurator.c:1049
+msgid "Logout command is not set"
+msgstr "Commando voor uitloggen is niet ingesteld"
+
+#: ../src/configurator.c:1098 ../src/configurator.c:1179
+msgid "Select a file"
+msgstr "Kies een bestand"
+
+#: ../src/configurator.c:1197
+msgid "_Browse"
+msgstr "_Browse"
+
+#: ../src/panel.c:630
+msgid "Left"
+msgstr "Links"
+
+#: ../src/panel.c:630
+msgid "Right"
+msgstr "Rechts"
+
+#: ../src/panel.c:630
+msgid "Top"
+msgstr "Boven"
+
+#: ../src/panel.c:630
+msgid "Bottom"
+msgstr "Onder"
+
+#: ../src/panel.c:632 ../src/panel.c:758
+msgid "Create New Panel"
+msgstr "Maak nieuw paneel aan"
+
+#: ../src/panel.c:638
+msgid "Where to put the panel?"
+msgstr "Plaatsing van het paneel?"
+
+#: ../src/panel.c:696
+msgid ""
+"Really delete this panel?\n"
+"<b>Warning: This can not be recovered.</b>"
+msgstr ""
+"Dit paneel echt verwijderen?\n"
+"<b>Waarschuwing: Deze actie kan niet ongedaan worden gemaakt.</b>"
+
+#: ../src/panel.c:697
+msgid "Confirm"
+msgstr "Bevestig"
+
+#: ../src/panel.c:732
+msgid "Add / Remove Panel Items"
+msgstr "Paneel items verwijderen/toevoegen"
+
+#: ../src/panel.c:740
+#, c-format
+msgid "Remove \"%s\" From Panel"
+msgstr "Verwijder \"%s\" van paneel"
+
+#: ../src/panel.c:752
+msgid "Panel Settings"
+msgstr "Paneel voorkeuren"
+
+#: ../src/panel.c:769
+msgid "Delete This Panel"
+msgstr "Dit paneel verwijderen"
+
+#: ../src/panel.c:779
+msgid "Panel"
+msgstr "Paneel"
+
+#: ../src/panel.c:792
+#, c-format
+msgid "\"%s\" Settings"
+msgstr "\"%s\" Voorkeuren"
+
+#: ../src/panel.c:1250
+#, c-format
+msgid "lxpanel %s - lightweight GTK2+ panel for UNIX desktops\n"
+msgstr "lxpanel %s - lichtgewicht GTK2+ paneel voor UNIX desktops\n"
+
+#: ../src/panel.c:1251
+#, c-format
+msgid "Command line options:\n"
+msgstr "Opdrachtregel voorkeuren:\n"
+
+#: ../src/panel.c:1252
+#, c-format
+msgid " --help      -- print this help and exit\n"
+msgstr " --help      -- toon deze help en sluit af\n"
+
+#: ../src/panel.c:1253
+#, c-format
+msgid " --version   -- print version and exit\n"
+msgstr " --version      -- toon de versie en sluit af\n"
+
+#: ../src/panel.c:1254
+#, c-format
+msgid " --log <number> -- set log level 0-5. 0 - none 5 - chatty\n"
+msgstr " --log <nummer> -- zet het log level 0-5. 0 - none 5 - chatty\n"
+
+#: ../src/panel.c:1255
+#, c-format
+msgid " --configure -- launch configuration utility\n"
+msgstr " --configure -- start het configuratievenster\n"
+
+#: ../src/panel.c:1256
+#, c-format
+msgid " --profile name -- use specified profile\n"
+msgstr " --profile name -- gebruik gespecifieerd profiel\n"
+
+#: ../src/panel.c:1258
+#, c-format
+msgid " -h  -- same as --help\n"
+msgstr " -h  -- zelfde als --help\n"
+
+#: ../src/panel.c:1259
+#, c-format
+msgid " -p  -- same as --profile\n"
+msgstr " -p  -- zelfde als --profile\n"
+
+#: ../src/panel.c:1260
+#, c-format
+msgid " -v  -- same as --version\n"
+msgstr " -v  -- zelfde als --version\n"
+
+#: ../src/panel.c:1261
+#, c-format
+msgid " -C  -- same as --configure\n"
+msgstr " -C  -- zelfde als --configure\n"
+
+#: ../src/panel.c:1262
+#, c-format
+msgid ""
+"\n"
+"Visit http://lxde.org/ for detail.\n"
+"\n"
+msgstr ""
+"\n"
+"Bezoek http://lxde.org/ voor meer info.\n"
+"\n"
+
+#: ../src/gtk-run.c:264
+msgid "Enter the command you want to execute:"
+msgstr "Voer het commando in dat U wil uitvoeren:"
+
+#: ../src/systray/tray.c:211
+msgid "System Tray"
+msgstr "Systeemvak"
+
+#: ../src/systray/tray.c:213
+msgid "Old KDE/GNOME Tray"
+msgstr "Oude KDE/GNOME Systeemvak"
+
+#: ../src/plugins/cpu/cpu.c:226
+msgid "CPU Usage Monitor"
+msgstr "CPU Systeemmonitor"
+
+#: ../src/plugins/cpu/cpu.c:228
+msgid "Display CPU usage"
+msgstr "Toon CPU gebruik"
+
+#: ../src/plugins/deskno/deskno.c:99 ../src/plugins/deskno/deskno2.c:129
+msgid "Desktop No / Workspace Name"
+msgstr "Desktop Nr. / Naam werkblad"
+
+#: ../src/plugins/deskno/deskno.c:101 ../src/plugins/deskno/deskno2.c:131
+msgid "Display workspace number, by cmeury@users.sf.net"
+msgstr "Toon werkblad nummer, door cmeury@users.sf.net"
+
+#: ../src/plugins/image.c:177
+msgid "Display Image and Tooltip"
+msgstr "Toon Afbeelding en Tooltip"
+
+#: ../src/plugins/launchbar.c:146
+msgid "Add Button"
+msgstr "Knop toevoegen"
+
+#: ../src/plugins/launchbar.c:148
+msgid "Button Properties"
+msgstr "Knop voorkeuren"
+
+#.
+#. title = g_strdup_printf( _("Remove \"%s\""), b-> );
+#. item = gtk_image_menu_item_new_with_label( _("Remove ") );
+#.
+#: ../src/plugins/launchbar.c:154
+msgid "Remove Button"
+msgstr "Knop verwijderen"
+
+#. FIXME: We should have a better interface for this in the fututure.
+#. 1. We can borrow the menu from menu plugin (PtkAppMenu).
+#. 2. We can borrow the app chooser from PCManFM.
+#.
+#: ../src/plugins/launchbar.c:530
+msgid "Select Application"
+msgstr "Kies Applicatie"
+
+#: ../src/plugins/launchbar.c:682
+msgid "Buttons"
+msgstr "Knoppen"
+
+#: ../src/plugins/launchbar.c:799
+msgid "Application Launch Bar"
+msgstr "Applicatiebar"
+
+#: ../src/plugins/launchbar.c:801
+msgid "Bar with buttons to launch application"
+msgstr "Bar met knoppen om applicaties te starten"
+
+#: ../src/plugins/taskbar.c:1407
+msgid "Raise"
+msgstr "Naar voren brengen"
+
+#: ../src/plugins/taskbar.c:1411
+msgid "Restore"
+msgstr "Herstellen"
+
+#: ../src/plugins/taskbar.c:1415
+msgid "Maximize"
+msgstr "Maximaliseren"
+
+#: ../src/plugins/taskbar.c:1419
+msgid "Iconify"
+msgstr "Iconifieren"
+
+#: ../src/plugins/taskbar.c:1428
+#, c-format
+msgid "Workspace %d"
+msgstr "Werkblad %d"
+
+#: ../src/plugins/taskbar.c:1436
+msgid "All workspaces"
+msgstr "Alle werkbladen"
+
+#: ../src/plugins/taskbar.c:1443
+msgid "Move to Workspace"
+msgstr "Verplaats naar werkblad"
+
+#. we want this item to be farest from mouse pointer
+#: ../src/plugins/taskbar.c:1451
+msgid "Close Window"
+msgstr "Venster sluiten"
+
+#: ../src/plugins/taskbar.c:1691
+msgid "Show tooltips"
+msgstr "Toon tooltips"
+
+#: ../src/plugins/taskbar.c:1692
+msgid "Icons only"
+msgstr "Alleen iconen"
+
+#: ../src/plugins/taskbar.c:1693
+msgid "Flat Buttons"
+msgstr "Platte knoppen"
+
+#: ../src/plugins/taskbar.c:1694
+msgid "Accept SkipPager"
+msgstr "SkipPager accepteren"
+
+#: ../src/plugins/taskbar.c:1695
+msgid "Show Iconified windows"
+msgstr "Toon ge-iconifieerde applicaties"
+
+# What are "mapped windows"?
+#: ../src/plugins/taskbar.c:1696
+msgid "Show mapped windows"
+msgstr "Toon gemapte applicaties"
+
+#: ../src/plugins/taskbar.c:1697
+msgid "Show windows from all desktops"
+msgstr "Toon applicaties van alle werkbladen"
+
+#: ../src/plugins/taskbar.c:1698
+msgid "Use mouse wheel"
+msgstr "Gebruik muiswiel"
+
+#: ../src/plugins/taskbar.c:1699
+msgid "Flash when there is any window requiring attention"
+msgstr "Knipper wanneer een venster om aandacht vraagt"
+
+#: ../src/plugins/taskbar.c:1700
+msgid "Max width of task button"
+msgstr "Maximale breedte van een applicatie-knop"
+
+#: ../src/plugins/taskbar.c:1701
+msgid "Spacing"
+msgstr "Uitlijning"
+
+#: ../src/plugins/taskbar.c:1779
+msgid "Task Bar (Window List)"
+msgstr "Taakbalk (Vensterlijst)"
+
+#: ../src/plugins/taskbar.c:1781
+msgid ""
+"Taskbar shows all opened windows and allow to iconify them, shade or get "
+"focus"
+msgstr ""
+"De taakbalk toont alle geopende vensters, en laat toe ze te iconifieren, op "
+"te rollen, of focus te krijgen"
+
+#: ../src/plugins/dclock.c:279
+msgid "Clock Format"
+msgstr "Klok formaat"
+
+#: ../src/plugins/dclock.c:280
+msgid "Tooltip Format"
+msgstr "Tooltip formaat"
+
+#: ../src/plugins/dclock.c:281
+msgid "Action"
+msgstr "Actie"
+
+#: ../src/plugins/dclock.c:282
+msgid "Bold font"
+msgstr "Vet font"
+
+#: ../src/plugins/dclock.c:317
+msgid "Digital Clock"
+msgstr "Digitale klok"
+
+#: ../src/plugins/dclock.c:319
+msgid "Display Digital clock and Tooltip"
+msgstr "Toon digitale klok en tooltip"
+
+#.
+#. item = gtk_menu_item_new_with_label(_("Add to desktop panel"));
+#. g_signal_connect(item, "activate", G_CALLBACK(on_add_menu_item_to_panel), data);
+#. gtk_menu_shell_append(p, item);
+#.
+#: ../src/plugins/menu.c:370
+msgid "Add to desktop"
+msgstr "Toevoegen aan de desktop"
+
+#: ../src/plugins/menu.c:380
+msgid "Properties"
+msgstr "Eigenschappen"
+
+#: ../src/plugins/menu.c:1030
+msgid "Icon"
+msgstr "Icoon"
+
+#: ../src/plugins/menu.c:1041
+msgid "Menu"
+msgstr "Menu"
+
+#: ../src/plugins/menu.c:1043
+msgid "Provide Menu"
+msgstr "Menu tonen"
+
+#: ../src/plugins/netstatus/glade-support.c:91
+#: ../src/plugins/netstatus/glade-support.c:115
+#, c-format
+msgid "Couldn't find pixmap file: %s"
+msgstr "Kon pixmap bestand niet vinden: %s"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:2
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:272
+#, no-c-format
+msgid "0%"
+msgstr "0%"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:3
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:194
+msgid "<b>Activity</b>"
+msgstr "<b>Activiteit</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:4
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:131
+msgid "<b>Connection</b>"
+msgstr "<b>Connectie</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:5
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:289
+msgid "<b>Internet Protocol (IPv4)</b>"
+msgstr "<b>Internet Protocol (IPv4)</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:6
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:376
+msgid "<b>Internet Protocol (IPv6)</b>"
+msgstr "<b>Internet Protocol (IPv6)</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:7
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:432
+msgid "<b>Network Device</b>"
+msgstr "<b>Internet Protocol (IPv6)</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:8
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:250
+msgid "<b>Signal Strength</b>"
+msgstr "<b>Signaalsterkte</b>"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:9
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:309
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:396
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:452
+msgid "Address:"
+msgstr "Adres:"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:10
+#: ../src/plugins/netstat/netstat.c:319 ../src/plugins/netstat/netstat.c:330
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:323
+msgid "Broadcast:"
+msgstr "Broadcast:"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:11
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:513
+msgid "Con_figure"
+msgstr "Instellen"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:12
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:316
+msgid "Destination:"
+msgstr "Bestemming:"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:14
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:232
+msgid "Received:"
+msgstr "Ontvangen:"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:15
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:403
+msgid "Scope:"
+msgstr "Scope:"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:16
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:239
+msgid "Sent:"
+msgstr "Verzonden:"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:17
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:155
+msgid "Status:"
+msgstr "Status:"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:18
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:330
+msgid "Subnet Mask:"
+msgstr "Subnet Mask:"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:19
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:484
+msgid "Support"
+msgstr "Support"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:20
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:477
+msgid "Type:"
+msgstr "Type:"
+
+#: ../src/plugins/netstatus/gnome-netstatus.glade.h:21
+#: ../src/plugins/netstatus/netstatus-dialog-ui.c:171
+msgid "_Name:"
+msgstr "_Naam:"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:148
+msgid "Name"
+msgstr "Naam"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:149
+msgid "The interface name"
+msgstr "Naam van de interface"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:156
+msgid "State"
+msgstr "Status"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:157
+msgid "The interface state"
+msgstr "Status van de interface"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:165
+msgid "Stats"
+msgstr "Statistieken"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:166
+msgid "The interface packets/bytes statistics"
+msgstr "Statistieken van de interface (paketten/bytes)"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:173
+#: ../src/plugins/netstat/netstat.c:315
+msgid "Wireless"
+msgstr "Draadloos"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:174
+msgid "Whether the interface is a wireless interface"
+msgstr "Is de interface draadloos of niet"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:181
+msgid "Signal"
+msgstr "Singaal"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:182
+msgid "Wireless signal strength percentage"
+msgstr "Signaalsterkte van de draadloze interface"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:191
+#: ../src/plugins/netstatus/netstatus-util.c:167
+msgid "Error"
+msgstr "Fout"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:192
+msgid "The current error condition"
+msgstr "De huidige fout-toestand"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:434
+#: ../src/plugins/netstatus/netstatus-iface.c:1197
+#, c-format
+msgid "Unable to open socket: %s"
+msgstr "Kan socket niet openen: %s"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:496
+#: ../src/plugins/netstatus/netstatus-iface.c:1223
+#, c-format
+msgid "SIOCGIFFLAGS error: %s"
+msgstr "SIOCGIFFLAGS fout: %s"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:870
+msgid "AMPR NET/ROM"
+msgstr "AMPR NET/ROM"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:873
+msgid "Ethernet"
+msgstr "Ethernet"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:879
+msgid "AMPR AX.25"
+msgstr "AMPR AX.25"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:888
+#: ../src/plugins/netstatus/netstatus-iface.c:1008
+msgid "16/4 Mbps Token Ring"
+msgstr "16/4 Mbps Token Ring"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:891
+msgid "ARCnet"
+msgstr "ARCnet"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:897
+msgid "Frame Relay DLCI"
+msgstr "Frame Relay DLCI"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:903
+msgid "Metricom Starmode IP"
+msgstr "Metricom Starmode IP"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:906
+msgid "Serial Line IP"
+msgstr "Serial Line IP"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:909
+msgid "VJ Serial Line IP"
+msgstr "VJ Serial Line IP"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:912
+msgid "6-bit Serial Line IP"
+msgstr "6-bit Serial Line IP"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:915
+msgid "VJ 6-bit Serial Line IP"
+msgstr "VJ 6-bit Serial Line IP"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:921
+msgid "Adaptive Serial Line IP"
+msgstr "Adaptive Serial Line IP"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:924
+msgid "AMPR ROSE"
+msgstr "AMPR ROSE"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:927
+msgid "Generic X.25"
+msgstr "Generic X.25"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:930
+msgid "Point-to-Point Protocol"
+msgstr "Point-to-Point Protocol"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:936
+msgid "(Cisco)-HDLC"
+msgstr "(Cisco)-HDLC"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:939
+msgid "LAPB"
+msgstr "LAPB"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:948
+msgid "IPIP Tunnel"
+msgstr "IPIP Tunnel"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:954
+msgid "Frame Relay Access Device"
+msgstr "Frame Relay Access Device"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:960
+msgid "Local Loopback"
+msgstr "Lokale Loopback"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:966
+msgid "Fiber Distributed Data Interface"
+msgstr "Fiber Distributed Data Interface"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:972
+msgid "IPv6-in-IPv4"
+msgstr "IPv6-in-IPv4"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:984
+msgid "HIPPI"
+msgstr "HIPPI"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:987
+msgid "Ash"
+msgstr "Ash"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:990
+msgid "Econet"
+msgstr "Econet"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:993
+msgid "IrLAP"
+msgstr "IrLAP"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:1155
+#, c-format
+msgid "SIOCGIFCONF error: %s"
+msgstr "SIOCGIFCONF fout: %s"
+
+#: ../src/plugins/netstatus/netstatus-iface.c:1248
+#, c-format
+msgid "No network devices found"
+msgstr "Geen netwerkapparaten gevonden"
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:180
+#, c-format
+msgid "Cannot open /proc/net/dev: %s"
+msgstr "Kan /proc/net/dev niet openen: %s"
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:189
+msgid "Could not parse /proc/net/dev. Unknown format."
+msgstr "Kan /proc/net/dev niet gekend. Onbekend formaat."
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:204
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:330
+#, c-format
+msgid "Could not parse interface name from '%s'"
+msgstr "Kan interface-naam niet ontleden van '%s'"
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:217
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:645
+#, c-format
+msgid ""
+"Could not parse interface statistics from '%s'. prx_idx = %d; ptx_idx = %d; "
+"brx_idx = %d; btx_idx = %d;"
+msgstr ""
+"Kan interface statistieken niet ontleden van '%s'. prx_idx = %d; ptx_idx = %"
+"d; brx_idx = %d; btx_idx = %d;"
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:314
+msgid "Could not parse /proc/net/wireless. Unknown format."
+msgstr "Kan /proc/net/wireless niet ontleden. Onbekend formaat."
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:341
+#, c-format
+msgid "Could not parse wireless details from '%s'. link_idx = %d;"
+msgstr "Kan wireless details niet verkrijgen van '%s'. link_idx = %d;"
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:414
+#, c-format
+msgid "Could not connect to interface, '%s'"
+msgstr "Kan niet verbinden met interface, '%s'"
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:420
+#, c-format
+msgid "Could not send ioctl to interface, '%s'"
+msgstr "Kan ioctl niet verzenden naar interface, '%s'"
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:598
+#, c-format
+msgid "Could not parse command line '%s': %s"
+msgstr "Kan opdrachtregel niet ontleden '%s': %s"
+
+#: ../src/plugins/netstatus/netstatus-sysdeps.c:635
+msgid "Could not parse 'netstat' output. Unknown format"
+msgstr "Kon 'netstat' output niet ontleden. Onbekend formaat"
+
+#: ../src/plugins/netstatus/netstatus-util.c:152
+msgid "Disconnected"
+msgstr "Verbinding verbroken"
+
+#: ../src/plugins/netstatus/netstatus-util.c:155
+msgid "Idle"
+msgstr "Idle"
+
+#: ../src/plugins/netstatus/netstatus-util.c:158
+msgid "Sending"
+msgstr "Verzenden"
+
+#: ../src/plugins/netstatus/netstatus-util.c:161
+msgid "Receiving"
+msgstr "Ontvangen"
+
+#: ../src/plugins/netstatus/netstatus-util.c:164
+msgid "Sending/Receiving"
+msgstr "Zenden/Ontvangen"
+
+#: ../src/plugins/separator.c:103
+msgid "Separator"
+msgstr "Scheidingslijn"
+
+#: ../src/plugins/separator.c:105
+msgid "Add a separator to the panel"
+msgstr "Schijdingslijn toevoegen aan paneel"
+
+#: ../src/plugins/pager.c:707
+msgid "Desktop Pager"
+msgstr "Welkbladbeheer"
+
+#: ../src/plugins/pager.c:709
+msgid "Simple pager plugin"
+msgstr "Eenvoudige werkbladbeheer plugin"
+
+#: ../src/plugins/space.c:138 ../src/plugins/batt/batt.c:892
+msgid "Size"
+msgstr "Grootte"
+
+#: ../src/plugins/space.c:153
+msgid "<Space>"
+msgstr "<Ruimte>"
+
+#: ../src/plugins/space.c:155
+msgid "Allocate space"
+msgstr "Ruimte toevoegen"
+
+#: ../src/plugins/xkb/xkb-plugin.c:241
+msgid "Keyboard Layout Switcher"
+msgstr "Toetsenbord Layout Switcher"
+
+#: ../src/plugins/xkb/xkb-plugin.c:247
+msgid ""
+"Allows you to switch the keyboard layout and\n"
+"displays the currently selected layout."
+msgstr ""
+"Plugin om van toetsenbord layout te wisselen\n"
+"en de huidige layout weer te geven."
+
+#: ../src/plugins/xkb/xkb-plugin.c:252
+msgid "Other plugins available here"
+msgstr "Andere plugins zijn hier beschikbaar"
+
+#: ../src/plugins/xkb/xkb-plugin.c:385
+msgid "Configure Keyboard Layout Switcher"
+msgstr "Toetsenbord Layout Switcher instellen"
+
+#: ../src/plugins/xkb/xkb-plugin.c:398
+msgid "Show layout as"
+msgstr "Toon layout als"
+
+#: ../src/plugins/xkb/xkb-plugin.c:413
+msgid "image"
+msgstr "afbeelding"
+
+#: ../src/plugins/xkb/xkb-plugin.c:414
+msgid "text"
+msgstr "tekst"
+
+#: ../src/plugins/xkb/xkb-plugin.c:418
+msgid "Per application settings"
+msgstr "Voorkeuren per applicatie"
+
+#: ../src/plugins/xkb/xkb-plugin.c:432
+msgid "_Remember layout for each application"
+msgstr "Onthou layout voor elke applicatie"
+
+#: ../src/plugins/xkb/xkb-plugin.c:441
+msgid "Default layout:"
+msgstr "Standaard layout:"
+
+#: ../src/plugins/xkb/xkb-plugin.c:499
+msgid "Kayboard Layout switcher"
+msgstr "Toetsenbord Layout switcher"
+
+#: ../src/plugins/xkb/xkb-plugin.c:501
+msgid "Switch between available keyboard layouts"
+msgstr "Wisselen tussen beschikbare toetsenbord layouts"
+
+#: ../src/plugins/wincmd.c:245
+msgid "Left click to iconify all windows. Middle click to shade them"
+msgstr ""
+"Linkermuisklik om alle vensters te iconifieren, middelmuisklik op ze op te "
+"rollen"
+
+#: ../src/plugins/wincmd.c:274
+msgid "Minimize All Windows"
+msgstr "Alle vensters minimaliseren"
+
+#: ../src/plugins/wincmd.c:276
+msgid ""
+"Sends commands to all desktop windows.\n"
+"Supported commnds are 1)toggle iconify and 2) toggle shade"
+msgstr ""
+"Zendt een opdracht naar alle desktop vensters.\n"
+"Ondersteunde opdrachten zijn 1) iconifieren aan/uitschakelen en 2) oprollen "
+"aan/uitschakelen"
+
+#: ../src/plugins/dirmenu.c:218
+msgid "Open in _Terminal"
+msgstr "In Terminal openen"
+
+#: ../src/plugins/dirmenu.c:383
+msgid "Directory Menu"
+msgstr "Map Menu"
+
+#: ../src/plugins/dirmenu.c:385
+msgid "Browse directory tree via menu (Author: PCMan)"
+msgstr "Boomstructeur doorbladeren via menu (Auteur: PCMan)"
+
+#: ../src/plugins/thermal/thermal.c:299
+msgid "Normal"
+msgstr "Normaal"
+
+#: ../src/plugins/thermal/thermal.c:300
+msgid "Warning1"
+msgstr "Waarschuwing1"
+
+#: ../src/plugins/thermal/thermal.c:301
+msgid "Warning2"
+msgstr "Waarschuwing2"
+
+#: ../src/plugins/thermal/thermal.c:302
+msgid "Automatic sensor location"
+msgstr "Automatische sensor locatie"
+
+#: ../src/plugins/thermal/thermal.c:303
+msgid "Sensor"
+msgstr "Sensor"
+
+#: ../src/plugins/thermal/thermal.c:304
+msgid "Automatic temperature levels"
+msgstr "Automatische temperatuur niveaus"
+
+#: ../src/plugins/thermal/thermal.c:305
+msgid "Warning1 Temperature"
+msgstr "Waarschuwing1 Temperatuur"
+
+#: ../src/plugins/thermal/thermal.c:306
+msgid "Warning2 Temperature"
+msgstr "Waarschuwing2 Temperatuur"
+
+#: ../src/plugins/thermal/thermal.c:348
+msgid "Temperature Monitor"
+msgstr "Temperatuur Monitor"
+
+#: ../src/plugins/thermal/thermal.c:350
+msgid "Display system temperature, by kesler.daniel@gmail.com"
+msgstr "Toon systeemtemperatuur, door kesler.daniel@gmail.com"
+
+#. FIXME: display current level in tooltip. ex: "Volume Control: 80%"
+#: ../src/plugins/volume/volume.c:305
+#: ../src/plugins/volumealsa/volumealsa.c:400
+msgid "Volume control"
+msgstr "Volumecontrole"
+
+#: ../src/plugins/volume/volume.c:317
+#: ../src/plugins/volumealsa/volumealsa.c:414
+msgid "Volume Control"
+msgstr "Volumecontrole"
+
+#. create frame
+#: ../src/plugins/volume/volume-impl.c:109
+#: ../src/plugins/volumealsa/volumealsa.c:310
+msgid "Volume"
+msgstr "Volume"
+
+#: ../src/plugins/volumealsa/volumealsa.c:327
+msgid "Mute"
+msgstr "Dempen"
+
+#: ../src/plugins/netstat/netstat.c:168
+msgid "<Hidden Access Point>"
+msgstr "<Verborgen Access Point>"
+
+#: ../src/plugins/netstat/netstat.c:201
+msgid "Wireless Networks not found in range"
+msgstr "Geen draadloze netwerken binnen bereik"
+
+#. Repair
+#: ../src/plugins/netstat/netstat.c:235
+msgid "Repair"
+msgstr "Herstellen"
+
+#. interface down
+#: ../src/plugins/netstat/netstat.c:240
+msgid "Disable"
+msgstr "Uitschakelen"
+
+#: ../src/plugins/netstat/netstat.c:299
+msgid "Wireless Connection has no connectivity"
+msgstr "Draadloos Netwerk heeft geen connectie"
+
+#: ../src/plugins/netstat/netstat.c:301
+msgid "Network cable is plugged out"
+msgstr "Netwerkkabel is niet aangesloten"
+
+#: ../src/plugins/netstat/netstat.c:303
+msgid "Connection has limited or no connectivity"
+msgstr "Connectie heeft geen of gelimiteerde verbinding"
+
+#: ../src/plugins/netstat/netstat.c:307 ../src/plugins/netstat/netstat.c:318
+#: ../src/plugins/netstat/netstat.c:329
+msgid "IP Address:"
+msgstr "IP Adres: "
+
+#: ../src/plugins/netstat/netstat.c:308
+msgid "Remote IP:"
+msgstr "Remote IP:"
+
+#: ../src/plugins/netstat/netstat.c:309 ../src/plugins/netstat/netstat.c:320
+#: ../src/plugins/netstat/netstat.c:331
+msgid "Netmask:"
+msgstr "Netmask:"
+
+#: ../src/plugins/netstat/netstat.c:310 ../src/plugins/netstat/netstat.c:322
+#: ../src/plugins/netstat/netstat.c:333
+msgid "Activity"
+msgstr "Activiteit"
+
+#: ../src/plugins/netstat/netstat.c:310 ../src/plugins/netstat/netstat.c:322
+#: ../src/plugins/netstat/netstat.c:333
+msgid "Sent"
+msgstr "Verzonden"
+
+#: ../src/plugins/netstat/netstat.c:310 ../src/plugins/netstat/netstat.c:322
+#: ../src/plugins/netstat/netstat.c:333
+msgid "Received"
+msgstr "Ontvangen"
+
+#: ../src/plugins/netstat/netstat.c:311 ../src/plugins/netstat/netstat.c:323
+#: ../src/plugins/netstat/netstat.c:334
+msgid "bytes"
+msgstr "bytes"
+
+#: ../src/plugins/netstat/netstat.c:312 ../src/plugins/netstat/netstat.c:324
+#: ../src/plugins/netstat/netstat.c:335
+msgid "packets"
+msgstr "paketten"
+
+#: ../src/plugins/netstat/netstat.c:317
+msgid "Protocol:"
+msgstr "Protocol:"
+
+#: ../src/plugins/netstat/netstat.c:321 ../src/plugins/netstat/netstat.c:332
+msgid "HW Address:"
+msgstr "HW Adres"
+
+#: ../src/plugins/netstat/netstat.c:471
+msgid "Manage Networks"
+msgstr "Netwerkbeheer"
+
+#: ../src/plugins/netstat/netstat.c:473
+msgid "Monitor and Manage networks"
+msgstr "Netwerkbeheer en -monitor"
+
+#. create dialog
+#: ../src/plugins/netstat/passwd_gui.c:84
+msgid "Setting Encryption Key"
+msgstr "Encryptiesleutel instellen"
+
+#. messages
+#: ../src/plugins/netstat/passwd_gui.c:94
+msgid ""
+"This wireless network was encrypted.\n"
+"You must have the encryption key."
+msgstr ""
+"Dit draadloos netwerk is beveiligd.\n"
+"U hebt de encryptiesleutel nodig."
+
+#: ../src/plugins/netstat/passwd_gui.c:99
+msgid "Encryption Key:"
+msgstr "Encryptiesleutel:"
+
+#: ../src/plugins/netstatus/netstatus.c:175
+msgid "Interface to monitor"
+msgstr "Deze interface opvolgen"
+
+#: ../src/plugins/netstatus/netstatus.c:176
+msgid "Config tool"
+msgstr "Instellingen"
+
+#: ../src/plugins/netstatus/netstatus.c:193
+msgid "Net Status Monitor"
+msgstr "Net Status Monitor"
+
+#: ../src/plugins/netstatus/netstatus.c:195
+msgid "Monitor network status"
+msgstr "Opvolging netwerk status"
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:52
+#: ../src/plugins/netstatus/netstatus-dialog.c:311
+msgid "Unknown"
+msgstr "Onbekend"
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:115
+msgid "Connection Properties"
+msgstr "Verbindingseigenschappen"
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:121
+#, c-format
+msgid "Connection Properties: %s"
+msgstr "Verbindingseigenschappen: %s"
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:134
+#, c-format
+msgid "%lu packet"
+msgid_plural "%lu packets"
+msgstr[0] "%lu pakket"
+msgstr[1] "%lu paketten"
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:395
+#, c-format
+msgid ""
+"There was an error displaying help:\n"
+"%s"
+msgstr ""
+"Help kan niet weergegeven worden:\n"
+"%s"
+
+#: ../src/plugins/netstatus/netstatus-dialog.c:579
+#, c-format
+msgid "Failed to launch time configuration tool: %s"
+msgstr "Kan tijdsinstellingen niet starten: %s"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:379
+#, c-format
+msgid "Network Connection: %s"
+msgstr "Netwerkverbinding: %s"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:384
+msgid "Network Connection"
+msgstr "Netwerkverbinding"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:811
+msgid "Interface"
+msgstr "Interface"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:812
+msgid "The current interface the icon is monitoring."
+msgstr "Interface die afgebeeld wordt"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:819
+msgid "Orientation"
+msgstr "Orientatie"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:820
+msgid "The orientation of the tray."
+msgstr "De orientatie van het systeemvak"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:828
+msgid "Tooltips Enabled"
+msgstr "Tooltips ingeschakeld"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:829
+msgid "Whether or not the icon's tooltips are enabled."
+msgstr "Tooltips in- of uitgeschakeld"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:836
+msgid "Show Signal"
+msgstr "Toon signaal"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:837
+msgid "Whether or not the signal strength should be displayed."
+msgstr "Toon signaalsterkte in-of uitgeschakeld"
+
+#: ../src/plugins/netstatus/netstatus-icon.c:950
+#, c-format
+msgid ""
+"Please contact your system administrator to resolve the following problem:\n"
+"\n"
+"%s"
+msgstr ""
+"Neem aub contact op met uw systeembeheerder ivm volgend probleem:\n"
+"\n"
+"%s"
+
+#: ../src/plugins/batt/batt.c:384
+#, c-format
+msgid "Battery: %d%% charged, %d:%02d until full"
+msgstr "Batterij: %d%% opgeladen, %d:%02d tot volledig geladen"
+
+#: ../src/plugins/batt/batt.c:393
+#, c-format
+msgid "Battery: %d%% charged, %s"
+msgstr "Batterij: %d%% opgeladen, %s"
+
+#: ../src/plugins/batt/batt.c:395
+msgid "charging finished"
+msgstr "Batterij opgeladen"
+
+#: ../src/plugins/batt/batt.c:395
+msgid "charging"
+msgstr "Aan het opladen"
+
+#: ../src/plugins/batt/batt.c:400
+#, c-format
+msgid "Battery: %d%% charged, %d:%02d left"
+msgstr "Batterij: %d%% opgeladen, %d:%02d overblijvend"
+
+#: ../src/plugins/batt/batt.c:406
+#, c-format
+msgid "Battery: %d%% charged"
+msgstr "Batterij: %d%% opgeladen"
+
+#: ../src/plugins/batt/batt.c:454
+#, c-format
+msgid "No batteries found"
+msgstr "Geen batterij gevonden"
+
+#: ../src/plugins/batt/batt.c:882
+msgid "Hide if there is no battery"
+msgstr "Verbergen indien geen batterij aanwezig"
+
+#: ../src/plugins/batt/batt.c:884
+msgid "Alarm command"
+msgstr "Alarmopdracht"
+
+#: ../src/plugins/batt/batt.c:885
+msgid "Alarm time (minutes left)"
+msgstr "Alarm tijd (overblijvende minuten)"
+
+#: ../src/plugins/batt/batt.c:886
+msgid "Background color"
+msgstr "Achtergrondkleur"
+
+#: ../src/plugins/batt/batt.c:887
+msgid "Charging color 1"
+msgstr "Oplaadkleur 1"
+
+#: ../src/plugins/batt/batt.c:888
+msgid "Charging color 2"
+msgstr "Oplaadkleur 2"
+
+#: ../src/plugins/batt/batt.c:889
+msgid "Discharging color 1"
+msgstr "Ontlaadkleur 1"
+
+#: ../src/plugins/batt/batt.c:890
+msgid "Discharging color 2"
+msgstr "Ontlaadkleur 2"
+
+#: ../src/plugins/batt/batt.c:891
+msgid "Border width"
+msgstr "Randbreedte"
+
+#: ../src/plugins/batt/batt.c:922
+msgid "Battery Monitor"
+msgstr "Batterij Monitor"
+
+#: ../src/plugins/batt/batt.c:924
+msgid "Display battery status using ACPI"
+msgstr "Toont status van de batterij met behulp van ACPI"
+
+#: ../src/plugins/kbled/kbled.c:277
+msgid "Show CapsLock"
+msgstr "Toon CapsLock"
+
+#: ../src/plugins/kbled/kbled.c:278
+msgid "Show NumLock"
+msgstr "Toon Numlock"
+
+#: ../src/plugins/kbled/kbled.c:279
+msgid "Show ScrollLock"
+msgstr "Toon ScrollLock"
+
+#: ../src/plugins/kbled/kbled.c:289
+msgid "Keyboard Led"
+msgstr "Toetsenbord Led"
+
+#: ../src/plugins/kbled/kbled.c:291
+msgid "Indicators for CapsLock, NumLock, and ScrollLock keys"
+msgstr "Indicators voor Capslock, Numlock en ScrollLock toetsen"
+
+#~ msgid "Warning1 Temperatur"
+#~ msgstr "Waarschuwing1 Temperatuur"
+
+#~ msgid "Warning2 Temperatur"
+#~ msgstr "Waarschuwing2 Temperatuur"

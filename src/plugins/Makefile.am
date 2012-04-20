@@ -13,6 +13,7 @@ noinst_LIBRARIES = libbuiltin_plugins.a
 
 INCLUDES = \
 	-I$(top_srcdir) \
+	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/plugins \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
@@ -20,12 +21,16 @@ INCLUDES = \
 	$(PACKAGE_CFLAGS) \
 	$(G_CAST_CHECKS)
 
-PLUGINS_SOURCES= \
+if ENABLE_MENU_CACHE
+MENU_SOURCES = \
+	menu.c
+endif
+
+PLUGINS_SOURCES = \
 	launchbar.c \
-	ptk-app-menu.c ptk-app-menu.h \
 	taskbar.c \
 	dclock.c \
-	menu.c \
+	$(MENU_SOURCES) \
 	separator.c \
 	pager.c \
 	space.c \

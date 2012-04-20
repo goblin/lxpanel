@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = src po data man
+SUBDIRS = src data po man
 
 EXTRA_DIST = \
 	autogen.sh \
@@ -8,7 +8,11 @@ EXTRA_DIST = \
         autogen.sh \
         intltool-extract.in \
         intltool-merge.in \
-        intltool-update.in
+        intltool-update.in \
+        lxpanel.pc.in
+
+pkgconfigdir   = $(libdir)/pkgconfig
+pkgconfig_DATA = lxpanel.pc
 
 ##desktopdir = $(datadir)/applications
 ##desktop_DATA = pcmanfm.desktop

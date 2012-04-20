@@ -56,13 +56,20 @@ netstatus_destructor(Plugin *p)
 
 static void on_response( GtkDialog* dlg, gint response, netstatus *ns )
 {
+    const char* iface;
     switch( response )
     {
         case GTK_RESPONSE_CLOSE:
         case GTK_RESPONSE_DELETE_EVENT:
         case GTK_RESPONSE_NONE:
+        iface = netstatus_dialog_get_iface_name((GtkWidget*)dlg);
+        if( iface )
+        {
+            g_free(ns->iface);
+            ns->iface = g_strdup(iface);
             gtk_widget_destroy( GTK_WIDGET(dlg) );
             ns->dlg = NULL;
+        }
     }
 }
 
@@ -130,6 +137,7 @@ netstatus_constructor(Plugin *p, char** fp)
 
     iface = netstatus_iface_new(ns->iface);
     ns->mainw = netstatus_icon_new( iface );
+    netstatus_icon_set_show_signal(ns->mainw, TRUE);
     gtk_widget_add_events( ns->mainw, GDK_BUTTON_PRESS_MASK );
     g_object_unref( iface );
     g_signal_connect( ns->mainw, "button-press-event",
@@ -147,9 +155,13 @@ netstatus_constructor(Plugin *p, char** fp)
     RET(0);
 }
 
-static void apply_config( Plugin* p )
+static void apply_config(Plugin* p)
 {
+    netstatus *ns = (netstatus *)p->priv;
+    NetstatusIface* iface;
 
+    iface = netstatus_iface_new(ns->iface);
+    netstatus_icon_set_iface(ns->mainw, iface);
 }
 
 static void netstatus_config( Plugin* p, GtkWindow* parent  )
@@ -160,8 +172,8 @@ static void netstatus_config( Plugin* p, GtkWindow* parent  )
                 _(p->class->name),
                 GTK_WIDGET(parent),
                 (GSourceFunc) apply_config, p,
-                _("Interface to monitor"), &ns->iface, G_TYPE_STRING,
-                _("Config tool"), &ns->config_tool, G_TYPE_STRING,
+                _("Interface to monitor"), &ns->iface, CONF_TYPE_STR,
+                _("Config tool"), &ns->config_tool, CONF_TYPE_STR,
                 NULL );
     gtk_window_present( GTK_WINDOW(dlg) );
 }

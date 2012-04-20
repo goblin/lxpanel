@@ -83,7 +83,6 @@ typedef struct {
         *gc1,
         *gc2;
     GdkPixmap *pixmap;
-    GtkTooltips *tooltip;
     GtkWidget *drawingArea;
     int orientation;
     unsigned int alarmTime,
@@ -265,7 +264,8 @@ static gboolean check_ac_adapter( batt* b )
         /* g_debug( "ac_state_changed: %d", has_ac_adapter ); */
         b->has_ac_adapter = has_ac_adapter;
         /* update the state of all batteries */
-        g_list_foreach( b->batteries, (GFunc)get_batt_state, b->use_sysfs );
+        g_list_foreach( b->batteries, (GFunc)get_batt_state,
+                &b->use_sysfs );
         update_display( b, TRUE );
     }
     return TRUE;
@@ -408,7 +408,7 @@ void update_display(batt *b, gboolean repaint) {
             }
         }
 
-        gtk_tooltips_set_tip(b->tooltip, b->drawingArea, tooltip, NULL);
+        gtk_widget_set_tooltip_text(b->drawingArea, tooltip);
 
         int chargeLevel = capacity ?
                 charge * (b->length - 2 * b->border) / capacity : 0;
@@ -452,7 +452,7 @@ void update_display(batt *b, gboolean repaint) {
     {
         char tip[ 256 ];
         g_snprintf( tip, 256, _("No batteries found") );
-        gtk_tooltips_set_tip(b->tooltip, b->drawingArea, tip, NULL);
+        gtk_widget_set_tooltip_text( b->drawingArea, tip );
     }
 
     if( repaint )
@@ -528,6 +528,7 @@ static void check_batteries( batt* b )
 
 /* This callback is called every 3 seconds */
 static int update_timout(batt *b) {
+    GList* l;
     GDK_THREADS_ENTER();
     ++b->state_elapsed_time;
     ++b->info_elapsed_time;
@@ -543,14 +544,16 @@ static int update_timout(batt *b) {
     if( b->state_elapsed_time == 30/3 )  /* 30 sec */
     {
         /* update state of batteries */
-        g_list_foreach( b->batteries, (GFunc)get_batt_state, b->use_sysfs );
+        for( l = b->batteries; l; l = l->next )
+            get_batt_state( (batt_info*)l->data, b->use_sysfs );
         b->state_elapsed_time = 0;
     }
     /* check the capacity of batteries every 1 hour */
     if( b->info_elapsed_time == 3600/3 )  /* 1 hour */
     {
         /* update info of batteries */
-        g_list_foreach( b->batteries, (GFunc)get_batt_info, b->use_sysfs );
+        for( l = b->batteries; l; l = l->next )
+            get_batt_info( (batt_info*)l->data, b->use_sysfs );
         b->info_elapsed_time = 0;
     }
 
@@ -649,7 +652,6 @@ constructor(Plugin *p, char **fp)
     gtk_widget_set_size_request(b->drawingArea, b->width, b->height);
 
     gtk_widget_show(b->drawingArea);
-    b->tooltip = p->panel->tooltips;
 
     b->bg = gdk_gc_new(p->panel->topgwin->window);
     b->gc1 = gdk_gc_new(p->panel->topgwin->window);
@@ -877,17 +879,17 @@ static void config(Plugin *p, GtkWindow* parent) {
             GTK_WIDGET(parent),
             (GSourceFunc) applyConfig, (gpointer) p,
 #if 0
-            _("Hide if there is no battery"), &b->hide_if_no_battery, G_TYPE_BOOLEAN,
+            _("Hide if there is no battery"), &b->hide_if_no_battery, CONF_TYPE_BOOL,
 #endif
-            _("Alarm command"), &b->alarmCommand, G_TYPE_STRING,
-            _("Alarm time (minutes left)"), &b->alarmTime, G_TYPE_INT,
-            _("Background color"), &b->backgroundColor, G_TYPE_STRING,
-            _("Charging color 1"), &b->chargingColor1, G_TYPE_STRING,
-            _("Charging color 2"), &b->chargingColor2, G_TYPE_STRING,
-            _("Discharging color 1"), &b->dischargingColor1, G_TYPE_STRING,
-            _("Discharging color 2"), &b->dischargingColor2, G_TYPE_STRING,
-            _("Border width"), &b->requestedBorder, G_TYPE_INT,
-            _("Size"), &b->thickness, G_TYPE_INT,
+            _("Alarm command"), &b->alarmCommand, CONF_TYPE_STR,
+            _("Alarm time (minutes left)"), &b->alarmTime, CONF_TYPE_INT,
+            _("Background color"), &b->backgroundColor, CONF_TYPE_STR,
+            _("Charging color 1"), &b->chargingColor1, CONF_TYPE_STR,
+            _("Charging color 2"), &b->chargingColor2, CONF_TYPE_STR,
+            _("Discharging color 1"), &b->dischargingColor1, CONF_TYPE_STR,
+            _("Discharging color 2"), &b->dischargingColor2, CONF_TYPE_STR,
+            _("Border width"), &b->requestedBorder, CONF_TYPE_INT,
+            _("Size"), &b->thickness, CONF_TYPE_INT,
             NULL);
     gtk_window_present(GTK_WINDOW(dialog));
 
@@ -896,12 +898,10 @@ static void config(Plugin *p, GtkWindow* parent) {
 
 
 static void save(Plugin* p, FILE* fp) {
-
-    ENTER;
-
     batt *b = (batt *) p->priv;
+    char l_char=(char)b->hide_if_no_battery;
 
-    lxpanel_put_str(fp, "HideIfNoBattery", b->hide_if_no_battery);
+    lxpanel_put_str(fp, "HideIfNoBattery",&l_char);
     lxpanel_put_str(fp, "AlarmCommand", b->alarmCommand);
     lxpanel_put_int(fp, "AlarmTime", b->alarmTime);
     lxpanel_put_str(fp, "BackgroundColor", b->backgroundColor);
@@ -911,8 +911,6 @@ static void save(Plugin* p, FILE* fp) {
     lxpanel_put_str(fp, "DischargingColor1", b->dischargingColor1);
     lxpanel_put_str(fp, "DischargingColor2", b->dischargingColor2);
     lxpanel_put_int(fp, "Size", b->thickness);
-
-    RET();
 }
 
 

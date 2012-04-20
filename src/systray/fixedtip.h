@@ -63,6 +63,15 @@ void       na_fixed_tip_set_markup (GtkWidget  *widget,
 void       na_fixed_tip_set_orientation (GtkWidget      *widget,
                                          GtkOrientation  orientation);
 
+extern void fixed_tip_hide (void);
+
+void	fixed_tip_show (int screen_number,
+			int root_x, int root_y,
+			gboolean strut_is_vertical,
+			int strut, const char *markup_text);
+
+void	fixed_tip_hide (void);
+
 G_END_DECLS
 
 #endif /* FIXED_TIP_H */

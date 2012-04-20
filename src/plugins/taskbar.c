@@ -23,7 +23,6 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-//#include <X11/xpm.h>
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf-xlib/gdk-pixbuf-xlib.h>
@@ -79,7 +78,6 @@ typedef struct _taskbar{
     int win_num;
     GHashTable  *task_list;
     GtkWidget *bar, *menu;
-    GtkTooltips *tips;
     GdkPixbuf *gen_pixbuf;
     GtkStateType normal_state;
     GtkStateType focused_state;
@@ -96,7 +94,7 @@ typedef struct _taskbar{
     guint dnd_activate;
 
     gboolean iconsize;
-    gboolean task_width_max;
+    int task_width_max;
     gboolean accept_skip_pager;// : 1;
     gboolean show_iconified;// : 1;
     gboolean show_mapped;// : 1;
@@ -217,7 +215,7 @@ tk_set_names(task *tk)
     }
     gtk_label_set_text(GTK_LABEL(tk->label), name);
     if (tk->tb->tooltips)
-        gtk_tooltips_set_tip(tk->tb->tips, tk->button, tk->name, NULL);
+        gtk_widget_set_tooltip_text( tk->button, tk->name );
     RET();
 }
 
@@ -415,6 +413,19 @@ apply_mask (GdkPixbuf *pixbuf,
   RET(with_alpha);
 }
 
+/* set the iconification destination */
+static void set_iconification_dest( Window win, int x, int y, int w, int h )
+{
+  guint32 data[4];
+
+  data[0] = x;
+  data[1] = y;
+  data[2] = w;
+  data[3] = h;
+  XChangeProperty(GDK_DISPLAY(), win,
+        gdk_x11_get_xatom_by_name("_NET_WM_ICON_GEOMETRY"),
+        XA_CARDINAL, 32, PropModeReplace, (guchar *)&data, 4);
+}
 
 static GdkPixbuf *
 get_netwm_icon(Window tkwin, int iw, int ih)
@@ -448,6 +459,12 @@ get_netwm_icon(Window tkwin, int iw, int ih)
     RET(ret);
 }
 
+static void
+free_pixels(guchar *pixels, gpointer data)
+{
+    g_free(pixels);
+}
+
 static GdkPixbuf *
 get_wm_icon(Window tkwin, int iw, int ih)
 {
@@ -455,49 +472,209 @@ get_wm_icon(Window tkwin, int iw, int ih)
     Pixmap xpixmap = None, xmask = None;
     Window win;
     unsigned int w, h;
-    int sd;
-    GdkPixbuf *ret, *masked, *pixmap, *mask = NULL;
+    int sd, result, format;
+    GdkPixbuf *ret=NULL, *masked=NULL, *pixmap = NULL, *mask = NULL;
+    Atom type = None;
+    gulong *data = NULL;
+    gulong  nitems;
+    gulong  bytes_after;
+    guchar *pixdata=NULL, *p=NULL;
+    int     i;
 
-    ENTER;
-    hints = (XWMHints *) get_xaproperty (tkwin, XA_WM_HINTS, XA_WM_HINTS, 0);
-    if (!hints)
-        RET(NULL);
+    /* Important Notes:
+     * According to freedesktop.org document:
+     * http://standards.freedesktop.org/wm-spec/wm-spec-1.4.html#id2552223
+     * _NET_WM_ICON contains an array of 32-bit packed CARDINAL ARGB.
+     * However, this is incorrect. Actually it's an array of long integers.
+     * Toolkits like gtk+ use unsigned long here to store icons.
+     * Besides, according to manpage of XGetWindowProperty, when returned format,
+     * is 32, the property data will be stored as an array of longs
+     * (which in a 64-bit application will be 64-bit values that are
+     * padded in the upper 4 bytes).
+     */
 
-    if ((hints->flags & IconPixmapHint))
-        xpixmap = hints->icon_pixmap;
-    if ((hints->flags & IconMaskHint))
-        xmask = hints->icon_mask;
-
-    XFree(hints);
-    if (xpixmap == None)
-        RET(NULL);
-
-    if (!XGetGeometry (GDK_DISPLAY(), xpixmap, &win, &sd, &sd, &w, &h,
-              (guint *)&sd, (guint *)&sd)) {
-        LOG(LOG_WARN,"XGetGeometry failed for %x pixmap\n", (unsigned int)xpixmap);
-        RET(NULL);
+    result = XGetWindowProperty(GDK_DISPLAY(),
+                                tkwin,
+                                gdk_x11_get_xatom_by_name("_NET_WM_ICON"),
+                                0, G_MAXLONG,
+                                0, XA_CARDINAL, &type, &format, &nitems,
+                                &bytes_after, (void*)&data);
+    /* g_debug("type=%d, format=%d, nitems=%d", type, format, nitems); */
+    if(type != XA_CARDINAL || nitems <= 0 )
+    {
+        LOG(LOG_WARN, "lxpanel : type is not XA_CARDINAL\n");
+        if(data) {
+            XFree(data);
+	    data=NULL;
+        }
+        result = -1;
     }
-    DBG("tkwin=%x icon pixmap w=%d h=%d\n", tkwin, w, h);
-    pixmap = _wnck_gdk_pixbuf_get_from_pixmap (NULL, xpixmap, 0, 0, 0, 0, w, h);
-    if (!pixmap)
-        RET(NULL);
-    if (xmask != None && XGetGeometry (GDK_DISPLAY(), xmask,
-              &win, &sd, &sd, &w, &h, (guint *)&sd, (guint *)&sd)) {
-        mask = _wnck_gdk_pixbuf_get_from_pixmap (NULL, xmask, 0, 0, 0, 0, w, h);
 
-        if (mask) {
-            masked = apply_mask (pixmap, mask);
-            g_object_unref (G_OBJECT (pixmap));
-            g_object_unref (G_OBJECT (mask));
-            pixmap = masked;
+    if(result == Success)
+    {
+        gulong* pdata = data;
+        gulong* pdata_end = data + nitems;
+        gulong* max_icon = NULL;
+        gulong max_w = 0, max_h = 0;
+
+        /* get the largest icon available. */
+        /* FIXME: should we try to find an icon whose size is closest to
+         * iw and ih to reduce unnecessary resizing? */
+        while(pdata + 2 < pdata_end)
+        {
+            gulong w = pdata[0];
+            gulong h = pdata[1];
+            gulong size = (w * h);
+
+            pdata += 2;
+            if( pdata + size > pdata_end ) /* corrupt icon */
+                break;
+
+            if( w > max_w && h > max_h )
+            {
+                max_icon = pdata;
+                max_w = w;
+                max_h = h;
+            }
+
+            /* rare special case: the desire size is the same as icon size */
+            if( iw == w && ih == h )
+                break;
+
+            pdata += size;
+        }
+
+        if( max_icon )
+        {
+            gulong len = max_w * max_h;
+            pixdata = g_new(guchar, len * 4);
+            p = pixdata;
+
+            i = 0;
+            while(i < len)
+            {
+                guint argb, rgba;
+                
+                argb = max_icon[i];
+                rgba = (argb << 8) | (argb >> 24);
+
+                *p = rgba >> 24;
+                ++p;
+                *p = (rgba >> 16) & 0xff;
+                ++p;
+                *p = (rgba >> 8) & 0xff;
+                ++p;
+                *p = rgba & 0xff;
+                ++p;
+
+                ++i;
+            }
+            
+            pixmap = gdk_pixbuf_new_from_data(pixdata,
+                                              GDK_COLORSPACE_RGB,
+                                              1, 8,
+                                              max_w, max_h, max_w * 4,
+                                              free_pixels,
+                                              NULL);
+        }
+	else
+	{
+	    result = -1;
+	}
+        XFree(data);
+	data=NULL;
+    }
+
+    if(result != Success)
+    {
+        LOG(LOG_WARN, "lxpanel : Can't read _NET_WM_ICON, try to read pixmap icon\n");
+
+        hints = XGetWMHints(GDK_DISPLAY(), tkwin);
+        result = (hints != NULL) ? Success : -1;
+
+        if(result == Success)
+        {
+            if ((hints->flags & IconPixmapHint))
+                xpixmap = hints->icon_pixmap;
+            if ((hints->flags & IconMaskHint))
+                xmask = hints->icon_mask;
+            XFree(hints);
+	    hints=NULL;
+            result = (xpixmap != None)?Success:-1;
+        }
+
+        if(result != Success)
+        {
+            Pixmap *icons = NULL;
+            LOG(LOG_WARN, "lxpanel : can't get icon using HINTS try to use KWM_WIN_ICON\n");
+            Atom kwin_win_icon_atom = gdk_x11_get_xatom_by_name("KWM_WIN_ICON");
+            result = XGetWindowProperty(GDK_DISPLAY(), tkwin,
+                                        kwin_win_icon_atom,
+                                        0, G_MAXLONG,
+                                        False,
+                                        kwin_win_icon_atom,
+                                        &type, &format, &nitems,
+                                        &bytes_after, (void*)&icons);
+            if(type != kwin_win_icon_atom)
+            {
+	        if( icons ) {
+                    XFree(icons);
+		    icons=NULL;
+		}
+                result = -1;
+            }
+            if(result == Success)
+            {
+                xpixmap = icons[0];
+                xmask   = icons[1];
+                result = (xpixmap != None) ? Success : -1;
+            }
+        }
+
+        if(result == Success)
+        {
+            result = XGetGeometry(GDK_DISPLAY(),
+                                  xpixmap, &win,
+                                  &sd, &sd, &w, &h,
+                                  (guint *)&sd, (guint *)&sd) ? Success : -1;
+        }
+
+        if(result != Success) 
+        {
+            LOG(LOG_WARN,"lxpanel : XGetGeometry failed for %x pixmap\n", (unsigned int)xpixmap);
+        }
+        else
+        {
+            DBG("tkwin=%x icon pixmap w=%d h=%d\n", tkwin, w, h);
+            pixmap = _wnck_gdk_pixbuf_get_from_pixmap (NULL, xpixmap, 0, 0, 0, 0, w, h);
+            result = pixmap?Success:-1;
+        }
+
+        if(result == Success)
+        {
+            if (xmask != None && XGetGeometry(GDK_DISPLAY(), xmask,
+                                              &win, &sd, &sd, &w, &h,
+                                              (guint *)&sd, (guint *)&sd))
+            {
+                mask = _wnck_gdk_pixbuf_get_from_pixmap (NULL, xmask, 0, 0, 0, 0, w, h);
+                if (mask)
+                {
+                    masked = apply_mask (pixmap, mask);
+                    g_object_unref (G_OBJECT (pixmap));
+                    g_object_unref (G_OBJECT (mask));
+                    pixmap = masked;
+                }
+            }
         }
     }
+
     if (!pixmap)
         RET(NULL);
+
     ret = gdk_pixbuf_scale_simple (pixmap, iw, ih, GDK_INTERP_TILES);
     g_object_unref(pixmap);
 
-    RET(ret);
+    return ret;
 }
 
 inline static GdkPixbuf*
@@ -572,18 +749,14 @@ tk_raise_window( task *tk, guint32 time )
         Xclimsg(GDK_ROOT_WINDOW(), a_NET_CURRENT_DESKTOP, tk->desktop, 0, 0, 0, 0);
         XSync (gdk_display, False);
     }
-    if(use_net_active) {
-        Xclimsg(tk->win, a_NET_ACTIVE_WINDOW, 2, time, 0, 0, 0);
-    }
-    else {
-        XRaiseWindow (GDK_DISPLAY(), tk->win);
-        XSetInputFocus (GDK_DISPLAY(), tk->win, RevertToNone, CurrentTime);
-    }
+    XSetInputFocus (GDK_DISPLAY(), tk->win, RevertToNone, CurrentTime);
+    XRaiseWindow (GDK_DISPLAY(), tk->win);
+    Xclimsg(tk->win, a_NET_ACTIVE_WINDOW, 2, time, 0, 0, 0);
     DBG("XRaiseWindow %x\n", tk->win);
 }
 
 static void
-tk_callback_leave( GtkWidget *widget, task *tk)
+on_tk_leave( GtkWidget *widget, task *tk)
 {
     ENTER;
 /*
@@ -595,7 +768,7 @@ tk_callback_leave( GtkWidget *widget, task *tk)
 
 
 static void
-tk_callback_enter( GtkWidget *widget, task *tk )
+on_tk_enter( GtkWidget *widget, task *tk )
 {
     ENTER;
 /*
@@ -615,7 +788,7 @@ static gboolean delay_active_win(task* tk)
 }
 
 static gboolean
-tk_callback_drag_motion( GtkWidget *widget,
+on_tk_drag_motion( GtkWidget *widget,
       GdkDragContext *drag_context,
       gint x, gint y,
       guint time, task *tk)
@@ -630,7 +803,7 @@ tk_callback_drag_motion( GtkWidget *widget,
 }
 
 static void
-tk_callback_drag_leave (GtkWidget *widget,
+on_tk_drag_leave (GtkWidget *widget,
       GdkDragContext *drag_context,
       guint time, task *tk)
 {
@@ -643,7 +816,7 @@ tk_callback_drag_leave (GtkWidget *widget,
 
 #if 0
 static gboolean
-tk_callback_expose(GtkWidget *widget, GdkEventExpose *event, task *tk)
+on_tk_expose(GtkWidget *widget, GdkEventExpose *event, task *tk)
 {
     GtkStateType state;
     ENTER;
@@ -678,7 +851,7 @@ tk_callback_expose(GtkWidget *widget, GdkEventExpose *event, task *tk)
 #endif
 
 static gint
-tk_callback_scroll_event (GtkWidget *widget, GdkEventScroll *event, task *tk)
+on_tk_scroll_event (GtkWidget *widget, GdkEventScroll *event, task *tk)
 {
     ENTER;
     if( ! tk->tb->use_mouse_wheel )
@@ -704,7 +877,7 @@ tk_callback_scroll_event (GtkWidget *widget, GdkEventScroll *event, task *tk)
 }
 
 static gboolean
-tk_callback_button_press_event(GtkWidget *widget, GdkEventButton *event, task *tk)
+on_tk_btn_press_event(GtkWidget *widget, GdkEventButton *event, task *tk)
 {
     if( event->type == GDK_BUTTON_PRESS && event->button == 3 )
     {
@@ -716,7 +889,7 @@ tk_callback_button_press_event(GtkWidget *widget, GdkEventButton *event, task *t
 }
 
 static gboolean
-tk_callback_button_release_event(GtkWidget *widget, GdkEventButton *event, task *tk)
+on_tk_btn_release_event(GtkWidget *widget, GdkEventButton *event, task *tk)
 {
     XWindowAttributes xwa;
 
@@ -777,7 +950,7 @@ tk_update(gpointer key, task *tk, taskbar *tb)
         gtk_widget_show(tk->button);
         if (tb->tooltips) {
             //DBG2("tip %x %s\n", tk->win, tk->name);
-            gtk_tooltips_set_tip(tb->tips, tk->button, tk->name, NULL);
+            gtk_widget_set_tooltip_text( tk->button, tk->name );
         }
     RET();
     }
@@ -801,6 +974,15 @@ tb_display(taskbar *tb)
         g_hash_table_foreach(tb->task_list, (GHFunc) tk_update, (gpointer) tb);
     RET();
 
+}
+
+static void on_tk_btn_size_allocate(GtkWidget* btn, GtkAllocation* alloc, task* tk)
+{
+    int x, y;
+    if( ! GTK_WIDGET_REALIZED(btn) )
+        return;
+    gdk_window_get_origin(GTK_BUTTON(btn)->event_window, &x, &y);
+    set_iconification_dest( tk->win, x, y, alloc->width, alloc->height );
 }
 
 static void
@@ -831,29 +1013,30 @@ tk_build_gui(taskbar *tb, task *tk)
     gtk_widget_show(tk->button);
     gtk_container_set_border_width(GTK_CONTAINER(tk->button), 0);
     gtk_widget_add_events (tk->button, GDK_BUTTON_RELEASE_MASK );
-    g_signal_connect(G_OBJECT(tk->button), "button_press_event",
-          G_CALLBACK(tk_callback_button_press_event), (gpointer)tk);
-    g_signal_connect(G_OBJECT(tk->button), "button_release_event",
-          G_CALLBACK(tk_callback_button_release_event), (gpointer)tk);
+    g_signal_connect(tk->button, "button_press_event",
+          G_CALLBACK(on_tk_btn_press_event), (gpointer)tk);
+    g_signal_connect(tk->button, "button_release_event",
+          G_CALLBACK(on_tk_btn_release_event), (gpointer)tk);
 /*
     g_signal_connect_after (G_OBJECT (tk->button), "leave",
-          G_CALLBACK (tk_callback_leave), (gpointer) tk);
+          G_CALLBACK (on_tk_leave), (gpointer) tk);
     g_signal_connect_after (G_OBJECT (tk->button), "enter",
-          G_CALLBACK (tk_callback_enter), (gpointer) tk);
+          G_CALLBACK (on_tk_enter), (gpointer) tk);
 */
+    g_signal_connect(tk->button, "size-allocate",
+          G_CALLBACK(on_tk_btn_size_allocate), (gpointer)tk);
 
 #if 0
     g_signal_connect_after (G_OBJECT (tk->button), "expose-event",
-          G_CALLBACK (tk_callback_expose), (gpointer) tk);
+          G_CALLBACK (on_tk_expose), (gpointer) tk);
 #endif
     gtk_drag_dest_set( tk->button, 0, NULL, 0, 0);
     g_signal_connect (G_OBJECT (tk->button), "drag-motion",
-          G_CALLBACK (tk_callback_drag_motion), (gpointer) tk);
+          G_CALLBACK (on_tk_drag_motion), (gpointer) tk);
     g_signal_connect (G_OBJECT (tk->button), "drag-leave",
-          G_CALLBACK (tk_callback_drag_leave), (gpointer) tk);
+          G_CALLBACK (on_tk_drag_leave), (gpointer) tk);
     g_signal_connect_after(G_OBJECT(tk->button), "scroll-event",
-            G_CALLBACK(tk_callback_scroll_event), (gpointer)tk);
-
+            G_CALLBACK(on_tk_scroll_event), (gpointer)tk);
 
     /* pix and name */
     w1 = tb->plug->panel->my_box_new(FALSE, 1);
@@ -1207,7 +1390,7 @@ static void
 menu_move_to_workspace( GtkWidget* mi, taskbar* tb )
 {
     GdkWindow* win;
-    int num = GPOINTER_TO_INT( g_object_get_data( mi, "num" ) );
+    int num = GPOINTER_TO_INT( g_object_get_data( G_OBJECT(mi), "num" ) );
     _wnck_change_workspace( DefaultScreenOfDisplay(GDK_DISPLAY()), tb->menutask->win, num );
 }
 
@@ -1244,14 +1427,14 @@ taskbar_make_menu(taskbar *tb)
         {
             g_snprintf( label, 128, _("Workspace %d"), i);
             mi = gtk_menu_item_new_with_label( label );
-            g_object_set_data( mi, "num", GINT_TO_POINTER(i - 1) );
+            g_object_set_data( G_OBJECT(mi), "num", GINT_TO_POINTER(i - 1) );
             g_signal_connect( mi, "activate", G_CALLBACK(menu_move_to_workspace), tb );
             gtk_menu_shell_append( (GtkMenuShell*)workspace_menu, mi );
         }
         gtk_menu_shell_append( GTK_MENU_SHELL (workspace_menu),
                                                    gtk_separator_menu_item_new());
         mi = gtk_menu_item_new_with_label(_("All workspaces"));
-        g_object_set_data( mi, "num", GINT_TO_POINTER(ALL_WORKSPACES) );
+        g_object_set_data( G_OBJECT(mi), "num", GINT_TO_POINTER(ALL_WORKSPACES) );
         g_signal_connect( mi, "activate", G_CALLBACK(menu_move_to_workspace), tb );
         gtk_menu_shell_append( (GtkMenuShell*)workspace_menu, mi );
 
@@ -1260,7 +1443,7 @@ taskbar_make_menu(taskbar *tb)
         mi = gtk_menu_item_new_with_label (_("Move to Workspace"));
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), mi);
 
-        gtk_menu_item_set_submenu( mi, workspace_menu );
+        gtk_menu_item_set_submenu( GTK_MENU_ITEM(mi), workspace_menu );
         workspace_menu = mi;
     }
 
@@ -1320,16 +1503,6 @@ taskbar_build_gui(Plugin *p)
     tb->cur_desk = get_net_current_desktop();
     tb->focused = NULL;
 
-    /* FIXME:
-        Can we delete the tooltip object if tooltips is not enabled?
-    if (tb->tooltips) */
-    tb->tips = gtk_tooltips_new();
-#if GLIB_CHECK_VERSION( 2, 10, 0 )
-    g_object_ref_sink( tb->tips );
-#else
-    g_object_ref( tb->tips );
-    gtk_object_sink( tb->tips );
-#endif
     tb->menu = taskbar_make_menu(tb);
     gtk_container_set_border_width(GTK_CONTAINER(p->pwid), 0);
     gtk_widget_show_all(tb->bar);
@@ -1462,7 +1635,6 @@ taskbar_destructor(Plugin *p)
     g_signal_handlers_disconnect_by_func(G_OBJECT (fbev), tb_net_number_of_desktops, tb);
     g_signal_handlers_disconnect_by_func(G_OBJECT (fbev), tb_net_client_list, tb);
     gdk_window_remove_filter(NULL, (GdkFilterFunc)tb_event_filter, tb );
-    g_object_unref( tb->tips );
     g_hash_table_destroy(tb->task_list);
     /* The widget is destroyed in plugin_stop().
     gtk_widget_destroy(tb->bar);
@@ -1488,13 +1660,16 @@ static void apply_config( Plugin* p )
 {
     taskbar *tb = (taskbar *)p->priv;
     if( tb->tooltips )
-        gtk_tooltips_enable(tb->tips);
+        gtk_container_foreach( GTK_CONTAINER(tb->bar), (GtkCallback)gtk_widget_set_has_tooltip, (gpointer)TRUE );
     else
-        gtk_tooltips_disable(tb->tips);
-     if (tb->icons_only) {
+        gtk_container_foreach( GTK_CONTAINER(tb->bar), (GtkCallback)gtk_widget_set_has_tooltip, (gpointer)FALSE );
+
+    if (tb->icons_only)
+    {
         gtk_bar_set_max_child_size(GTK_BAR(tb->bar),
-              GTK_WIDGET(p->panel->box)->allocation.height -2);
-     } else
+          GTK_WIDGET(p->panel->box)->allocation.height -2);
+    }
+    else
         gtk_bar_set_max_child_size(GTK_BAR(tb->bar), tb->task_width_max);
 
     gtk_box_set_spacing( GTK_BOX(tb->bar), tb->spacing );
@@ -1513,17 +1688,17 @@ static void taskbar_config( Plugin* p, GtkWindow* parent )
                 _(p->class->name),
                 GTK_WIDGET(parent),
                 (GSourceFunc) apply_config, (gpointer) p,
-                _("Show tooltips"), &tb->tooltips, G_TYPE_BOOLEAN,
-                _("Icons only"), &tb->icons_only, G_TYPE_BOOLEAN,
-                 _("Flat Buttons"), &tb->flat_button, G_TYPE_BOOLEAN,
-               _("Accept SkipPager"), &tb->accept_skip_pager, G_TYPE_BOOLEAN,
-                _("Show Iconified windows"), &tb->show_iconified, G_TYPE_BOOLEAN,
-                _("Show mapped windows"), &tb->show_mapped, G_TYPE_BOOLEAN,
-                _("Show windows from all desktops"), &tb->show_all_desks, G_TYPE_BOOLEAN,
-                _("Use mouse wheel"), &tb->use_mouse_wheel, G_TYPE_BOOLEAN,
-                _("Flash when there is any window requiring attention"), &tb->use_urgency_hint, G_TYPE_BOOLEAN,
-                _("Max width of task button"), &tb->task_width_max, G_TYPE_INT,
-                _("Spacing"), &tb->spacing, G_TYPE_INT,
+                _("Show tooltips"), &tb->tooltips, CONF_TYPE_BOOL,
+                _("Icons only"), &tb->icons_only, CONF_TYPE_BOOL,
+                 _("Flat Buttons"), &tb->flat_button, CONF_TYPE_BOOL,
+               _("Accept SkipPager"), &tb->accept_skip_pager, CONF_TYPE_BOOL,
+                _("Show Iconified windows"), &tb->show_iconified, CONF_TYPE_BOOL,
+                _("Show mapped windows"), &tb->show_mapped, CONF_TYPE_BOOL,
+                _("Show windows from all desktops"), &tb->show_all_desks, CONF_TYPE_BOOL,
+                _("Use mouse wheel"), &tb->use_mouse_wheel, CONF_TYPE_BOOL,
+                _("Flash when there is any window requiring attention"), &tb->use_urgency_hint, CONF_TYPE_BOOL,
+                _("Max width of task button"), &tb->task_width_max, CONF_TYPE_INT,
+                _("Spacing"), &tb->spacing, CONF_TYPE_INT,
                 NULL );
     gtk_window_present( GTK_WINDOW(dlg) );
 }

@@ -22,7 +22,7 @@
 
 #include <glib/gi18n.h>
 #include <stdlib.h>
-#include <stdio.h>
+#include <glib/gstdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -44,10 +44,10 @@ static gchar *cfgfile = NULL;
 static gchar version[] = VERSION;
 gchar *cprofile = "default";
 
+static GtkWindowGroup* win_grp; /* window group used to limit the scope of model dialog. */
+
 static int config = 0;
 FbEv *fbev = NULL;
-
-int log_level;
 
 GSList* all_panels = NULL;  /* a single-linked list storing all panels */
 
@@ -55,6 +55,8 @@ gboolean is_restarting = FALSE;
 
 static int panel_start( Panel *p, char **fp );
 void panel_config_save(Panel* panel);   /* defined in configurator.c */
+
+gboolean is_in_lxde = FALSE;
 
 /****************************************************
  *         panel's handlers for WM events           *
@@ -153,12 +155,14 @@ void panel_configure(Panel* p, int sel_page );
 /* built-in commands, defined in configurator.c */
 void restart(void);
 void gtk_run(void);
+void panel_destroy(Panel *p);
 
 static void process_client_msg ( XClientMessageEvent* ev )
 {
     int cmd = ev->data.b[0];
     switch( cmd )
     {
+#ifndef DISABLE_MENU
         case LXPANEL_CMD_SYS_MENU:
         {
             GSList* l;
@@ -176,9 +180,12 @@ static void process_client_msg ( XClientMessageEvent* ev )
             }
             break;
         }
+#endif
+#ifndef DISABLE_MENU
         case LXPANEL_CMD_RUN:
             gtk_run();
             break;
+#endif
         case LXPANEL_CMD_CONFIG:
             //FIXME: configure();
             break;
@@ -350,16 +357,20 @@ void panel_update_background( Panel* p )
 
 static gboolean delay_update_background( Panel* p )
 {
-    /* FIXME: can this work? */
-    gdk_display_sync( gtk_widget_get_display(p->topgwin) );
-    panel_update_background( p );
+    /* Panel could be destroyed while background update scheduled */
+    if ( p->topgwin && GTK_WIDGET_REALIZED ( p->topgwin ) ) {
+	gdk_display_sync( gtk_widget_get_display(p->topgwin) );
+	panel_update_background( p );
+    }
+    
     return FALSE;
 }
 
 static void
 panel_realize(GtkWidget *widget, Panel *p)
 {
-    g_idle_add_full( G_PRIORITY_LOW, delay_update_background, p, NULL );
+    g_idle_add_full( G_PRIORITY_LOW, 
+            (GSourceFunc)delay_update_background, p, NULL );
 }
 
 static void
@@ -367,7 +378,8 @@ panel_style_set(GtkWidget *widget, GtkStyle* prev, Panel *p)
 {
     /* FIXME: This dirty hack is used to fix the background of systray... */
     if( GTK_WIDGET_REALIZED( widget ) )
-        g_idle_add_full( G_PRIORITY_LOW, delay_update_background, p, NULL );
+        g_idle_add_full( G_PRIORITY_LOW, 
+                (GSourceFunc)delay_update_background, p, NULL );
 }
 
 static gint
@@ -433,12 +445,11 @@ static gint
 panel_press_button_event(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
     GdkEventButton *event_button;
-    GtkWidget* img;
 
     g_return_val_if_fail (event != NULL, FALSE);
     event_button = (GdkEventButton *)event;
     if (event_button->button == 3) {
-            GtkWidget *menu;
+            GtkMenu *menu;
             Panel* panel = (Panel*)user_data;
             /* create menu */
             menu = lxpanel_get_panel_menu( panel, NULL, FALSE );
@@ -451,7 +462,7 @@ panel_press_button_event(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 
 static void panel_popupmenu_config_plugin( GtkMenuItem* item, Plugin* plugin )
 {
-    plugin->class->config( plugin, plugin->panel->topgwin );
+    plugin->class->config( plugin, GTK_WINDOW(plugin->panel->topgwin) );
 
     /* FIXME: this should be more elegant */
     plugin->panel->config_changed = TRUE;
@@ -619,7 +630,7 @@ static void panel_popupmenu_create_panel( GtkMenuItem* item, Panel* panel )
     const char* edges[]={N_("Left"), N_("Right"), N_("Top"), N_("Bottom")};
     GtkWidget* dlg = gtk_dialog_new_with_buttons(
                                         _("Create New Panel"),
-                                        panel->topgwin,
+                                        GTK_WINDOW(panel->topgwin),
                                         GTK_DIALOG_MODAL,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                         GTK_STOCK_OK, GTK_RESPONSE_OK, NULL );
@@ -633,7 +644,7 @@ static void panel_popupmenu_create_panel( GtkMenuItem* item, Panel* panel )
         GSList* l;
         btns[ i ] = gtk_radio_button_new_with_label( group, _(edges[i]) );
         group = gtk_radio_button_get_group( (GtkRadioButton*)btns[ i ] );
-        gtk_box_pack_start( box, btns[ i ], FALSE, TRUE, 2 );
+        gtk_box_pack_start( GTK_BOX(box), btns[ i ], FALSE, TRUE, 2 );
         for( l = all_panels; l; l = l->next )
         {
             Panel* p = (Panel*)l->data;
@@ -645,7 +656,7 @@ static void panel_popupmenu_create_panel( GtkMenuItem* item, Panel* panel )
     }
     gtk_widget_show_all( dlg );
 
-    if( gtk_dialog_run( dlg ) == GTK_RESPONSE_OK )
+    if( gtk_dialog_run( GTK_DIALOG(dlg) ) == GTK_RESPONSE_OK )
     {
         char* pfp;
         char default_conf[128];
@@ -678,7 +689,7 @@ static void panel_popupmenu_delete_panel( GtkMenuItem* item, Panel* panel )
 {
     GtkWidget* dlg;
     gboolean ok;
-    dlg = gtk_message_dialog_new_with_markup( panel->topgwin,
+    dlg = gtk_message_dialog_new_with_markup( GTK_WINDOW(panel->topgwin),
                                                     GTK_DIALOG_MODAL,
                                                     GTK_MESSAGE_QUESTION,
                                                     GTK_BUTTONS_OK_CANCEL,
@@ -701,11 +712,13 @@ static void panel_popupmenu_delete_panel( GtkMenuItem* item, Panel* panel )
     }
 }
 
-extern GtkWidget* lxpanel_get_panel_menu( Panel* panel, Plugin* plugin, gboolean use_sub_menu )
+extern GtkMenu* lxpanel_get_panel_menu( Panel* panel, Plugin* plugin, gboolean use_sub_menu )
 {
-    GtkWidget *ret,*menu, *menu_item, *img;
+    GtkWidget  *menu_item, *img;
+    GtkMenu *ret,*menu;
+    
     char* tmp;
-    ret = menu = gtk_menu_new();
+    ret = menu = GTK_MENU(gtk_menu_new());
 
 /*
     img = gtk_image_new_from_stock( GTK_STOCK_ADD, GTK_ICON_SIZE_MENU );
@@ -762,12 +775,12 @@ extern GtkWidget* lxpanel_get_panel_menu( Panel* panel, Plugin* plugin, gboolean
 
     if( use_sub_menu )
     {
-        ret = gtk_menu_new();
+        ret = GTK_MENU(gtk_menu_new());
         menu_item = gtk_image_menu_item_new_with_label(_("Panel"));
         gtk_menu_shell_append(GTK_MENU_SHELL(ret), menu_item);
-        gtk_menu_item_set_submenu( menu_item, menu );
+        gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), GTK_WIDGET(menu) );
 
-        gtk_widget_show_all(ret);
+        gtk_widget_show_all(GTK_WIDGET(ret));
     }
 
     if( plugin )
@@ -787,13 +800,11 @@ extern GtkWidget* lxpanel_get_panel_menu( Panel* panel, Plugin* plugin, gboolean
             gtk_widget_set_sensitive( menu_item, FALSE );
     }
 
-    gtk_widget_show_all(menu);
+    gtk_widget_show_all(GTK_WIDGET(menu));
 
     g_signal_connect( ret, "selection-done", G_CALLBACK(gtk_widget_destroy), NULL );
     return ret;
 }
-
-
 
 /****************************************************
  *         panel creation                           *
@@ -835,6 +846,8 @@ panel_start_gui(Panel *p)
     gtk_window_set_title(GTK_WINDOW(p->topgwin), "panel");
     gtk_window_set_position(GTK_WINDOW(p->topgwin), GTK_WIN_POS_NONE);
     gtk_window_set_decorated(GTK_WINDOW(p->topgwin), FALSE);
+
+    gtk_window_group_add_window( win_grp, (GtkWindow*)p->topgwin );
 
     g_signal_connect(G_OBJECT(p->topgwin), "delete-event",
           G_CALLBACK(panel_delete_event), p);
@@ -904,14 +917,6 @@ panel_start_gui(Panel *p)
     calculate_position(p);
     gdk_window_move_resize(p->topgwin->window, p->ax, p->ay, p->aw, p->ah);
     panel_set_wm_strut(p);
-
-    p->tooltips = gtk_tooltips_new();
-#if GLIB_CHECK_VERSION( 2, 10, 0 )
-    g_object_ref_sink( p->tooltips );
-#else
-    g_object_ref( p->tooltips );
-    gtk_object_sink( p->tooltips );
-#endif
 
     RET();
 }
@@ -1197,8 +1202,7 @@ void panel_destroy(Panel *p)
         } while ( g_source_remove_by_user_data( p->system_menus ) );
     }
 
-    if( p->tooltips )
-        g_object_unref( p->tooltips );
+    gtk_window_group_remove_window( win_grp, GTK_WINDOW(  p->topgwin ) );
 
     if( p->topgwin )
         gtk_widget_destroy(p->topgwin);
@@ -1218,7 +1222,7 @@ Panel* panel_new( const char* config_file, const char* config_name )
 {
     char *fp, *pfp; /* point to current position of profile data in memory */
     Panel* panel = NULL;
-    char* ret;
+
     if( G_LIKELY(config_file) )
     {
         g_file_get_contents( config_file, &fp, NULL, NULL );
@@ -1339,7 +1343,7 @@ static gboolean start_all_panels( )
     {
         char* panel_dir = get_config_file( cprofile, "panels", is_global );
         GDir* dir = g_dir_open( panel_dir, 0, NULL );
-        char* name;
+        const gchar* name;
 
         if( ! dir )
         {
@@ -1367,6 +1371,7 @@ void free_global_config();
 int main(int argc, char *argv[], char *env[])
 {
     int i;
+    const char* session_name;
 
     setlocale(LC_CTYPE, "");
 
@@ -1382,6 +1387,9 @@ int main(int argc, char *argv[], char *env[])
     XSetErrorHandler((XErrorHandler) handle_error);
 
     resolve_atoms();
+
+    session_name = g_getenv("DESKTOP_SESSION");
+    is_in_lxde = session_name && (0 == strcmp(session_name, "LXDE"));
 
     for (i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
@@ -1428,6 +1436,7 @@ int main(int argc, char *argv[], char *env[])
                                        PACKAGE_DATA_DIR "/lxpanel/images" );
 
     fbev = fb_ev_new();
+    win_grp = gtk_window_group_new();
 
 restart:
     is_restarting = FALSE;
@@ -1463,6 +1472,7 @@ restart:
     if( is_restarting )
         goto restart;
 
+    g_object_unref(win_grp);
     g_object_unref(fbev);
 
     return 0;

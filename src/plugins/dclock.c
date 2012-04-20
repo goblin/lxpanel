@@ -41,7 +41,6 @@ typedef struct {
     GtkWidget *main;
     GtkWidget *clockw;
     GtkWidget *calwin;
-    GtkTooltips *tip;
     char *tfmt;
     char *cfmt;
     char *action;
@@ -71,7 +70,7 @@ static GtkWidget *create_calendar()
     gtk_window_set_position(GTK_WINDOW(win), GTK_WIN_POS_MOUSE);
     gtk_window_stick (GTK_WINDOW(win));
 
-    GtkVBox* box = gtk_vbox_new(FALSE, 0);
+    GtkVBox* box = (GtkVBox*)gtk_vbox_new(FALSE, 0);
 
     /* calendar */
     calendar = gtk_calendar_new();
@@ -80,19 +79,19 @@ static GtkWidget *create_calendar()
                                  GTK_CALENDAR_SHOW_DAY_NAMES |
                                  GTK_CALENDAR_SHOW_HEADING);
 //    gtk_container_add(GTK_CONTAINER(win), calendar);
-    gtk_box_pack_start_defaults( box, calendar );
-    gtk_container_add(GTK_CONTAINER(win), box);
+    gtk_box_pack_start_defaults( GTK_BOX(box), calendar );
+    gtk_container_add(GTK_CONTAINER(win), GTK_WIDGET(box));
 
     gtk_widget_show_all(win);
 
     RET(win);
 }
 
-static int
+static void *
 actionProcess( void *arg )
 {
     ENTER;
-    RET(system((char *) arg));
+    RET((void *)system((char *) arg));
 }
 
 static  gboolean
@@ -120,7 +119,7 @@ clicked( GtkWidget *widget, GdkEventButton* evt, Plugin* plugin)
             dc->calwin = NULL;
         }
     }
-    RET2(TRUE);
+    RET2(FALSE);
 }
 
 static gint
@@ -157,7 +156,7 @@ clock_update(gpointer data )
         strftime (output, sizeof(output),
                   (dc->tfmt ? dc->tfmt : DEFAULT_TIP_FORMAT), detail);
             if ((utf8 = g_locale_to_utf8(output, -1, NULL, NULL, NULL))) {
-                gtk_tooltips_set_tip(dc->tip, dc->main, utf8, NULL);
+                gtk_widget_set_tooltip_text(dc->main, utf8);
                 g_free(utf8);
             }
     }
@@ -180,7 +179,8 @@ dclock_constructor(Plugin *p, char** fp)
     dc->panel = p->panel;
 
     s.len = 256;
-    dc->cfmt = dc->tfmt = dc->action = dc->bold = 0;
+    dc->cfmt = dc->tfmt = dc->action = NULL;
+    dc->bold = 0;
     dc->bold = TRUE;
     dc->cal_show = FALSE;
     if( fp )
@@ -220,14 +220,6 @@ dclock_constructor(Plugin *p, char** fp)
     gtk_container_add(GTK_CONTAINER(dc->main), dc->clockw);
     gtk_widget_show_all(dc->main);
 
-    dc->tip = p->panel->tooltips;
-#if GLIB_CHECK_VERSION( 2, 10, 0 )
-    g_object_ref_sink( dc->tip );
-#else
-    g_object_ref( dc->tip );
-    gtk_object_sink( dc->tip );
-#endif
-
     dc->timer = g_timeout_add(1000, (GSourceFunc) clock_update, (gpointer)dc);
 
     clock_update( dc );
@@ -256,8 +248,10 @@ dclock_destructor(Plugin *p)
         g_source_remove(dc->timer);
 
     /* g_object_unref( dc->tip ); */
-	gtk_widget_destroy(dc->clockw);
-	gtk_widget_destroy(dc->main);
+    gtk_widget_destroy(dc->clockw);
+
+    /* p->pwid = dc->main;
+    gtk_widget_destroy(dc->main); */
     g_free(dc->cfmt);
     g_free(dc->tfmt);
     g_free(dc->action);
@@ -282,10 +276,10 @@ static void dclock_config( Plugin *p, GtkWindow* parent )
     dlg = create_generic_config_dlg( _(p->class->name),
                                      GTK_WIDGET(parent),
                                     (GSourceFunc) apply_config, (gpointer) p,
-                                     _("Clock Format"), &dc->cfmt, G_TYPE_STRING,
-                                     _("Tooltip Format"), &dc->tfmt, G_TYPE_STRING,
-                                     _("Action"), &dc->action, G_TYPE_STRING,
-                                     _("Bold font"), &dc->bold, G_TYPE_BOOLEAN,
+                                     _("Clock Format"), &dc->cfmt, CONF_TYPE_STR,
+                                     _("Tooltip Format"), &dc->tfmt, CONF_TYPE_STR,
+                                     _("Action"), &dc->action, CONF_TYPE_STR,
+                                     _("Bold font"), &dc->bold, CONF_TYPE_BOOL,
                                      NULL );
     gtk_window_present( GTK_WINDOW(dlg) );
 }
