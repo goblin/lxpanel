@@ -202,13 +202,18 @@ wireless_parse_scanning_event(struct iw_event *event, ap_info *oldinfo)
 		info->apaddr = g_strdup(iw_saether_ntop(&event->u.ap_addr, buf));
 		info->en_method = NS_WIRELESS_AUTH_OFF;
 		info->haskey = FALSE;
+		info->key_mgmt = NS_IW_IE_KEY_MGMT_NONE;
+		info->group = NS_IW_IE_CIPHER_TKIP;
+		info->pairwise = NS_IW_IE_CIPHER_TKIP;
 	} else {
 		info = oldinfo;
 	}
 
     switch (event->cmd) {
         case SIOCGIWESSID: /* ESSID */
-			if (!event->u.essid.flags||event->u.essid.length==0) {
+			if (!event->u.essid.flags
+				|| event->u.essid.length==0
+				|| strlen(event->u.essid.pointer)==0) {
 				info->essid = NULL;
 			} else {
 				info->essid = g_strndup(event->u.essid.pointer, event->u.essid.length);
@@ -323,7 +328,8 @@ APLIST *wireless_scanning(int iwsockfd, const char *ifname)
 	fd_set rfds; /* File descriptors for select */
 	int selfd;
 	int ret;
-	char buffer[IW_SCAN_MAX_DATA];
+	int bufferlen = IW_SCAN_MAX_DATA;
+	int timeout = 15000000;
 
 	strncpy(wrq.ifr_name, ifname, IFNAMSIZ);
 
@@ -335,7 +341,7 @@ APLIST *wireless_scanning(int iwsockfd, const char *ifname)
 		return NULL;
 
 	/* Initiate Scanning */
-	wrq.u.data.pointer = buffer;
+	wrq.u.data.pointer = malloc(sizeof(char)*IW_SCAN_MAX_DATA);
 	wrq.u.data.length = IW_SCAN_MAX_DATA;
 	wrq.u.data.flags = 0;
 
@@ -354,9 +360,26 @@ APLIST *wireless_scanning(int iwsockfd, const char *ifname)
 			if (errno == EAGAIN) { /* not yet ready */
 				FD_ZERO(&rfds);
 				selfd = -1;
+				ret = select(selfd + 1, &rfds, NULL, NULL, &tv);
+				if (ret==0) {
+					tv.tv_usec = 100000;
+					timeout -= tv.tv_usec;
+					if (timeout>0)
+						continue;
+				} else if (ret<0) {
+					if (errno == EAGAIN || errno == EINTR)
+						continue;
+				}
 
-				if (select(selfd + 1, &rfds, NULL, NULL, &tv)==0)
-					continue; /* timeout */
+				break;
+			} else if ((errno == E2BIG) && (range.we_version_compiled > 16)) {
+				if(wrq.u.data.length > bufferlen)
+					bufferlen = wrq.u.data.length;
+				else
+					bufferlen *= 2;
+
+				wrq.u.data.pointer = realloc(wrq.u.data.pointer, bufferlen);
+				continue;
 			} else {
 				break;
 			}
@@ -366,7 +389,7 @@ APLIST *wireless_scanning(int iwsockfd, const char *ifname)
 			break;
 
 		/* Initializing event */
-		iw_init_event_stream(&stream, buffer, wrq.u.data.length); 
+		iw_init_event_stream(&stream, wrq.u.data.pointer, wrq.u.data.length); 
 		do {
 			ret = iw_extract_event_stream(&stream, &event, range.we_version_compiled);
 			if (ret > 0) {
@@ -382,6 +405,8 @@ APLIST *wireless_scanning(int iwsockfd, const char *ifname)
 				ap->info = wireless_parse_scanning_event(&event, ap->info);
 			}
 		} while (ret > 0);
+
+		break;
 	}
 
 	return ap;

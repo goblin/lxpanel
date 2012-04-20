@@ -50,7 +50,9 @@
 #include "glib-mem.h" /* compatibility macros for g_slice* */
 
 #define BATTERY_DIRECTORY "/proc/acpi/battery/" /* must be slash-terminated */
+#define BATTERY_SYSFS_DIRECTORY "/sys/class/power_supply/"
 #define AC_ADAPTER_STATE_FILE "/proc/acpi/ac_adapter/AC/state"
+#define AC_ADAPTER_STATE_SYSFS_FILE "/sys/class/power_supply/AC0/online"
 
 /* The last MAX_SAMPLES samples are averaged when charge rates are evaluated.
    This helps prevent spikes in the "time left" values the user sees. */
@@ -102,6 +104,7 @@ typedef struct {
     sem_t alarmProcessLock;
     GList* batteries;
     gboolean has_ac_adapter;
+    gboolean use_sysfs;
 } batt;
 
 
@@ -119,62 +122,102 @@ static void batt_info_free( batt_info* bi )
     g_slice_free( batt_info, bi );
 }
 
-static gboolean get_batt_info( batt_info* bi )
+static gboolean get_batt_info( batt_info* bi, gboolean use_sysfs )
 {
     FILE *info;
     char buf[ 256 ];
 
     /* Open the info file */
-    g_snprintf(buf, 256, "%s%s/info", BATTERY_DIRECTORY, bi->name);
+    if (use_sysfs)
+        g_snprintf(buf, 256, "%s%s/charge_full", BATTERY_SYSFS_DIRECTORY, bi->name);
+    else
+        g_snprintf(buf, 256, "%s%s/info", BATTERY_DIRECTORY, bi->name);
     if ((info = fopen(buf, "r"))) {
         /* Read the file until the battery's capacity is found or until
            there are no more lines to be read */
-        while( fgets(buf, 256, info) &&
-                ! sscanf(buf, "last full capacity: %d",
-                &bi->capacity) );
+	if (use_sysfs)
+            while( fgets(buf, 256, info) &&
+                    ! sscanf(buf, "%d", &bi->capacity) );
+	else
+            while( fgets(buf, 256, info) &&
+                    ! sscanf(buf, "last full capacity: %d",
+                    &bi->capacity) );
         fclose(info);
         return TRUE;
     }
     return FALSE;
 }
 
-static gboolean get_batt_state( batt_info* bi )
+static gboolean get_batt_state( batt_info* bi, gboolean use_sysfs )
 {
     FILE *state;
     char buf[ 512 ];
-
-    g_snprintf( buf, 512, "%s%s/state", BATTERY_DIRECTORY, bi->name );
+    
+    if (use_sysfs)
+        g_snprintf( buf, 512, "%s%s/uevent", BATTERY_SYSFS_DIRECTORY, bi->name );
+    else
+        g_snprintf( buf, 512, "%s%s/state", BATTERY_DIRECTORY, bi->name );
     if((state = fopen( buf, "r"))) {
         char *pstr;
         fread(buf, sizeof(buf), 1, state);
 
         char thisState = 'c';
 
-        /* Read the file until the battery's charging state is found or
-           until there are no more lines to be read */
-        if (pstr = strstr(buf, "charging state:"))
-            thisState = *(pstr + 25);
+        if (use_sysfs) {
+            /* Read the file until the battery's charging state is found or
+               until there are no more lines to be read */
+            if (pstr = strstr(buf, "POWER_SUPPLY_STATUS="))
+                thisState = *(pstr + 20);
 
-        /* Read the file until the battery's charge/discharge rate is
-           found or until there are no more lines to be read */
-        if (pstr = strstr(buf, "present rate:")) {
-            pstr += 25;
-            sscanf (pstr, "%d",&bi->rate );
+            /* Read the file until the battery's charge/discharge rate is
+               found or until there are no more lines to be read */
+            if (pstr = strstr(buf, "POWER_SUPPLY_CURRENT_NOW=")) {
+                pstr += 25;
+                sscanf (pstr, "%d",&bi->rate );
 
-            if( bi->rate < 0 )
-                bi->rate = 0;
+                if( bi->rate < 0 )
+                    bi->rate = 0;
+            }
+
+            /* Read the file until the battery's charge is found or until
+               there are no more lines to be read */
+            if (pstr = strstr (buf, "POWER_SUPPLY_CHARGE_NOW=")) {
+                pstr += 24;
+                sscanf (pstr, "%d",&bi->charge);
+            }
+
+            /* thisState will be 'c' if the batter is charging and 'd'
+               otherwise */
+            bi->is_charging = !( thisState - 'C' );
+        } else {
+            /* Read the file until the battery's charging state is found or
+               until there are no more lines to be read */
+            if (pstr = strstr(buf, "charging state:"))
+                thisState = *(pstr + 25);
+
+            /* Read the file until the battery's charge/discharge rate is
+               found or until there are no more lines to be read */
+            if (pstr = strstr(buf, "present rate:")) {
+                pstr += 25;
+                sscanf (pstr, "%d",&bi->rate );
+
+                if( bi->rate < 0 )
+                    bi->rate = 0;
+            }
+
+            /* Read the file until the battery's charge is found or until
+               there are no more lines to be read */
+            if (pstr = strstr (buf, "remaining capacity")) {
+                pstr += 25;
+                sscanf (pstr, "%d",&bi->charge);
+            }
+	    
+            /* thisState will be 'c' if the batter is charging and 'd'
+               otherwise */
+            bi->is_charging = !( thisState - 'c' );
         }
 
-        /* Read the file until the battery's charge is found or until
-           there are no more lines to be read */
-        if (pstr = strstr (buf, "remaining capacity")) {
-            pstr += 25;
-            sscanf (pstr, "%d",&bi->charge);
-        }
 
-        /* thisState will be 'c' if the batter is charging and 'd'
-           otherwise */
-        bi->is_charging = !( thisState - 'c' );
 
         fclose(state);
         return TRUE;
@@ -187,10 +230,21 @@ static gboolean check_ac_adapter( batt* b )
     FILE *state;
     char buf[ 256 ];
     char* pstr;
+    b->use_sysfs = FALSE;
 
-    if ((state = fopen( AC_ADAPTER_STATE_FILE, "r"))) {
-        gboolean has_ac_adapter = FALSE;
+    if (!(state = fopen( AC_ADAPTER_STATE_FILE, "r"))) {
+        if ((state = fopen( AC_ADAPTER_STATE_SYSFS_FILE, "r"))) {
+	    b->use_sysfs = TRUE;
+        } else {
+            return FALSE;
+        }
+    }
 
+    gboolean has_ac_adapter = FALSE;
+    if (b->use_sysfs) {
+        while( fgets(buf, 256, state) &&
+                ! sscanf(buf, "%d", &has_ac_adapter) );
+    } else {
         while( fgets(buf, 256, state) &&
                 ! ( pstr = strstr(buf, "state:") ) );
         if( pstr )
@@ -201,20 +255,20 @@ static gboolean check_ac_adapter( batt* b )
             if( pstr[0] == 'o' && pstr[1] == 'n' )
                 has_ac_adapter = TRUE;
         }
-        fclose(state);
-
-        /* if the state of AC adapter changed, is_charging of the batteries might change, too. */
-        if( has_ac_adapter != b->has_ac_adapter )
-        {
-            /* g_debug( "ac_state_changed: %d", has_ac_adapter ); */
-            b->has_ac_adapter = has_ac_adapter;
-            /* update the state of all batteries */
-            g_list_foreach( b->batteries, (GFunc)get_batt_state, NULL );
-            update_display( b, TRUE );
-        }
-        return TRUE;
     }
-    return FALSE;
+
+    fclose(state);
+
+    /* if the state of AC adapter changed, is_charging of the batteries might change, too. */
+    if( has_ac_adapter != b->has_ac_adapter )
+    {
+        /* g_debug( "ac_state_changed: %d", has_ac_adapter ); */
+        b->has_ac_adapter = has_ac_adapter;
+        /* update the state of all batteries */
+        g_list_foreach( b->batteries, (GFunc)get_batt_state, b->use_sysfs );
+        update_display( b, TRUE );
+    }
+    return TRUE;
 }
 
 /* alarmProcess takes the address of a dynamically allocated alarm struct (which
@@ -338,15 +392,22 @@ void update_display(batt *b, gboolean repaint) {
                 snprintf(tooltip, 256,
                         _("Battery: %d%% charged, %s"),
                         capacity ? charge * 100 / capacity : 0,
-                        (charge >= capacity) ? _("charging finished") : _("not charging") );
+                        (charge >= capacity) ? _("charging finished") : _("charging") );
 
+        } else {
+            /* if we have enough rate information for battery */
+            if (rate) {
+                snprintf(tooltip, 256,
+                        _("Battery: %d%% charged, %d:%02d left"),
+                        capacity ? charge * 100 / capacity : 0,
+                        charge / rate,
+                        (charge * 60 / rate) % 60);
+            } else {
+                snprintf(tooltip, 256,
+                        _("Battery: %d%% charged"),
+                        capacity ? charge * 100 / capacity : 0);
+            }
         }
-        else
-            snprintf(tooltip, 256,
-                    _("Battery: %d%% charged, %d:%02d left"),
-                    capacity ? charge * 100 / capacity : 0,
-                    rate ? charge / rate : 0,
-                    rate ? (charge * 60 / rate) % 60 : 0);
 
         gtk_tooltips_set_tip(b->tooltip, b->drawingArea, tooltip, NULL);
 
@@ -405,13 +466,17 @@ static void check_batteries( batt* b )
     const char *battery_name;
     GList* l;
     gboolean need_update_display = FALSE;
+    b->use_sysfs = FALSE;
 
     if (! (batteryDirectory = g_dir_open(BATTERY_DIRECTORY, 0, NULL)))
     {
-        g_list_foreach( b->batteries, (GFunc)batt_info_free, NULL );
-        g_list_free( b->batteries );
-        b->batteries = NULL;
-        return;
+        if (! (batteryDirectory = g_dir_open(BATTERY_SYSFS_DIRECTORY, 0, NULL))) {
+            g_list_foreach( b->batteries, (GFunc)batt_info_free, NULL );
+            g_list_free( b->batteries );
+            b->batteries = NULL;
+            return;
+	}
+	    b->use_sysfs = TRUE;
     }
 
     /* Remove dead entries */
@@ -420,7 +485,10 @@ static void check_batteries( batt* b )
         GList* next = l->next;
         batt_info* bi = (batt_info*)l->data;
         char* path;
-        path = g_build_filename( BATTERY_DIRECTORY, bi->name, NULL );
+	if (b->use_sysfs)
+            path = g_build_filename( BATTERY_SYSFS_DIRECTORY, bi->name, NULL );
+	else
+            path = g_build_filename( BATTERY_DIRECTORY, bi->name, NULL );
         if( ! g_file_test( path, G_FILE_TEST_EXISTS ) ) /* file no more exists */
         {
             b->batteries = g_list_remove_link( b->batteries, l );   /* remove from the list */
@@ -432,7 +500,7 @@ static void check_batteries( batt* b )
 
     /* Scan the battery directory for available batteries */
     while ((battery_name = g_dir_read_name(batteryDirectory))) {
-        if (battery_name[0] != '.') {
+        if (battery_name[0] != '.'&&strncmp(battery_name, "BAT", 3)==0) {
             /* find the battery in our list */
             for( l = b->batteries; l; l = l->next )
             {
@@ -445,8 +513,8 @@ static void check_batteries( batt* b )
                 batt_info* bi = g_slice_new0( batt_info );
                 bi->name = g_strdup( battery_name );
                 /* get battery info & state for the newly added entry */
-                get_batt_info( bi );
-                get_batt_state( bi );
+                get_batt_info(bi, b->use_sysfs);
+                get_batt_state(bi, b->use_sysfs);
                 b->batteries = g_list_prepend( b->batteries, bi );  /* add to our list */
                 need_update_display = TRUE;
             }
@@ -461,8 +529,6 @@ static void check_batteries( batt* b )
 /* This callback is called every 3 seconds */
 static int update_timout(batt *b) {
     GDK_THREADS_ENTER();
-    gboolean changed = FALSE;
-
     ++b->state_elapsed_time;
     ++b->info_elapsed_time;
 
@@ -477,14 +543,14 @@ static int update_timout(batt *b) {
     if( b->state_elapsed_time == 30/3 )  /* 30 sec */
     {
         /* update state of batteries */
-        g_list_foreach( b->batteries, (GFunc)get_batt_state, NULL );
+        g_list_foreach( b->batteries, (GFunc)get_batt_state, b->use_sysfs );
         b->state_elapsed_time = 0;
     }
     /* check the capacity of batteries every 1 hour */
     if( b->info_elapsed_time == 3600/3 )  /* 1 hour */
     {
         /* update info of batteries */
-        g_list_foreach( b->batteries, (GFunc)get_batt_info, NULL );
+        g_list_foreach( b->batteries, (GFunc)get_batt_info, b->use_sysfs );
         b->info_elapsed_time = 0;
     }
 
