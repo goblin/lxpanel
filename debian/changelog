@@ -15,6 +15,14 @@ lxpanel (0.5.8-2) unstable; urgency=low
 
  -- Andrew Lee (李健秋) <ajqlee@debian.org>  Sat, 03 Mar 2012 18:08:09 +0800
 
+lxpanel (0.5.8-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Use dh-autoreconf to run autoreconf and intltoolize before
+    configure. (Closes: #658001)
+
+ -- Sébastien Villemot <sebastien.villemot@ens.fr>  Sat, 18 Feb 2012 17:19:17 +0100
+
 lxpanel (0.5.8-1) unstable; urgency=low
 
   * Merging upstream version 0.5.8:
