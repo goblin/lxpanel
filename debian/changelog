@@ -1,3 +1,10 @@
+lxpanel (0.3.8.1-2) unstable; urgency=low
+
+  * Install lxde-x-terminal-emulator.desktop to prevent missing icon
+    for user who installed old version of lxpanel.
+
+ -- Andrew Lee <andrew@linux.org.tw>  Wed, 09 Jul 2008 16:03:10 +0800
+
 lxpanel (0.3.8.1-1) unstable; urgency=high
 
   * New upstream release
