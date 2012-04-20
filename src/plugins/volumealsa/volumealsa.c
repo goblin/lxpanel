@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <alsa/asoundlib.h>
+#include <poll.h>
 #include "panel.h"
 #include "misc.h"
 #include "plugin.h"
@@ -39,17 +40,26 @@ typedef struct {
     GtkWidget *dlg;
     GtkTooltips* tooltips;
     GtkWidget *vscale;
+    guint vscale_handler;
+    GtkWidget* mute_check;
+    guint mute_handler;
     snd_mixer_t *mixer;
     snd_mixer_selem_id_t *sid;
     snd_mixer_elem_t *master_element;
     long alsa_min_vol, alsa_max_vol;
+    long level;
     int mute;
     int show;
+    gboolean mixer_evt_idle;
 } volume_t;
 
 
-
 /* ALSA */
+
+static int asound_read(volume_t *vol);
+
+static void asound_write(volume_t *vol, int volume);
+
 static gboolean find_element(volume_t *vol, const char *ename)
 {
     for (vol->master_element=snd_mixer_first_elem(vol->mixer);vol->master_element;vol->master_element=snd_mixer_elem_next(vol->master_element)) {
@@ -65,8 +75,85 @@ static gboolean find_element(volume_t *vol, const char *ename)
     return FALSE;
 }
 
+static void update_display(volume_t* vol)
+{
+    /* mute status */
+    snd_mixer_selem_get_playback_switch(vol->master_element, 0, &vol->mute);
+
+    if (vol->mute==0)
+        gtk_image_set_from_file(vol->tray_icon, ICONS_MUTE);
+    else
+        gtk_image_set_from_file(vol->tray_icon, ICONS_VOLUME);
+
+    g_signal_handler_block( vol->mute_check, vol->mute_handler );
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(vol->mute_check), !vol->mute );
+    g_signal_handler_unblock( vol->mute_check, vol->mute_handler );
+
+    /* volume */
+    vol->level = asound_read(vol);
+
+    if( vol->vscale )
+    {
+        g_signal_handler_block( vol->vscale, vol->vscale_handler );
+        gtk_range_set_value(GTK_RANGE(vol->vscale), vol->level);
+        g_signal_handler_unblock( vol->vscale, vol->vscale_handler );
+    }
+}
+
+/* NOTE by PCMan:
+ * This is magic! Since ALSA uses its own machanism to handle this part.
+ * After polling of mixer fds, it requires that we should call
+ * snd_mixer_handle_events to clear all pending mixer events.
+ * However, when using the glib IO channels approach, we don't have
+ * poll() and snd_mixer_poll_descriptors_revents(). Due to the design of
+ * glib, on_mixer_event() will be called for every fd whose status was
+ * changed. So, after each poll(), it's called for several times,
+ * not just once. Therefore, we cannot call snd_mixer_handle_events()
+ * directly in the event handler. Otherwise, it will get called for
+ * several times, which might clear unprocessed pending events in the queue.
+ * So, here we call it once in the event callback for the first fd.
+ * Then, we don't call it for the following fds. After all fds with changed
+ * status are handled, we remove this restriction in an idle handler.
+ * The next time the event callback is involked for the first fs, we can
+ * call snd_mixer_handle_events() again. Racing shouldn't happen here
+ * because the idle handler has the same priority as the io channel callback.
+ * So, io callbacks for future pending events should be in the next gmain
+ * iteration, and won't be affected.
+ */
+static gboolean reset_mixer_evt_idle( volume_t* vol )
+{
+    vol->mixer_evt_idle = 0;
+    return FALSE;
+}
+
+static gboolean on_mixer_event( GIOChannel* channel, GIOCondition cond, volume_t *vol )
+{
+    if( 0 == vol->mixer_evt_idle )
+    {
+        vol->mixer_evt_idle = g_idle_add_full( G_PRIORITY_DEFAULT, (GSourceFunc)reset_mixer_evt_idle, vol, NULL );
+        snd_mixer_handle_events( vol->mixer );
+    }
+
+    if( cond & G_IO_IN )
+    {
+        /* the status of mixer is changed. update of display is needed. */
+        update_display( vol );
+    }
+    if( cond & G_IO_HUP )
+    {
+        /* FIXME: This means there're some problems with alsa. */
+
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
 static gboolean asound_init(volume_t *vol)
 {
+    int i, n_fds;
+    struct pollfd *fds;
+
     snd_mixer_selem_id_alloca(&vol->sid);
     snd_mixer_open(&vol->mixer, 0);
     snd_mixer_attach(vol->mixer, "default");
@@ -85,13 +172,25 @@ static gboolean asound_init(volume_t *vol)
 
     snd_mixer_selem_set_playback_volume_range(vol->master_element, 0, 100);
 
+    /* listen to events from alsa */
+    n_fds = snd_mixer_poll_descriptors_count( vol->mixer );
+    fds = g_new0( struct pollfd, n_fds );
+
+    snd_mixer_poll_descriptors( vol->mixer, fds, n_fds );
+    for( i = 0; i < n_fds; ++i )
+    {
+        /* g_debug("fd=%d", fds[i]); */
+        GIOChannel* channel = g_io_channel_unix_new( fds[i].fd );
+        g_io_add_watch( channel, G_IO_IN|G_IO_HUP, on_mixer_event, vol );
+        g_io_channel_unref( channel );
+    }
+    g_free( fds );
     return TRUE;
 }
 
-static int asound_read(volume_t *vol)
+int asound_read(volume_t *vol)
 {
     long aleft, aright;
-    snd_mixer_handle_events(vol->mixer);
     /* Left */
     snd_mixer_selem_get_playback_volume(vol->master_element, SND_MIXER_SCHN_FRONT_LEFT, &aleft);
     /* Right */
@@ -100,7 +199,7 @@ static int asound_read(volume_t *vol)
     return (aleft + aright) >> 1;
 }
 
-static void asound_write(volume_t *vol, int volume)
+void asound_write(volume_t *vol, int volume)
 {
     snd_mixer_selem_set_playback_volume(vol->master_element, SND_MIXER_SCHN_FRONT_LEFT, volume);
     snd_mixer_selem_set_playback_volume(vol->master_element, SND_MIXER_SCHN_FRONT_RIGHT, volume);
@@ -124,7 +223,6 @@ static gboolean tray_icon_press(GtkWidget *widget, GdkEventButton *event, volume
 
     if (vol->show==0) {
         gtk_window_set_position(GTK_WINDOW(vol->dlg), GTK_WIN_POS_MOUSE);
-        gtk_scale_set_digits(GTK_SCALE(vol->vscale), asound_read(vol));
         gtk_widget_show_all(vol->dlg);
         vol->show = 1;
     } else {
@@ -137,6 +235,21 @@ static gboolean tray_icon_press(GtkWidget *widget, GdkEventButton *event, volume
 static void on_vscale_value_changed(GtkRange *range, volume_t *vol)
 {
     asound_write(vol, gtk_range_get_value(range));
+}
+
+static void on_vscale_scrolled( GtkScale* scale, GdkEventScroll *evt, volume_t* vol )
+{
+    gdouble val = gtk_range_get_value((GtkRange*)scale);
+    switch( evt->direction )
+    {
+    case GDK_SCROLL_UP:
+        val += 2;
+        break;
+    case GDK_SCROLL_DOWN:
+        val -= 2;
+        break;
+    }
+    gtk_range_set_value((GtkRange*)scale, CLAMP((int)val, 0, 100) );
 }
 
 static void click_mute(GtkWidget *widget, volume_t *vol)
@@ -163,7 +276,6 @@ static void panel_init(Plugin *p)
     GtkWidget *viewport;
     GtkWidget *box;
     GtkWidget *frame;
-    GtkWidget *checkbutton;
 
     /* set show flags */
     vol->show = 0;
@@ -176,9 +288,6 @@ static void panel_init(Plugin *p)
     gtk_window_set_skip_taskbar_hint(GTK_WINDOW(vol->dlg), TRUE);
     gtk_window_set_skip_pager_hint(GTK_WINDOW(vol->dlg), TRUE);
     gtk_window_set_type_hint(GTK_WINDOW(vol->dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
-
-    /* setting background to default */
-    //gtk_widget_set_style(vol->dlg, p->panel->defstyle);
 
     /* Focus-out signal */
     g_signal_connect (G_OBJECT (vol->dlg), "focus_out_event",
@@ -210,22 +319,20 @@ static void panel_init(Plugin *p)
     gtk_scale_set_draw_value(GTK_SCALE(vol->vscale), FALSE);
     gtk_range_set_inverted(GTK_RANGE(vol->vscale), TRUE);
 
-    g_signal_connect ((gpointer) vol->vscale, "value_changed",
-                      G_CALLBACK (on_vscale_value_changed),
-                      vol);
+    vol->vscale_handler = g_signal_connect ((gpointer) vol->vscale, "value_changed",
+                                  G_CALLBACK (on_vscale_value_changed),
+                                  vol);
+    g_signal_connect( vol->vscale, "scroll-event", G_CALLBACK(on_vscale_scrolled), vol );
 
-    checkbutton = gtk_check_button_new_with_label(_("Mute"));
+    vol->mute_check = gtk_check_button_new_with_label(_("Mute"));
     snd_mixer_selem_get_playback_switch(vol->master_element, 0, &vol->mute);
 
-    if (!vol->mute)
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbutton), TRUE);
-
-    g_signal_connect ((gpointer) checkbutton, "toggled",
-                      G_CALLBACK (click_mute),
-                      vol);
+    vol->mute_handler = g_signal_connect ((gpointer) vol->mute_check, "toggled",
+                                  G_CALLBACK (click_mute),
+                                  vol);
 
     gtk_box_pack_start(GTK_BOX(box), vol->vscale, TRUE, TRUE, 0);
-    gtk_box_pack_end(GTK_BOX(box), checkbutton, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(box), vol->mute_check, FALSE, FALSE, 0);
     gtk_container_add(GTK_CONTAINER(frame), box);
 
     /* setting background to default */
@@ -238,6 +345,10 @@ volumealsa_destructor(Plugin *p)
     volume_t *vol = (volume_t *) p->priv;
 
     ENTER;
+
+    if( vol->mixer_evt_idle )
+        g_source_remove( vol->mixer_evt_idle );
+
     if (vol->dlg)
         gtk_widget_destroy(vol->dlg);
 
@@ -278,11 +389,8 @@ volumealsa_constructor(Plugin *p, char **fp)
                          G_CALLBACK(tray_icon_press), vol);
 
     /* tray icon */
-    snd_mixer_selem_get_playback_switch(vol->master_element, 0, &vol->mute);
-    if (vol->mute==0)
-        vol->tray_icon = gtk_image_new_from_file(ICONS_MUTE);
-    else
-        vol->tray_icon = gtk_image_new_from_file(ICONS_VOLUME);
+    vol->tray_icon = gtk_image_new();
+    update_display( vol );
 
     gtk_container_add(GTK_CONTAINER(vol->mainw), vol->tray_icon);
 
