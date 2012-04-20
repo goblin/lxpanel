@@ -1,3 +1,15 @@
+lxpanel (0.5.9-1) unstable; urgency=low
+
+  * Merging upstream version 0.5.9.
+  * Adding upstreams todo file as documentation.
+  * Rediffing potfiles.patch.
+  * Rediffing run-in-background.patch.
+  * Adding build-depends to libwnck-dev.
+  * Removing potfiles.patch, fixing the testsuite is to be addressed
+    upstream later on.
+
+ -- Daniel Baumann <daniel@debian.org>  Fri, 20 Apr 2012 17:01:48 +0200
+
 lxpanel (0.5.8-3) unstable; urgency=low
 
   * Updating maintainer field.
