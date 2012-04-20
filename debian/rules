@@ -26,7 +26,7 @@ INSTALL_DIR     = $(INSTALL) -p -d -o root -g root  -m  755
 ifneq (,$(filter noopt,$(DEB_BUILD_OPTIONS)))
     CFLAGS += -O0
 else
-    CFLAGS += -O2
+    CFLAGS += -O2 -fprofile-arcs
 endif
 ifeq (,$(filter nostrip,$(DEB_BUILD_OPTIONS)))
     INSTALL_PROGRAM += -s
@@ -92,11 +92,13 @@ install: build
 
 	# Install .desktop files
 	install -d $(CURDIR)/debian/lxpanel/usr/share/applications
-	install -m644 $(CURDIR)/debian/lxde-x-terminal-emulator.desktop \
-			$(CURDIR)/debian/lxpanel/usr/share/applications
 	install -m644 $(CURDIR)/debian/lxde-x-www-browser.desktop \
 			$(CURDIR)/debian/lxpanel/usr/share/applications
 
+	# Install lintian-overrides
+	install -d $(CURDIR)/debian/lxpanel/usr/share/lintian/overrides
+	install -m644 $(CURDIR)/debian/lxpanel.lintian-overrides \
+			$(CURDIR)/debian/lxpanel/usr/share/lintian/overrides
 
 # Build architecture-independent files here.
 binary-indep: build install
