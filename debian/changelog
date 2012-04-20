@@ -1,3 +1,17 @@
+lxpanel (0.5.5-1) unstable; urgency=low
+
+  * New upstream release
+    - Startup becomes slightly faster. (might not be visible to users)
+    - Configuration dialog of launchbar applet become much faster. (quite
+      prominent)
+    - Translations update
+    - Several minor bug fixes 
+    - Fixed crash problem with libmenu-cache >= 0.3.1
+  * Updated upstream url to http://lxde.org
+  * Bumped Standard-version to 3.8.4
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Fri, 19 Feb 2010 15:37:59 +0100
+
 lxpanel (0.5.4.1-1) unstable; urgency=low
 
   * New upstream release (Closes: #493253, #534222, #548333, #560843)
