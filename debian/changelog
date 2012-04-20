@@ -1,0 +1,5 @@
+lxpanel (0.3.5.2+svn20080509-1) unstable; urgency=low
+
+  * Initial release (Closes: #466562)
+
+ -- Andrew Lee <andrew@linux.org.tw>  Fri, 09 May 2008 17:10:24 +0800
