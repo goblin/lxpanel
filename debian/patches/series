@@ -1,8 +1,4 @@
-libtool-fix.patch
-panel_draw_label_text.patch
-kbled.patch
 batt_status.patch
-sort_dirmenu.patch
 missing_glades.patch
 default-config.patch
-g_locale_to_utf8.patch
+redefine-alarm-variable.patch

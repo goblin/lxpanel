@@ -1,3 +1,52 @@
+lxpanel (0.5.6-1) unstable; urgency=low
+
+  * New upstream release (Closes:#555575, #577599, #581980) 
+    - Reduced unnecessary flickers during resizing icon grid
+    - Fixed uninitialized variable that causes initial panel color 
+      selector to be wrong
+    - Fixed unlikely memory leak in taskbar icon fetch
+    - Change alpha default to fully opaque
+    - Fixed failure to install CPU Frequency plugin icon
+    - Fixed failure to react to keyboard map changes initiated outside 
+      the plugin
+    - Honor Terminal=true in menu and launchbar
+    - Implemented lxpanelctl config command
+    - Improved clock poll interval for format strings that do not change
+      every second
+    - Fixed conditions where on-disk configuration was not in sync with 
+      actual configuration
+    - Replaced show_all with show on toplevel to avoid situation where 
+      plugin loses control of children's visibility
+    - Fixed 64-bit clean regressions
+    - Fixed some issues with urgency notification
+    - Fixed race condition in task deletion, urgency timer could fire after
+      structure deleted
+    - Fixed race condition in UI draw, cell renderer could be called after
+      plugin structure deleted
+    - Fixed endianness clean issue in lxpanelctl
+    - Fixed segfault if g_locale_to_utf8 fails
+    - Fixed handling of "visible" flag in icon_grid_add
+    - Fixed crash following deleting a plugin from the right-click popup 
+      with the configuration dialog open
+    - Fixed misoperation when symbol string does not have "+inet(evdev)"
+    - Forced group number value into valid range after Xkb query
+    - Ensure that group and symbol names are initialized on all flow paths
+    - Fixed buffer overflow in panel_draw_label_text
+    - Fixed crash when reconfiguring after tray selection failed
+    - Workaround for popup positioning
+    - Fixed CPUFreq plugin 
+    - Changed behavior of strut in Autohide case 
+  * Drop patches that included in upstream:
+    - g_locale_to_utf8.patch 
+    - kbled.patch libtool-fix.patch 
+    - panel_draw_label_text.patch 
+    - sort_dirmenu.patch 
+  * Applied redefine-alarm-variable.patch (Closes:#583986) from 
+    Julien Lavergne <gilir@ubuntu.com>
+  * Bumped Standard-version to 3.9.1 
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Wed, 28 Jul 2010 16:12:08 -0400
+
 lxpanel (0.5.5-4) unstable; urgency=high
 
   * Added some backport patches to close bugs on BTS and fix a potential 
