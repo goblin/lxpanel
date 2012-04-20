@@ -1,10 +1,13 @@
 Source: lxpanel
 Section: x11
 Priority: optional
-Maintainer: Andrew Lee (李健秋) <ajqlee@debian.org>
-Build-Depends: debhelper (>= 5), autotools-dev, intltool, intltool-debian, libgtk2.0-dev (>=2.6), libglib2.0-dev (>=2.10), libxmu-dev, libxpm-dev, libiw-dev, libasound2-dev, libmenu-cache-dev (>=0.2.6), docbook-xml, docbook-xsl, xsltproc, dpatch, python
+Maintainer: Debian LXDE Packaging Team <pkg-lxde-maintainers@lists.alioth.debian.org>
+Uploaders: Andrew Lee (李健秋) <ajqlee@debian.org>
+Build-Depends: debhelper (>= 5), autotools-dev, intltool, intltool-debian, libgtk2.0-dev (>=2.6), libglib2.0-dev (>=2.10), libxmu-dev, libxpm-dev, libiw-dev [!kfreebsd-i386 !kfreebsd-amd64], libasound2-dev, libmenu-cache1-dev (>=0.3.2), docbook-xml, docbook-xsl, xsltproc, python
 Standards-Version: 3.8.4
 Homepage: http://lxde.org
+Vcs-Git: git://git.debian.org/git/collab-maint/lxpanel.git
+Vcs-Browser: http://git.debian.org/?p=collab-maint/lxpanel.git;a=summary
 
 Package: lxpanel
 Architecture: any

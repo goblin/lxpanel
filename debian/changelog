@@ -1,3 +1,14 @@
+lxpanel (0.5.5-2) unstable; urgency=low
+
+  * debian/control:
+    - Build-depends on libiw-dev for linux only. (Closes:#565636)
+    - Build-depends on new libmenu-cache
+  * Applied backport g_locale_to_utf8.patch from upstream to 
+    preven crashes. (Closes:#572944)
+  * Switch to dpkg-source 3.0 (quilt) format
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Sat, 27 Mar 2010 12:04:30 +0700
+
 lxpanel (0.5.5-1) unstable; urgency=low
 
   * New upstream release

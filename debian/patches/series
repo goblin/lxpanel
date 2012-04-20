@@ -1,0 +1,2 @@
+default-config.patch
+g_locale_to_utf8.patch
