@@ -1,3 +1,75 @@
+lxpanel (0.5.3-1) experimental; urgency=low
+
+  * New upstream release
+    - Added documentation of \n to dclock dialog
+    - Added configuration dialog to deskno plugin
+    - Improved usability on narrow vertical panel support, now it's possible
+      to configure a vertical panel as small as 16 pixels.
+  * debian/control:
+    - Recommends on manpages-dev to be able to have 'man 3 strftime' to
+      check the format codes of digital clock plugin. (Closes:#493245)
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Mon, 10 Aug 2009 03:13:50 +0800
+
+lxpanel (0.5.2-1) experimental; urgency=low
+
+  * New upstream release
+    - Fixed "Run" dialog hangs problem.
+    - Restored the old behavior of taskbar in earlier versions
+    - Hided signal strength display in the icon of the netstatus applet 
+      if the monitored iface is not wireless.
+    - Improved application launcher, Available apps are now categorized 
+      as they are in applications menu.
+    - The class name of the desktop panels are now changed to 
+      "PanelToplevel". This is compatible with gnome and can be used by
+      theme authors to distinguish the panel widgets from others.
+    - Reduced program size.
+  * debian/control:
+    - Build-depends on xsltproc
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Fri, 07 Aug 2009 22:20:31 +0800
+
+lxpanel (0.5.0-1) experimental; urgency=low
+
+  * New upstream release
+    - Change behavior of preference dialogs
+    - Added window icons to configuration dialogs
+    - Added help on dclock format strings
+    - Added keyboard equivalents to taskbar popup menu (FR2781949)
+    - Fixed width control range, fix geometry calculations so it
+      doesn't fly off edge of screen
+    - Improved geometry of menu configuration dialog
+    - Replaced xterm by lxterminal as default terminal
+    - Switch desktop on taskbar button Click and Raise (Bug2028953)
+    - Keyboard equivalents on taskbar popup submenu (FR2781949)
+    - Repaired bad function signature on focus-out callback
+    - Rewrited WM_STRUT setting so it doesn't update the property 
+      unless it changed
+    - Fixed the panel transparency colorbox
+    - Fixed CPU plugin loses context on a relayout (Patch 2800828, song6song)
+    - Added autohide
+    - Rewrote battery backend code (based on Linux acpi 1.4)
+    - Added scroll wheel on main icon to adjust volume and middle-click 
+      on main icon to adjust mute
+    - Use Docbook-XML instead of SGML
+    - Added --enable-man for manpage regeneration
+    - Added New wincmd icon from http://www.oxygen-icons.org/
+    - Icon size now configurable
+    - Enable xkb plugin
+    - Added logic to have a visible name on grouped tasks
+    - Added way to get line breaks in dclock formatting
+    - Rework system tray to do event handling at the X protocol level
+    - Rework background draw to solve observed systray corruption
+    - Rework 90 degree re-orientation to solve lost tray icons for
+      Qt applications, conditional on 2.16 or later
+    - Fix memory leaks
+  * debian/rules:
+    - Added --enable-man
+  * debian/control:
+    - Build-depends on docbook-xsl
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Wed, 29 Jul 2009 20:56:08 +0200
+
 lxpanel (0.4.1+svn20090524-2) unstable; urgency=low
 
   * Update debian/control (Thanks Jonas Smedegaard's for the advice):
