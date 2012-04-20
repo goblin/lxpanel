@@ -34,7 +34,7 @@ static const char usage[] =
         "Available commands:\n"
         "menu\tshow system menu\n"
         "run\tshow run dialog\n"
-//       "config\tshow config dialog\n"
+        "config\tshow configuration dialog\n"
         "restart\trestart lxpanel\n"
         "exit\texit lxpanel\n\n";
 
@@ -44,8 +44,8 @@ static int get_cmd( const char* cmd )
         return LXPANEL_CMD_SYS_MENU;
     else if( ! strcmp( cmd, "run") )
         return LXPANEL_CMD_RUN;
-//    else if( ! strcmp( cmd, "config") )
-//        return LXPANEL_CMD_CONFIG;
+    else if( ! strcmp( cmd, "config") )
+        return LXPANEL_CMD_CONFIG;
     else if( ! strcmp( cmd, "restart") )
         return LXPANEL_CMD_RESTART;
     else if( ! strcmp( cmd, "exit") )
@@ -89,7 +89,7 @@ int main( int argc, char** argv )
     ev.xclient.message_type = cmd_atom;
     ev.xclient.format = 8;
 
-    ev.xclient.data.l[0] = cmd;
+    ev.xclient.data.b[0] = cmd;
 
     XSendEvent(dpy, root, False,
                SubstructureRedirectMask|SubstructureNotifyMask, &ev);

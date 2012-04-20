@@ -173,7 +173,7 @@ void panel_set_wm_strut(Panel *p)
     }
 
     /* Handle autohide case.  EWMH recommends having the strut be the minimized size. */
-    if ( ! p->visible)
+    if (p->autohide)
         strut_size = p->height_when_hidden;
 
     /* Set up strut value in property format. */
@@ -261,7 +261,11 @@ static void process_client_msg ( XClientMessageEvent* ev )
             break;
 #endif
         case LXPANEL_CMD_CONFIG:
-            //FIXME: configure();
+            {
+            Panel * p = ((all_panels != NULL) ? all_panels->data : NULL);
+            if (p != NULL)
+                panel_configure(p, 0);
+            }
             break;
         case LXPANEL_CMD_RESTART:
             restart();
@@ -563,6 +567,16 @@ static void panel_popupmenu_add_item( GtkMenuItem* item, Panel* panel )
 static void panel_popupmenu_remove_item( GtkMenuItem* item, Plugin* plugin )
 {
     Panel* panel = plugin->panel;
+
+    /* If the configuration dialog is open, there will certainly be a crash if the
+     * user manipulates the Configured Plugins list, after we remove this entry.
+     * Close the configuration dialog if it is open. */
+    if (panel->pref_dialog != NULL)
+    {
+        gtk_widget_destroy(panel->pref_dialog);
+        panel->pref_dialog = NULL;
+    }
+
     panel->plugins = g_list_remove( panel->plugins, plugin );
     plugin_delete(plugin);
     panel_config_save( plugin->panel );
@@ -673,7 +687,7 @@ static void panel_popupmenu_about( GtkMenuItem* item, Panel* panel )
     gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
     gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(about), _("LXPanel"));
     gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about), gdk_pixbuf_new_from_file(PACKAGE_DATA_DIR "/lxpanel/images/my-computer.png", NULL));
-    gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), _("Copyright (C) 2008-2009"));
+    gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), _("Copyright (C) 2008-2010"));
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about), _( "Desktop panel for LXDE project"));
     gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about), "This program is free software; you can redistribute it and/or\nmodify it under the terms of the GNU General Public License\nas published by the Free Software Foundation; either version 2\nof the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.");
     gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about), "http://lxde.org/");
@@ -1040,8 +1054,6 @@ void panel_adjust_geometry_terminology(Panel * p)
 /* Draw text into a label, with the user preference color and optionally bold. */
 void panel_draw_label_text(Panel * p, GtkWidget * label, char * text, gboolean bold, gboolean custom_color)
 {
-    char buffer[512];
-
     if (text == NULL)
     {
         /* Null string. */
@@ -1054,7 +1066,7 @@ void panel_draw_label_text(Panel * p, GtkWidget * label, char * text, gboolean b
         int font_desc;
         if (p->icon_size < 20) 
             font_desc = 9;
-        else if (p->icon_size >= 20 && p->icon_size < 26)
+        else if (p->icon_size >= 20 && p->icon_size < 36)
             font_desc = 10;
         else
             font_desc = 12;
@@ -1077,23 +1089,25 @@ void panel_draw_label_text(Panel * p, GtkWidget * label, char * text, gboolean b
         if ((custom_color) && (p->usefontcolor))
         {
             /* Color, optionally bold. */
-            g_snprintf(buffer, sizeof(buffer), "<span font_desc=\"%d\" color=\"#%06x\">%s%s%s</span>",
+            gchar * text = g_strdup_printf("<span font_desc=\"%d\" color=\"#%06x\">%s%s%s</span>",
                 font_desc,
                 gcolor2rgb24(&p->gfontcolor),
                 ((bold) ? "<b>" : ""),
                 valid_markup,
                 ((bold) ? "</b>" : ""));
-            gtk_label_set_markup(GTK_LABEL(label), buffer);
+            gtk_label_set_markup(GTK_LABEL(label), text);
+            g_free(text);
         }
         else
         {
             /* No color, optionally bold. */
-            g_snprintf(buffer, sizeof(buffer), "<span font_desc=\"%d\">%s%s%s</span>",
+            gchar * text = g_strdup_printf("<span font_desc=\"%d\">%s%s%s</span>",
                 font_desc,
                 ((bold) ? "<b>" : ""),
                 valid_markup,
                 ((bold) ? "</b>" : ""));
-            gtk_label_set_markup(GTK_LABEL(label), buffer);
+            gtk_label_set_markup(GTK_LABEL(label), text);
+            g_free(text);
         }
         g_free(escaped_text);
     }
