@@ -5,9 +5,10 @@ Maintainer: Debian LXDE Maintainers <lxde-debian@lists.lxde.org>
 Uploaders:
  Andrew Lee (李健秋) <ajqlee@debian.org>, Daniel Baumann <daniel@debian.org>
 Build-Depends:
- debhelper (>= 9), autotools-dev, docbook-xml, docbook-xsl, intltool,
- intltool-debian, libasound2-dev, libglib2.0-dev, libgtk2.0-dev,
- libiw-dev [linux-any], libmenu-cache1-dev, libxpm-dev, python, xsltproc
+ debhelper (>= 9), dh-autoreconf, autotools-dev, autopoint, docbook-xml,
+ docbook-xsl, intltool, intltool-debian, libasound2-dev, libglib2.0-dev,
+ libgtk2.0-dev, libiw-dev [linux-any], libmenu-cache1-dev, libxpm-dev, python,
+ xsltproc
 Standards-Version: 3.9.3
 Homepage: http://www.lxde.org/
 Vcs-Browser: http://git.lxde.org/gitweb/?p=debian/lxpanel.git
