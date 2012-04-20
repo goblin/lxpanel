@@ -110,6 +110,7 @@ typedef struct _taskbar {
     int task_width_max;				/* Maximum width of a taskbar button in horizontal orientation */
     int spacing;				/* Spacing between taskbar buttons */
     gboolean use_net_active;			/* NET_WM_ACTIVE_WINDOW is supported by the window manager */
+    gboolean net_active_checked;		/* True if use_net_active is valid */
 } TaskbarPlugin;
 
 static gchar *taskbar_rc = "style 'taskbar-style'\n"
@@ -147,9 +148,7 @@ static TaskClass * taskbar_enter_res_class(TaskbarPlugin * tb, char * res_class,
 static void task_set_class(Task * tk);
 static Task * task_lookup(TaskbarPlugin * tb, Window win);
 static void task_delete(TaskbarPlugin * tb, Task * tk, gboolean unlink);
-static GdkColormap * get_colormap_from_pixmap(GdkPixmap * pixmap);
-static GdkPixbuf * _wnck_gdk_pixbuf_get_from_pixmap(
-    GdkPixbuf * dest, Pixmap xpixmap, int src_x, int src_y, int dest_x, int dest_y, int width, int height);
+static GdkPixbuf * _wnck_gdk_pixbuf_get_from_pixmap(Pixmap xpixmap, int width, int height);
 static GdkPixbuf * apply_mask(GdkPixbuf * pixbuf, GdkPixbuf * mask);
 static GdkPixbuf * get_wm_icon(Window task_win, int required_width, int required_height, Atom source, Atom * current_source);
 static GdkPixbuf * task_update_icon(TaskbarPlugin * tb, Task * tk, Atom source);
@@ -185,6 +184,7 @@ static void menu_iconify_window(GtkWidget * widget, TaskbarPlugin * tb);
 static void menu_move_to_workspace(GtkWidget * widget, TaskbarPlugin * tb);
 static void menu_close_window(GtkWidget * widget, TaskbarPlugin * tb);
 static void taskbar_make_menu(TaskbarPlugin * tb);
+static void taskbar_window_manager_changed(GdkScreen * screen, TaskbarPlugin * tb);
 static void taskbar_build_gui(Plugin * p);
 static int taskbar_constructor(Plugin * p, char ** fp);
 static void taskbar_destructor(Plugin * p);
@@ -580,71 +580,56 @@ static void task_delete(TaskbarPlugin * tb, Task * tk, gboolean unlink)
     g_free(tk);
 }
 
-/* Get the color map from a pixmap.
- * From libwnck, Copyright (C) 2001 Havoc Pennington. */
-static GdkColormap * get_colormap_from_pixmap(GdkPixmap * pixmap)
+/* Get a pixbuf from a pixmap.
+ * Originally from libwnck, Copyright (C) 2001 Havoc Pennington. */
+static GdkPixbuf * _wnck_gdk_pixbuf_get_from_pixmap(Pixmap xpixmap, int width, int height)
 {
-    GdkColormap * colormap = gdk_drawable_get_colormap(pixmap);
-    if (colormap != NULL)
-        g_object_ref(G_OBJECT(colormap));
-    else
-    {
-        if (gdk_drawable_get_depth(pixmap) == 1)
-        {
-            /* Try null colormap. */
-            colormap = NULL;
-        }
-        else
-        {
-            /* Try system colormap. */
-            GdkScreen * screen = gdk_drawable_get_screen(GDK_DRAWABLE(pixmap));
-            colormap = gdk_screen_get_system_colormap(screen);
-            g_object_ref(G_OBJECT(colormap));
-        }
-    }
-
-    /* Be sure we aren't going to blow up due to visual mismatch. */
-    if ((colormap != NULL) && (gdk_colormap_get_visual(colormap)->depth != gdk_drawable_get_depth(pixmap)))
-        colormap = NULL;
-
-    return colormap;
-}
-
-/* These functions with the prefix wnck are taken from libwnck
- * Copyright (C) 2001 Havoc Pennington
- * slightly modified by Hong Jen Yee for LXPanel
- */
-
-/* Get a pixbuf from a pixmap. */
-static GdkPixbuf * _wnck_gdk_pixbuf_get_from_pixmap(
-    GdkPixbuf * dest, Pixmap xpixmap, int src_x, int src_y, int dest_x, int dest_y, int width, int height)
-{
-    /* Initialize; get the drawable and its colormap. */
-    GdkPixbuf * retval = NULL;
+    /* Get the drawable. */
     GdkDrawable * drawable = gdk_xid_table_lookup(xpixmap);
     if (drawable != NULL)
         g_object_ref(G_OBJECT(drawable));
     else
         drawable = gdk_pixmap_foreign_new(xpixmap);
-    GdkColormap * colormap = get_colormap_from_pixmap(drawable);
 
-    /* Do the major work. */
-    retval = gdk_pixbuf_get_from_drawable(dest,
-        drawable,
-        colormap,
-        src_x, src_y,
-        dest_x, dest_y,
-        width, height);
+    GdkColormap * colormap = NULL;
+    GdkPixbuf * retval = NULL;
+    if (drawable != NULL)
+    {
+        /* Get the colormap.
+         * If the drawable has no colormap, use no colormap or the system colormap as recommended in the documentation of gdk_drawable_get_colormap. */
+        colormap = gdk_drawable_get_colormap(drawable);
+        gint depth = gdk_drawable_get_depth(drawable);
+        if (colormap != NULL)
+            g_object_ref(G_OBJECT(colormap));
+        else if (depth == 1)
+            colormap = NULL;
+        else
+        {
+            colormap = gdk_screen_get_system_colormap(gdk_drawable_get_screen(drawable));
+            g_object_ref(G_OBJECT(colormap));
+        }
+
+        /* Be sure we aren't going to fail due to visual mismatch. */
+        if ((colormap != NULL) && (gdk_colormap_get_visual(colormap)->depth != depth))
+        {
+            g_object_unref(G_OBJECT(colormap));
+            colormap = NULL;
+        }
+
+        /* Do the major work. */
+        retval = gdk_pixbuf_get_from_drawable(NULL, drawable, colormap, 0, 0, 0, 0, width, height);
+    }
 
     /* Clean up and return. */
     if (colormap != NULL)
         g_object_unref(G_OBJECT(colormap));
-    g_object_unref(G_OBJECT(drawable));
+    if (drawable != NULL)
+        g_object_unref(G_OBJECT(drawable));
     return retval;
 }
 
 /* Apply a mask to a pixbuf.
- * From libwnck, Copyright (C) 2001 Havoc Pennington. */
+ * Originally from libwnck, Copyright (C) 2001 Havoc Pennington. */
 static GdkPixbuf * apply_mask(GdkPixbuf * pixbuf, GdkPixbuf * mask)
 {
     /* Initialize. */
@@ -880,7 +865,7 @@ static GdkPixbuf * get_wm_icon(Window task_win, int required_width, int required
         /* If we have an X pixmap and its geometry, convert it to a GDK pixmap. */
         if (result == Success) 
         {
-            pixmap = _wnck_gdk_pixbuf_get_from_pixmap(NULL, xpixmap, 0, 0, 0, 0, w, h);
+            pixmap = _wnck_gdk_pixbuf_get_from_pixmap(xpixmap, w, h);
             result = ((pixmap != NULL) ? Success : -1);
         }
 
@@ -896,7 +881,7 @@ static GdkPixbuf * get_wm_icon(Window task_win, int required_width, int required
                 &unused_win, &unused, &unused, &w, &h, &unused_2, &unused_2))
             {
                 /* Convert the X mask to a GDK pixmap. */
-                GdkPixbuf * mask = _wnck_gdk_pixbuf_get_from_pixmap(NULL, xmask, 0, 0, 0, 0, w, h);
+                GdkPixbuf * mask = _wnck_gdk_pixbuf_get_from_pixmap(xmask, w, h);
                 if (mask != NULL)
                 {
                     /* Apply the mask. */
@@ -1006,6 +991,15 @@ static void task_raise_window(Task * tk, guint32 time)
     if ((tk->desktop != -1) && (tk->desktop != tk->tb->current_desktop))
         Xclimsg(GDK_ROOT_WINDOW(), a_NET_CURRENT_DESKTOP, tk->desktop, 0, 0, 0, 0);
 
+    /* Evaluate use_net_active if not yet done. */
+    if ( ! tk->tb->net_active_checked)
+    {
+        TaskbarPlugin * tb = tk->tb;
+        GdkAtom net_active_atom = gdk_x11_xatom_to_atom(a_NET_ACTIVE_WINDOW);
+        tb->use_net_active = gdk_x11_screen_supports_net_wm_hint(gtk_widget_get_screen(tb->plug->pwid), net_active_atom);
+        tb->net_active_checked = TRUE;
+    }
+
     /* Raise the window.  We can use NET_ACTIVE_WINDOW if the window manager supports it.
      * Otherwise, do it the old way with XMapRaised and XSetInputFocus. */
     if (tk->tb->use_net_active)
@@ -1017,8 +1011,13 @@ static void task_raise_window(Task * tk, guint32 time)
             gdk_window_show(gdkwindow);
         else
             XMapRaised(GDK_DISPLAY(), tk->win);
-        XSync(GDK_DISPLAY(), False);	/* This we need to avoid BadMatch */
-        XSetInputFocus(GDK_DISPLAY(), tk->win, RevertToNone, time);
+
+	/* There is a race condition between the X server actually executing the XMapRaised and this code executing XSetInputFocus.
+	 * If the window is not viewable, the XSetInputFocus will fail with BadMatch. */
+	XWindowAttributes attr;
+	XGetWindowAttributes(GDK_DISPLAY(), tk->win, &attr);
+	if (attr.map_state == IsViewable)
+            XSetInputFocus(GDK_DISPLAY(), tk->win, RevertToNone, time);
     }
 
     /* Change viewport if needed. */
@@ -1775,12 +1774,11 @@ static void taskbar_make_menu(TaskbarPlugin * tb)
     tb->menu = menu;
 }
 
-static void on_window_manager_changed(GdkScreen* screen, TaskbarPlugin* tb)
+/* Handler for "window-manager-changed" event. */
+static void taskbar_window_manager_changed(GdkScreen * screen, TaskbarPlugin * tb)
 {
-    GdkAtom net_active_atom;
-    GdkDisplay* display = gdk_screen_get_display(screen);
-    net_active_atom = gdk_x11_xatom_to_atom(a_NET_ACTIVE_WINDOW);
-    tb->use_net_active = gdk_x11_screen_supports_net_wm_hint(display, net_active_atom);
+    /* Force re-evaluation of use_net_active. */
+    tb->net_active_checked = FALSE;
 }
 
 /* Build graphic elements needed for the taskbar. */
@@ -1822,8 +1820,8 @@ static void taskbar_build_gui(Plugin * p)
      * Number of desktops and edge is needed for this operation. */
     taskbar_make_menu(tb);
 
-    g_signal_connect(gtk_widget_get_screen(p->pwid), "window-manager-changed", G_CALLBACK(on_window_manager_changed), tb);
-    on_window_manager_changed(gtk_widget_get_screen(p->pwid), tb);
+    /* Connect a signal to be notified when the window manager changes.  This causes re-evaluation of the "use_net_active" status. */
+    g_signal_connect(gtk_widget_get_screen(p->pwid), "window-manager-changed", G_CALLBACK(taskbar_window_manager_changed), tb);
 }
 
 /* Plugin constructor. */
@@ -1915,9 +1913,8 @@ static void taskbar_destructor(Plugin * p)
     g_signal_handlers_disconnect_by_func(fbev, taskbar_net_number_of_desktops, tb);
     g_signal_handlers_disconnect_by_func(fbev, taskbar_net_client_list, tb);
 
-    /* Remove 'window-manager-changed' handler */
-    g_signal_handlers_disconnect_by_func(gtk_widget_get_screen(p->pwid),
-                                         on_window_manager_changed, tb);
+    /* Remove "window-manager-changed" handler. */
+    g_signal_handlers_disconnect_by_func(gtk_widget_get_screen(p->pwid), taskbar_window_manager_changed, tb);
 
     /* Deallocate task list. */
     while (tb->task_list != NULL)

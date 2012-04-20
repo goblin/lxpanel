@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(lxpanel, 0.5.4.1, http://lxde.org/)
+AC_INIT(lxpanel, 0.5.5, http://lxde.org/)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/bg.c])
 AC_CONFIG_HEADER([config.h])
@@ -23,6 +23,10 @@ pkg_modules="gtk+-2.0 >= 2.12.0 \
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
+
+pkg_modules="x11"
+PKG_CHECK_MODULES(X11, [$pkg_modules])
+AC_SUBST(X11_LIBS)
 
 pkg_modules="libmenu-cache"
 PKG_CHECK_MODULES(MENU_CACHE, [$pkg_modules],
