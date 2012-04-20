@@ -1,3 +1,14 @@
+lxpanel (0.4.1+svn20090524-2) unstable; urgency=low
+
+  * Update debian/control (Thanks Jonas Smedegaard's for the advice):
+    - Move conflicts lxnm ( <0.3 ) from lxpanel-netstat-plugin to lxpanel
+    - Make lxpanel-netstat-plugin dummy package depends on connman
+      (See ITP #475022 for detail)
+  * Removed deprecated dh_desktop from debian/rules
+  * Bumped Standard-version to 3.8.2
+
+ -- Andrew Lee <andrew@linux.org.tw>  Sun, 19 Jul 2009 13:48:27 +0200
+
 lxpanel (0.4.1+svn20090524-1) unstable; urgency=low
 
   * New upstream release (Closes: #516603, #511001, #493242, #486284, 

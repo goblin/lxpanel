@@ -126,7 +126,6 @@ binary-arch: build install
 #	dh_installinit
 #	dh_installcron
 #	dh_installinfo
-	dh_desktop -A lxde-x-terminal-emulator.desktop lxde-x-www-browser.desktop
 	dh_installman
 	dh_link
 	dh_strip

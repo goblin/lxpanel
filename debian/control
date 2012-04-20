@@ -3,7 +3,7 @@ Section: x11
 Priority: optional
 Maintainer: Andrew Lee <andrew@linux.org.tw>
 Build-Depends: debhelper (>= 5), autotools-dev, intltool, libgtk2.0-dev (>=2.6), libglib2.0-dev (>=2.10), libxmu-dev, libxpm-dev, libiw-dev, libasound2-dev, libmenu-cache-dev (>=0.2.5), docbook-to-man, dpatch, python
-Standards-Version: 3.8.1
+Standards-Version: 3.8.2
 DM-Upload-Allowed: yes
 Homepage: http://www.gnomefiles.org/app.php/LXPanel
 
@@ -11,6 +11,7 @@ Package: lxpanel
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, lxmenu-data
 Suggests: lxsession-lite (>=0.3.5) | lxsession (>=0.3.2) | menu, lxpanel-netstat-plugin, www-browser
+Conflicts: lxnm ( <0.3 )
 Description: a lightweight desktop panel for X
  LXPanel is a lightweight GTK+2 desktop panel derived from fbpanel. Its
  features include:
@@ -32,9 +33,7 @@ Description: a lightweight desktop panel for X
 
 Package: lxpanel-netstat-plugin
 Architecture: all
-Depends: ${misc:Depends}, lxpanel (>= ${binary:Version}), wicd | network-manager-gnome 
-Conflicts: lxnm (< 0.3)
-Replaces: lxnm
+Depends: ${misc:Depends}, lxpanel (>= ${binary:Version}), wicd | network-manager-gnome | connman 
 Description: transiational dummy package which can be safely removed
  Due to upstream dropped netstat plugin. User who installed old 
  lxpanel-netstat-plugin are encouraged to switch to either wicd or 
