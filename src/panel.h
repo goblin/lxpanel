@@ -87,6 +87,8 @@ typedef struct _Panel {
     guint setstrut : 1;
     guint round_corners : 1;
     guint usefontcolor : 1;
+    guint usefontsize : 1;
+    guint fontsize;    
     guint transparent : 1;
     guint background : 1;
     guint spacing;
@@ -224,7 +226,7 @@ extern void panel_adjust_geometry_terminology(Panel *p);
 extern void panel_determine_background_pixmap(Panel * p, GtkWidget * widget, GdkWindow * window);
 extern void panel_draw_label_text(Panel * p, GtkWidget * label, char * text, gboolean bold, gboolean custom_color);
 extern void panel_establish_autohide(Panel *p);
-extern void panel_image_set_from_file(Panel * p, GtkWidget * image, char * file);
+extern void panel_image_set_from_file(Panel * p, GtkWidget * image, const char * file);
 extern gboolean panel_image_set_icon_theme(Panel * p, GtkWidget * image, const gchar * icon);
 extern void panel_set_wm_strut(Panel *p);
 extern void panel_set_dock_type(Panel *p);

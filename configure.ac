@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(lxpanel, 0.5.8, http://lxde.org/)
+AC_INIT(lxpanel, 0.5.9, http://lxde.org/)
 AM_INIT_AUTOMAKE([1.11 -Wall -Werror foreign])
 AC_CONFIG_HEADER([config.h])
 
@@ -22,17 +22,66 @@ LT_PREREQ([2.2])
 LT_INIT
 
 # Checks for libraries.
-pkg_modules="gtk+-2.0 >= 2.12.0 \
+AC_ARG_ENABLE(gtk3,
+AC_HELP_STRING([--enable-gtk3],[enable to use gtk-3.0 instead of gtk-2.0]),
+[case "${enableval}" in
+  yes)  enable_gtk3=yes ;;
+  no)   enable_gtk3=no ;;
+  *) AC_MSG_ERROR([bad value "${enableval}" for --enable-gtk3, use "yes" (default) or "no".]) ;;
+esac],[])
+
+if test "x$enable_gtk3" = "xyes" ; then
+  CFLAGS="$CFLAGS -DENABLE_GTK3"
+  pkg_modules="$pkg_modules gtk+-3.0"
+else
+  pkg_modules="$pkg_modules gtk+-2.0 >= 2.12.0"
+fi
+
+pkg_modules="$pkg_modules \
              gio-unix-2.0 \
-             gthread-2.0"
+             gthread-2.0 \
+             libmenu-cache"
 #             libstartup-notification-1.0"
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
 
+###########################
+# Indicator Info
+###########################
+AC_ARG_ENABLE([indicator_support],
+    AS_HELP_STRING([--enable-indicator-support],
+               [enable plugin loading (default: disable)]),
+               indicator_support=$enableval, indicator_support="no")
+AM_CONDITIONAL(ENABLE_INDICATOR_SUPPORT, test x"$indicator_support" = x"yes")
+
+if test "$indicator_support" != "no"; then
+	INDICATOR_REQUIRED_VERSION=0.3.0
+	INDICATOR_PKG_NAME=indicator-0.4
+
+	PKG_CHECK_MODULES(APPLET, $INDICATOR_PKG_NAME >= $INDICATOR_REQUIRED_VERSION)
+	AC_SUBST(APPLET_CFLAGS)
+
+	if test "x$with_localinstall" = "xyes"; then
+		INDICATORDIR="${libdir}/indicators/2/"
+		INDICATORICONSDIR="${datadir}/indicator-applet/icons/"
+	else
+		INDICATORDIR=`$PKG_CONFIG --variable=indicatordir $INDICATOR_PKG_NAME`
+		INDICATORICONSDIR=`$PKG_CONFIG --variable=iconsdir $INDICATOR_PKG_NAME`
+fi
+	AC_SUBST(INDICATORDIR)
+	AC_SUBST(INDICATORICONSDIR)
+fi
+
+
 pkg_modules="x11"
 PKG_CHECK_MODULES(X11, [$pkg_modules])
 AC_SUBST(X11_LIBS)
+
+pkg_modules="libwnck-1.0"
+PKG_CHECK_MODULES(WNCK, [$pkg_modules])
+AC_SUBST(WNCK_CFLAGS)
+AC_SUBST(WNCK_LIBS)
 
 pkg_modules="libmenu-cache"
 PKG_CHECK_MODULES(MENU_CACHE, [$pkg_modules],
@@ -169,6 +218,7 @@ fi
 
 dnl Here are plugin listing.
 plugin_netstatus=
+plugin_netstat=
 plugin_volume=
 plugin_volumealsa=
 plugin_cpu=
@@ -178,6 +228,9 @@ plugin_xkb=
 plugin_kbled=
 plugin_thermal=
 plugin_cpufreq=
+plugin_monitors=
+plugin_wnckpager=
+plugin_indicator=
 
 AC_MSG_CHECKING([which plugins should be built dynamically])
 AC_ARG_WITH(plugins,
@@ -185,7 +238,7 @@ AC_ARG_WITH(plugins,
 [                         plugins may be comma separated ]
 [                         'all' builds all plugins (default), 'none' builds none ]
 [                         Possible plugins are: ]
-[                         netstatus, volume, volumealsa, cpu, deskno, batt, kbled, xkb, thermal, cpufreq], plugins="$withval",[plugins="all"])
+[                         netstatus, netstat, volume, volumealsa, cpu, deskno, batt, kbled, xkb, thermal, cpufreq, monitors, wnckpager], plugins="$withval",[plugins="all"])
 
 if test x"$plugins" != xall -a x"$plugins" != xnone; then
     if test x"$plugins_loading" = xno; then
@@ -194,7 +247,7 @@ if test x"$plugins" != xall -a x"$plugins" != xnone; then
     fi
 fi
 
-ALL_PLUGINS_LIST="netstatus volume volumealsa cpu deskno batt kbled xkb thermal cpufreq"
+ALL_PLUGINS_LIST="netstatus netstat volume volumealsa cpu deskno batt kbled xkb thermal cpufreq monitors wnckpager indicator"
 AC_SUBST(ALL_PLUGINS_LIST)
 
 if test x"$plugins" = xall; then
@@ -204,6 +257,7 @@ dnl        export plugin_$name="$name"
 dnl    done
 
     plugin_netstatus=netstatus
+    plugin_netstat=netstat
     plugin_volume=volume
     plugin_volumealsa=volumealsa
     plugin_cpu=cpu
@@ -213,6 +267,9 @@ dnl    done
     plugin_xkb=xkb
     plugin_thermal=thermal
     plugin_cpufreq=cpufreq
+    plugin_monitors=monitors
+    plugin_wnckpager=wnckpager
+    plugin_indicator=indicator
 
     AC_MSG_RESULT(all)
 else
@@ -223,6 +280,9 @@ else
         case "$plugin" in
             netstatus)
                 plugin_netstatus=netstatus
+                ;;
+            netstat)
+                plugin_netstat=netstat
                 ;;
             volume)
                 plugin_volume=volume
@@ -251,6 +311,15 @@ else
             cpufreq)
                 plugin_cpufreq=cpufreq
                 ;;
+            monitors)
+                plugin_monitors=monitors
+                ;;
+            wnckpager)
+                plugin_wnckpager=wnckpager
+                ;;
+            indicator)
+                plugin_indicator=indicator
+                ;;
             *)
                 echo "Unknown plugin $plugin."
                 exit 1
@@ -271,8 +340,15 @@ else
     dnl force OSS plugin to <null>
     plugin_volume=
 fi
+
+dnl Exclude indicator support when there is no support.
+if test x"$indicator_support" = "xno"; then
+    plugin_indicator=
+fi
+
 PLUGINS_LIST="\
     $plugin_netstatus \
+    $plugin_netstat \
     $plugin_volume \
     $plugin_volumealsa \
     $plugin_cpu \
@@ -281,10 +357,19 @@ PLUGINS_LIST="\
     $plugin_kbled \
     $plugin_xkb \
     $plugin_thermal \
-    $plugin_cpufreq"
+    $plugin_cpufreq \
+    $plugin_monitors \
+    $plugin_wnckpager\
+    $plugin_indicator"
 
 AC_SUBST(PLUGINS_LIST)
 
+# Plugin-specific dependencies
+# nestat
+if test x"$plugin_netstat" != "x";then
+AC_CHECK_HEADER([iwlib.h],,
+ AC_MSG_ERROR([netstat plugin requires wireless-tools-devel]))
+fi
 
 # Checks for header files.
 AC_PATH_X
@@ -345,6 +430,7 @@ AC_CONFIG_FILES([
     src/Makefile
     src/plugins/Makefile
     src/plugins/netstatus/Makefile
+    src/plugins/netstat/Makefile
     src/plugins/volume/Makefile
     src/plugins/volumealsa/Makefile
     src/plugins/cpu/Makefile
@@ -354,9 +440,14 @@ AC_CONFIG_FILES([
     src/plugins/xkb/Makefile
     src/plugins/thermal/Makefile
     src/plugins/cpufreq/Makefile
+    src/plugins/monitors/Makefile
+    src/plugins/wnckpager/Makefile
+    src/plugins/indicator/Makefile
     po/Makefile.in
     data/Makefile
     data/default/panels/panel
+    data/two_panels/panels/top
+    data/two_panels/panels/bottom
     man/Makefile
 ])
 AC_OUTPUT
@@ -369,6 +460,9 @@ if test x$plugins_loading = xyes; then
 echo Building dynamic plugins:
     if test x"$plugin_netstatus" != x; then
         AC_MSG_RESULT([    netstatus - Monitor networking status])
+    fi
+    if test x"$plugin_netstat" != x; then
+        AC_MSG_RESULT([    netstat - Monitor networking status])
     fi
     if test x"$plugin_volume" != x; then
         AC_MSG_RESULT([    volume - Display and adjust volume of sound card for OSS])
@@ -396,6 +490,15 @@ echo Building dynamic plugins:
     fi
     if test x"$plugin_cpufreq" != x; then
         AC_MSG_RESULT([    cpufreq - CpuFreq frontend])
+    fi
+    if test x"$plugin_monitors" != x; then
+        AC_MSG_RESULT([    monitors - Monitors for CPU & RAM])
+    fi
+    if test x"$plugin_wnckpager" != x; then
+        AC_MSG_RESULT([    wnckpager - Pager which support openbox and compiz])
+    fi
+    if test x"$plugin_indicator" != x; then
+        AC_MSG_RESULT([    indicator - Indicator support])
     fi
 else
 echo Dynamic loader for plugins....... : disabled.

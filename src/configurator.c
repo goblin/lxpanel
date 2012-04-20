@@ -337,6 +337,26 @@ on_use_font_color_toggled( GtkToggleButton* btn,   Panel* p )
 }
 
 static void
+on_font_size_set( GtkSpinButton* spin, Panel* p )
+{
+    p->fontsize = (int)gtk_spin_button_get_value(spin);
+    panel_set_panel_configuration_changed(p);
+}
+
+static void
+on_use_font_size_toggled( GtkToggleButton* btn,   Panel* p )
+{
+    GtkWidget* clr = (GtkWidget*)g_object_get_data( G_OBJECT(btn), "clr" );
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn)))
+        gtk_widget_set_sensitive( clr, TRUE );
+    else
+        gtk_widget_set_sensitive( clr, FALSE );
+    p->usefontsize = gtk_toggle_button_get_active( btn );
+    panel_set_panel_configuration_changed(p);
+}
+
+
+static void
 set_dock_type(GtkToggleButton* toggle,  Panel* p )
 {
     p->setdocktype = gtk_toggle_button_get_active(toggle) ? 1 : 0;
@@ -483,6 +503,23 @@ static void init_plugin_list( Panel* p, GtkTreeView* view, GtkWidget* label )
         gtk_tree_selection_select_iter( tree_sel, &it );
 }
 
+static void on_add_plugin_row_activated( GtkTreeView *tree_view, 
+                                         GtkTreePath *path, 
+                                         GtkTreeViewColumn *col, 
+                                         gpointer user_data) 
+{
+    GtkWidget *dlg;
+
+    dlg = (GtkWidget *) user_data; 
+
+    (void) tree_view;
+    (void) path;
+    (void) col;
+
+    /* Emitting the "response" signal ourselves. */
+    gtk_dialog_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+}
+
 static void on_add_plugin_response( GtkDialog* dlg,
                                     int response,
                                     GtkTreeView* _view )
@@ -611,8 +648,15 @@ static void on_add_plugin( GtkButton* btn, GtkTreeView* _view )
     gtk_tree_view_set_model( view, GTK_TREE_MODEL(list) );
     g_object_unref( list );
 
+    /* 
+     * The user can add a plugin either by clicking the "Add" button, or by
+     * double-clicking the plugin.
+     */
     g_signal_connect( dlg, "response",
                       G_CALLBACK(on_add_plugin_response), _view );
+    g_signal_connect( view, "row-activated",
+                      G_CALLBACK(on_add_plugin_row_activated), (gpointer) dlg);
+
     g_object_set_data( G_OBJECT(dlg), "avail-plugins", view );
     g_object_weak_ref( G_OBJECT(dlg), (GWeakNotify) plugin_class_list_free, classes );
 
@@ -972,6 +1016,19 @@ void panel_configure( Panel* p, int sel_page )
     if( ! p->usefontcolor )
         gtk_widget_set_sensitive( w, FALSE );
 
+    /* font size */
+    w = (GtkWidget*)gtk_builder_get_object( builder, "font_size" );
+    gtk_spin_button_set_value( (GtkSpinButton*)w, p->fontsize );
+    g_signal_connect( w, "value-changed",
+                      G_CALLBACK(on_font_size_set), p);
+
+    w2 = (GtkWidget*)gtk_builder_get_object( builder, "use_font_size" );
+    gtk_toggle_button_set_active( (GtkToggleButton*)w2, p->usefontsize );
+    g_object_set_data( G_OBJECT(w2), "clr", w );
+    g_signal_connect(w2, "toggled", G_CALLBACK(on_use_font_size_toggled), p);
+    if( ! p->usefontsize )
+        gtk_widget_set_sensitive( w, FALSE );
+
     /* plugin list */
     {
         GtkWidget* plugin_list = (GtkWidget*)gtk_builder_get_object( builder, "plugin_list" );
@@ -1052,7 +1109,9 @@ panel_global_config_save( Panel* p, FILE *fp)
     lxpanel_put_bool(fp, "setdocktype", p->setdocktype);
     lxpanel_put_bool(fp, "setpartialstrut", p->setstrut);
     lxpanel_put_bool(fp, "usefontcolor", p->usefontcolor);
+    lxpanel_put_int(fp, "fontsize", p->fontsize);
     lxpanel_put_line(fp, "fontcolor=#%06x", gcolor2rgb24(&p->gfontcolor));
+    lxpanel_put_bool(fp, "usefontsize", p->usefontsize);
     lxpanel_put_bool(fp, "background", p->background );
     lxpanel_put_str(fp, "backgroundfile", p->background_file);
     lxpanel_put_int(fp, "iconsize", p->icon_size);
@@ -1254,7 +1313,7 @@ GtkWidget* create_generic_config_dlg( const char* title, GtkWidget* parent,
         GtkWidget* label = gtk_label_new( name );
         GtkWidget* entry = NULL;
         gpointer val = va_arg( args, gpointer );
-        GType type = va_arg( args, GType );
+        enum _PluginConfType type = va_arg( args, enum _PluginConfType );
         switch( type )
         {
             case CONF_TYPE_STR:
@@ -1315,8 +1374,14 @@ GtkWidget* create_generic_config_dlg( const char* title, GtkWidget* parent,
                     gtk_box_pack_start( GTK_BOX(hbox), browse, TRUE, TRUE, 2 );
                     g_object_set_data(G_OBJECT(dlg), "file-val", val);
                     g_object_set_data(G_OBJECT(browse), "dlg", dlg);
-                    g_object_set_data(G_OBJECT(browse), "chooser-action",
-                        (gpointer) ((type == CONF_TYPE_DIRECTORY_ENTRY) ? GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER : GTK_FILE_CHOOSER_ACTION_OPEN));
+                    
+                    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+                    if (type == CONF_TYPE_DIRECTORY_ENTRY)
+                    {
+                      action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
+                    }
+
+                    g_object_set_data(G_OBJECT(browse), "chooser-action", &action);
                     g_signal_connect( browse, "clicked", G_CALLBACK(on_browse_btn_clicked), entry );
                 }
             }

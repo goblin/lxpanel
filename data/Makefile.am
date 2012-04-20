@@ -6,13 +6,31 @@ default_config_panel_DATA = \
 	default/panels/panel
 default_config_paneldir = $(datadir)/lxpanel/profile/default/panels
 
+two_panels_config_DATA = \
+	two_panels/config
+two_panels_configdir = $(datadir)/lxpanel/profile/two_panels
+
+two_panels_config_panel_DATA = \
+	two_panels/panels/bottom \
+	two_panels/panels/top
+two_panels_config_paneldir = $(datadir)/lxpanel/profile/two_panels/panels
+
 uidir=$(datadir)/lxpanel/ui
 ui_in_files= \
-	ui/panel-pref.ui \
-	ui/launchbar.ui \
-	ui/netstatus.ui
+	ui/panel-pref.glade \
+	ui/launchbar.glade \
+	ui/netstatus.glade
 
-ui_DATA = $(ui_in_files)
+ui_DATA = $(ui_in_files:.glade=.ui)
+
+# Generate GtkBuilder UI files from Glade files
+%.ui: %.glade
+	cp $< $@
+	$(top_builddir)/src/xml-purge $@
+
+CLEANFILES = \
+        $(ui_DATA)
+
 
 lxpanel_images_DATA = \
 	images/my-computer.png \
@@ -30,7 +48,9 @@ lxpanel_images_DATA = \
 	images/gnome-netstatus-txrx.png \
 	images/gnome-netstatus-tx.png \
 	images/background.png \
-	images/volume.png \
+	images/volume-low.png \
+	images/volume-medium.png \
+	images/volume-high.png \
 	images/mute.png \
 	images/ns-bothrs.png \
 	images/ns-connected.png \
@@ -57,5 +77,6 @@ EXTRA_DIST = \
 	$(lxpanel_DATA) \
 	$(lxpanel_images_DATA) \
 	$(ui_DATA) \
-	$(default_config_DATA)
-
+	$(ui_in_files) \
+	$(default_config_DATA) \
+	$(two_panels_config_DATA)
