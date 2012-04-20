@@ -1,0 +1,13 @@
+Author: Sergey Slipchenko <faergeek@gmail.com>
+Description: Closes: #656672
+--- a/src/gtk-run.c
++++ b/src/gtk-run.c
+@@ -344,7 +344,7 @@ void gtk_run()
+     gtk_widget_show_all( win );
+ 
+     setup_auto_complete( (GtkEntry*)entry );
+-    gtk_widget_show( win );
++    gtk_window_present(GTK_WINDOW(win));
+ 
+     g_signal_connect(entry ,"changed", G_CALLBACK(on_entry_changed), img);
+ 
