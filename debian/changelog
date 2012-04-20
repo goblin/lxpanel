@@ -1,3 +1,14 @@
+lxpanel (0.5.8-1) unstable; urgency=low
+
+  * Merging upstream version 0.5.8:
+    - fix typo to make code build with old gtk
+    - fixed compiler warning
+    - fixed error in tooltipS function call
+    - Fix usage of GtkRequisition
+  * Drop 10_fix_menu.patch: included in upstream.
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Sat, 30 Jul 2011 20:35:23 +0800
+
 lxpanel (0.5.7-1) unstable; urgency=low
 
   * Use debhelper 8
