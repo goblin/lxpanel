@@ -1,4 +1,4 @@
 01-default-config.patch
-configure_desktop_number.patch
+02-desktop-number.patch
 potfiles-in.patch
 run-in-background.patch
