@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+DEB_HOST_ARCH_OS	?= $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
+
 # lxpanel does not build (yet) with hardening
 export DEB_BUILD_MAINT_OPTIONS = hardening=-all
 
@@ -14,7 +16,12 @@ override_dh_autoreconf:
 	dh_autoreconf debian/rules -- autoreconf
 
 override_dh_auto_configure:
-	dh_auto_configure -- --enable-man
+ifeq ($(DEB_HOST_ARCH_OS),kfreebsd)
+	# omit netstat plugin on non-linux, requires wireless-tools
+	dh_auto_configure -- --enable-man --with-plugins=netstatus,volume,volumealsa,cpu,deskno,batt,kbled,xkb,thermal,cpufreq,monitors,wnckpager
+else
+	dh_auto_configure -- --enable-man --with-plugins=all
+endif
 
 override_dh_auto_test:
 	# disabled: test fails in po directory
