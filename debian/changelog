@@ -1,3 +1,10 @@
+lxpanel (0.5.9-2) unstable; urgency=low
+
+  * Omitting netstat plugin on non-linux, requires wireless-tools
+    (Closes: #669724).
+
+ -- Daniel Baumann <daniel@debian.org>  Tue, 24 Apr 2012 20:59:52 +0200
+
 lxpanel (0.5.9-1) unstable; urgency=low
 
   * Merging upstream version 0.5.9.
