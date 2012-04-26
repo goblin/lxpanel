@@ -1,3 +1,12 @@
+lxpanel (0.5.9-3) unstable; urgency=low
+
+  * Remove extra tab in host_art_os variable assignment in rules files.
+  * Updating handling of plugins in rules for non-linux platforms
+    (Closes: #670324).
+  * Renumbering run-in-background.patch.
+
+ -- Daniel Baumann <daniel@debian.org>  Thu, 26 Apr 2012 08:18:50 +0200
+
 lxpanel (0.5.9-2) unstable; urgency=low
 
   * Omitting netstat plugin on non-linux, requires wireless-tools
