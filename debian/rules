@@ -16,11 +16,11 @@ override_dh_autoreconf:
 	dh_autoreconf debian/rules -- autoreconf
 
 override_dh_auto_configure:
-ifeq ($(DEB_HOST_ARCH_OS),kfreebsd)
+ifeq ($(DEB_HOST_ARCH_OS),linux)
+	dh_auto_configure -- --enable-man --with-plugins=all
+else
 	# omit netstat plugin on non-linux, requires wireless-tools
 	dh_auto_configure -- --enable-man --with-plugins=netstatus,volume,volumealsa,cpu,deskno,batt,kbled,xkb,thermal,cpufreq,monitors,wnckpager
-else
-	dh_auto_configure -- --enable-man --with-plugins=all
 endif
 
 override_dh_auto_test:
