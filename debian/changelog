@@ -1,3 +1,11 @@
+lxpanel (0.5.9-4) unstable; urgency=low
+
+  * Merging lxpanel-dev into lxpanel package itself, lxpanel-dev only
+    contained one header and one pkgconfig file.
+  * Adding debug package.
+
+ -- Daniel Baumann <daniel@debian.org>  Fri, 18 May 2012 19:47:56 +0200
+
 lxpanel (0.5.9-3) unstable; urgency=low
 
   * Remove extra tab in host_art_os variable assignment in rules files.
