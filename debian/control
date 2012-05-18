@@ -39,3 +39,14 @@ Description: LXDE panel
     For example, "lxpanelctl run" will show the Run dialog in lxpanel,
     and "lxpanelctl menu" will show the application menu. This is
     useful in combination with window manager key bindings.
+
+Package: lxpanel-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: ${misc:Depends}, lxpanel (= ${binary:Version})
+Description: LXDE panel (debug)
+ LXPanel is a GUI application for the Lightweight X11 Desktop Environment
+ (LXDE).
+ .
+ This package contains the debugging symbols.

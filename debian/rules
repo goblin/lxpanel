@@ -23,8 +23,14 @@ else
 	dh_auto_configure -- --enable-man --with-plugins=netstatus,volume,volumealsa,cpu,deskno,batt,kbled,xkb,thermal,cpufreq,monitors,wnckpager
 endif
 
+override_dh_auto_install:
+	dh_auto_install -- DESTDIR=$(CURDIR)/debian/lxpanel
+
 override_dh_auto_test:
 	# disabled: test fails in po directory
 
 override_dh_builddeb:
 	dh_builddeb -- -Zxz -z9
+
+override_dh_strip:
+	dh_strip --dbg-package=lxpanel-dbg
