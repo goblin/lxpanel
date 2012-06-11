@@ -486,13 +486,19 @@ panel_size_req(GtkWidget *widget, GtkRequisition *req, Panel *p)
 {
     ENTER;
 
+    if (p->autohide && !p->visible)
+        /* When the panel is in invisible state, the content box also got hidden, thus always
+         * report 0 size.  Ask the content box instead for its size. */
+        gtk_widget_size_request(p->box, req);
+
     if (p->widthtype == WIDTH_REQUEST)
         p->width = (p->orientation == ORIENT_HORIZ) ? req->width : req->height;
     if (p->heighttype == HEIGHT_REQUEST)
         p->height = (p->orientation == ORIENT_HORIZ) ? req->height : req->width;
+
     calculate_position(p);
-    req->width  = p->aw;
-    req->height = p->ah;
+
+    gtk_widget_set_size_request( widget, p->aw, p->ah );
 
     RET( TRUE );
 }
@@ -580,8 +586,8 @@ static void panel_popupmenu_remove_item( GtkMenuItem* item, Plugin* plugin )
     }
 
     panel->plugins = g_list_remove( panel->plugins, plugin );
-    plugin_delete(plugin);
     panel_config_save( plugin->panel );
+    plugin_delete(plugin);
 }
 
 /* FIXME: Potentially we can support multiple panels at the same edge,

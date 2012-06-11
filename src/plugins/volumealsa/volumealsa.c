@@ -52,12 +52,18 @@ typedef struct {
     snd_mixer_selem_id_t * sid;			/* The element ID */
     snd_mixer_elem_t * master_element;		/* The Master element */
     guint mixer_evt_idle;			/* Timer to handle restarting poll */
+
+    /* unloading and error handling */
+    GIOChannel **channels;                      /* Channels that we listen to */
+    guint num_channels;                         /* Number of channels */
 } VolumeALSAPlugin;
 
 static gboolean asound_find_element(VolumeALSAPlugin * vol, const char * ename);
 static gboolean asound_reset_mixer_evt_idle(VolumeALSAPlugin * vol);
 static gboolean asound_mixer_event(GIOChannel * channel, GIOCondition cond, gpointer vol_gpointer);
+static gboolean asound_restart(gpointer vol_gpointer);
 static gboolean asound_initialize(VolumeALSAPlugin * vol);
+static void asound_deinitialize(VolumeALSAPlugin * vol);
 static gboolean asound_has_mute(VolumeALSAPlugin * vol);
 static gboolean asound_is_muted(VolumeALSAPlugin * vol);
 static int asound_get_volume(VolumeALSAPlugin * vol);
@@ -122,11 +128,12 @@ static gboolean asound_reset_mixer_evt_idle(VolumeALSAPlugin * vol)
 static gboolean asound_mixer_event(GIOChannel * channel, GIOCondition cond, gpointer vol_gpointer)
 {
     VolumeALSAPlugin * vol = (VolumeALSAPlugin *) vol_gpointer;
+    int res = 0;
 
     if (vol->mixer_evt_idle == 0)
     {
         vol->mixer_evt_idle = g_idle_add_full(G_PRIORITY_DEFAULT, (GSourceFunc) asound_reset_mixer_evt_idle, vol, NULL);
-        snd_mixer_handle_events(vol->mixer);
+        res = snd_mixer_handle_events(vol->mixer);
     }
 
     if (cond & G_IO_IN)
@@ -135,13 +142,38 @@ static gboolean asound_mixer_event(GIOChannel * channel, GIOCondition cond, gpoi
         volumealsa_update_display(vol);
     }
 
-    if (cond & G_IO_HUP)
+    if ((cond & G_IO_HUP) || (res < 0))
     {
         /* This means there're some problems with alsa. */
+	ERR("volumealsa: ALSA (or pulseaudio) had a problem: \n"
+                "volumealsa: snd_mixer_handle_events() = %d,"
+                " cond 0x%x (IN: 0x%x, HUP: 0x%x).\n", res, cond,
+                G_IO_IN, G_IO_HUP);
+        gtk_widget_set_tooltip_text(vol->plugin->pwid, "ALSA (or pulseaudio) had a problem."
+                " Please check the lxpanel logs.");
+
+        g_timeout_add_seconds(1, asound_restart, vol);
+
         return FALSE;
     }
 
     return TRUE;
+}
+
+static gboolean asound_restart(gpointer vol_gpointer)
+{
+    VolumeALSAPlugin * vol = vol_gpointer;
+
+    asound_deinitialize(vol);
+
+    if (!asound_initialize(vol)) {
+        ERR("volumealsa: Re-initialization failed.\n");
+        return TRUE; // try again in a second
+    }
+
+    ERR("volumealsa: Restarted ALSA interface...\n");
+
+    return FALSE;
 }
 
 /* Initialize the ALSA interface. */
@@ -169,16 +201,36 @@ static gboolean asound_initialize(VolumeALSAPlugin * vol)
     int n_fds = snd_mixer_poll_descriptors_count(vol->mixer);
     struct pollfd * fds = g_new0(struct pollfd, n_fds);
 
+    vol->channels = g_new0(GIOChannel *, n_fds);
+    vol->num_channels = n_fds;
+
     snd_mixer_poll_descriptors(vol->mixer, fds, n_fds);
     int i;
     for (i = 0; i < n_fds; ++i)
     {
         GIOChannel* channel = g_io_channel_unix_new(fds[i].fd);
         g_io_add_watch(channel, G_IO_IN | G_IO_HUP, asound_mixer_event, vol);
-        g_io_channel_unref(channel);
+        vol->channels[i] = channel;
     }
     g_free(fds);
     return TRUE;
+}
+
+static void asound_deinitialize(VolumeALSAPlugin * vol)
+{
+    int i;
+
+    if (vol->mixer_evt_idle != 0)
+        g_source_remove(vol->mixer_evt_idle);
+
+    for (i = 0; i < vol->num_channels; i++) {
+        g_io_channel_shutdown(vol->channels[i], FALSE, NULL);
+        g_io_channel_unref(vol->channels[i]);
+    }
+    g_free(vol->channels);
+
+    vol->channels = NULL;
+    vol->num_channels = 0;
 }
 
 /* Get the presence of the mute control from the sound system. */
@@ -478,9 +530,7 @@ static void volumealsa_destructor(Plugin * p)
 {
     VolumeALSAPlugin * vol = (VolumeALSAPlugin *) p->priv;
 
-    /* Remove the periodic timer. */
-    if (vol->mixer_evt_idle != 0)
-        g_source_remove(vol->mixer_evt_idle);
+    asound_deinitialize(vol);
 
     /* If the dialog box is open, dismiss it. */
     if (vol->popup_window != NULL)
@@ -587,3 +637,5 @@ PluginClass volumealsa_plugin_class = {
     panel_configuration_changed : volumealsa_panel_configuration_changed
 
 };
+
+/* vim: set sw=4 et sts=4 : */

@@ -78,7 +78,7 @@
 #define PLUGIN_NAME      "MonitorsPlugin"
 #define BORDER_SIZE      2                  /* Pixels               */
 #define DEFAULT_WIDTH    40                 /* Pixels               */
-#define UPDATE_PERIOD    2000               /* Milliseconds         */
+#define UPDATE_PERIOD    1                  /* Seconds              */
 #define COLOR_SIZE       8                  /* In chars : #xxxxxx\0 */
 
 #ifndef ENTER
@@ -100,6 +100,7 @@ struct Monitor {
     gint         pixmap_width;      /* Width and size of the buffer           */
     gint         pixmap_height;     /* Does not include border size           */
     stats_set    *stats;            /* Circular buffer of values              */
+    stats_set    total;             /* Maximum possible value, as in mem_total*/
     gint         ring_cursor;       /* Cursor for ring/circular buffer        */
     gchar        *color;            /* Color of the graph                     */
     gboolean     (*update) (struct Monitor *); /* Update function             */
@@ -123,6 +124,7 @@ typedef void (*tooltip_update_func) (Monitor *);
 typedef struct {
     Monitor  *monitors[N_MONITORS];          /* Monitors                      */
     int      displayed_monitors[N_MONITORS]; /* Booleans                      */
+    char     *action;                        /* What to do on click           */
     guint    timer;                          /* Timer for regular updates     */
 } MonitorsPlugin;
 
@@ -145,6 +147,7 @@ static void     mem_tooltip_update (Monitor *m);
 static gboolean configure_event(GtkWidget*, GdkEventConfigure*, gpointer);
 static gboolean expose_event(GtkWidget *, GdkEventExpose *, Monitor *);
 static void redraw_pixmap (Monitor *m);
+static gboolean monitors_button_press_event(GtkWidget*, GdkEventButton*, Plugin*);
 
 /* Monitors functions */
 static int monitors_constructor(Plugin *, char **);
@@ -274,13 +277,14 @@ cpu_update(Monitor * c)
 static void
 cpu_tooltip_update (Monitor *m)
 {
-    gchar tooltip_text[20];
     if (m && m->stats) {
+        gchar *tooltip_text;
         gint ring_pos = (m->ring_cursor == 0)
             ? m->pixmap_width - 1 : m->ring_cursor - 1;
-        g_snprintf(tooltip_text, 20, "CPU usage : %.2f%%",
+        tooltip_text = g_strdup_printf(_("CPU usage: %.2f%%"),
                 m->stats[ring_pos] * 100);
         gtk_widget_set_tooltip_text(m->da, tooltip_text);
+        g_free(tooltip_text);
     }
 }
 
@@ -327,13 +331,20 @@ mem_update(Monitor * m)
 
         fclose(meminfo);
 
+        m->total = mem_total;
+
         /* Adding stats to the buffer:
-	 * It is debatable if 'mem_buffers' counts as free or not. I'll go with
-	 * no, because it may need to be flushed. mem_free definitely counts as
-	 * 'free' because it is immediately released should any application
-	 * need it. */
-        m->stats[m->ring_cursor] = (mem_total - mem_free - mem_cached)/(float)mem_total;
-        m->ring_cursor++;
+         * It is debatable if 'mem_buffers' counts as free or not. I'll go with
+         * 'free', because it can be flushed fairly quickly, and generally
+         * isn't necessary to keep in memory.
+         * It is hard to draw the line, which caches should be counted as free,
+         * and which not. Pagecaches, dentry, and inode caches are quickly
+         * filled up again for almost any use case. Hence I would not count
+         * them as 'free'.
+         * 'mem_cached' definitely counts as 'free' because it is immediately
+         * released should any application need it. */
+        m->stats[m->ring_cursor] = (mem_total - mem_buffers - mem_free -
+                mem_cached) / (float)mem_total; m->ring_cursor++;
 
         if (m->ring_cursor >= m->pixmap_width)
             m->ring_cursor = 0; 
@@ -349,13 +360,15 @@ mem_update(Monitor * m)
 static void
 mem_tooltip_update (Monitor *m)
 {
-    gchar tooltip_text[20];
     if (m && m->stats) {
+        gchar *tooltip_text;
         gint ring_pos = (m->ring_cursor == 0)
             ? m->pixmap_width - 1 : m->ring_cursor - 1;
-        g_snprintf(tooltip_text, 20, "RAM usage : %.2f%%",
+        tooltip_text = g_strdup_printf(_("RAM usage: %.1fMB (%.2f%%)"),
+                m->stats[ring_pos] * m->total / 1024,
                 m->stats[ring_pos] * 100);
         gtk_widget_set_tooltip_text(m->da, tooltip_text);
+        g_free(tooltip_text);
     }
 }
 /******************************************************************************
@@ -469,7 +482,24 @@ expose_event(GtkWidget * widget, GdkEventExpose * event, Monitor *m)
     
     return FALSE;
     
-};
+}
+
+
+static gboolean monitors_button_press_event(GtkWidget* widget, GdkEventButton* evt, Plugin *plugin)
+{
+    MonitorsPlugin* mp = plugin->priv;
+
+    /* Standard right-click handling. */
+    if (plugin_button_press_event(widget, evt, plugin))
+        return TRUE;
+
+    if (mp->action != NULL)
+        g_spawn_command_line_async(mp->action, NULL);
+    else
+        g_spawn_command_line_async("lxtask", NULL);
+
+    return TRUE;
+}
 /******************************************************************************
  *                       End of basic events handlers                         *
  ******************************************************************************/
@@ -485,12 +515,12 @@ redraw_pixmap (Monitor *m)
 
     for (i = 0; i < m->pixmap_width; i++)
     {
-        /* Draw one bar of the graph */
-        gdk_draw_line(m->pixmap,
-            m->graphics_context,
-            i, m->pixmap_height,
-        i,(1-m->stats[(m->ring_cursor +i)%m->pixmap_width])*m->pixmap_height);
+        unsigned int drawing_cursor = (m->ring_cursor + i) % m->pixmap_width;
 
+        /* Draw one bar of the graph */
+        gdk_draw_line(m->pixmap, m->graphics_context,
+                i, m->pixmap_height,
+                i, (1.0 - m->stats[drawing_cursor]) * m->pixmap_height);
     }
 
     /* Redraw pixmap */
@@ -523,7 +553,7 @@ static char *colors[N_MONITORS] = {
 };
 
 /* 
- * This function is called every UPDATE_PERIOD milliseconds. It updates all
+ * This function is called every UPDATE_PERIOD seconds. It updates all
  * monitors.
  */
 static gboolean
@@ -580,6 +610,7 @@ monitors_constructor(Plugin *p, char **fp)
     p->pwid = gtk_hbox_new(TRUE, 2);
     gtk_container_set_border_width(GTK_CONTAINER(p->pwid), 1);
     GTK_WIDGET_SET_FLAGS(p->pwid, GTK_NO_WINDOW);
+    g_signal_connect(G_OBJECT(p->pwid), "button_press_event", G_CALLBACK(monitors_button_press_event), (gpointer) p);
 
     /* Apply options */
     line s;
@@ -597,6 +628,8 @@ monitors_constructor(Plugin *p, char **fp)
                     mp->displayed_monitors[CPU_POSITION] = atoi(s.t[1]);
                 else if (g_ascii_strcasecmp(s.t[0], "DisplayRAM") == 0)
                     mp->displayed_monitors[MEM_POSITION] = atoi(s.t[1]);
+                else if (g_ascii_strcasecmp(s.t[0], "Action") == 0)
+                    mp->action = g_strdup(s.t[1]);
                 else if (g_ascii_strcasecmp(s.t[0], "CPUColor") == 0)
                     colors[CPU_POSITION] = g_strndup(s.t[1], COLOR_SIZE-1);
                 else if (g_ascii_strcasecmp(s.t[0], "RAMColor") == 0)
@@ -630,8 +663,8 @@ monitors_constructor(Plugin *p, char **fp)
     }
    
     /* Adding a timer : monitors will be updated every UPDATE_PERIOD
-     * milliseconds */
-    mp->timer = g_timeout_add(UPDATE_PERIOD, (GSourceFunc) monitors_update, 
+     * seconds */
+    mp->timer = g_timeout_add_seconds(UPDATE_PERIOD, (GSourceFunc) monitors_update,
                               (gpointer) mp);
     RET(TRUE);
 }
@@ -655,6 +688,7 @@ monitors_destructor(Plugin *p)
             monitor_free(mp->monitors[i]);
     }
 
+    g_free(mp->action);
     g_free(mp); 
 
     RET();
@@ -678,6 +712,7 @@ monitors_config (Plugin *p, GtkWindow *parent)
         _("CPU color"), &colors[CPU_POSITION], CONF_TYPE_STR,
         _("Display RAM usage"), &mp->displayed_monitors[1], CONF_TYPE_BOOL,
         _("RAM color"), &colors[MEM_POSITION], CONF_TYPE_STR,
+        _("Action when clicked (default: lxtask)"), &mp->action, CONF_TYPE_STR,
         NULL);
     gtk_window_present(GTK_WINDOW(dialog));    
 
@@ -742,8 +777,6 @@ start:
         goto start;
     }
 
-
-    
     RET();
 }
 
@@ -758,6 +791,7 @@ monitors_save(Plugin *p, FILE *fp)
 
     lxpanel_put_bool(fp, "DisplayCPU", mp->displayed_monitors[CPU_POSITION]);
     lxpanel_put_bool(fp, "DisplayRAM", mp->displayed_monitors[MEM_POSITION]);
+    lxpanel_put_str(fp, "Action", mp->action);
 
     if (mp->monitors[CPU_POSITION])
         lxpanel_put_str(fp, "CPUColor", colors[CPU_POSITION]);
@@ -780,3 +814,5 @@ PluginClass monitors_plugin_class = {
     save: monitors_save,
     panel_configuration_changed: NULL
 };
+
+/* vim: set sw=4 sts=4 et : */
