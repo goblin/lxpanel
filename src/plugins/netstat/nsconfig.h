@@ -14,4 +14,17 @@
 #define ICONS_WL_RENEW		RESOURCE_DIR "/ns-wlrenew.png"
 #define ICONS_WL_LOCK		RESOURCE_DIR "/ns-lock.png"
 
+/*Themed icon names*/
+#define ICONS_CONNECTED_THEME		"network-idle"
+#define ICONS_DISCONNECT_THEME		"network-offline"
+#define ICONS_PROBLEM_THEME			"network-error"
+#define ICONS_RENEW_THEME			"network-idle"
+#define ICONS_BOTHRS_THEME			"network-transmit-receive"
+#define ICONS_SENDDATA_THEME		"network-transmit"
+#define ICONS_RECVDATA_THEME		"network-receive"
+#define ICONS_WL_CONNECTED_THEME	"network-wireless-disconnected"
+#define ICONS_WL_DISCONNECT_THEME	"network-wireless-disconnected"
+#define ICONS_WL_RENEW_THEME		"network-idle"
+#define ICONS_WL_LOCK_THEME			"ns-lock"
+
 #endif

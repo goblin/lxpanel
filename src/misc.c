@@ -722,7 +722,7 @@ get_net_wm_state(Window win, NetWMState *nws)
 
 
     ENTER;
-    bzero(nws, sizeof(nws));
+    memset(nws, 0, sizeof(*nws));
     if (!(state = get_xaproperty(win, a_NET_WM_STATE, XA_ATOM, &num3)))
         RET();
 
@@ -760,7 +760,7 @@ get_net_wm_window_type(Window win, NetWMWindowType *nwwt)
 
 
     ENTER;
-    bzero(nwwt, sizeof(*nwwt));
+    memset(nwwt, 0, sizeof(*nwwt));
     if (!(state = get_xaproperty(win, a_NET_WM_WINDOW_TYPE, XA_ATOM, &num3)))
         RET();
 
@@ -1429,7 +1429,8 @@ static char* translate_app_exec_to_command_line( const char* pexec,
                     file = g_shell_quote( tmp );
                     g_free( tmp );
                     g_string_append( cmd, file );
-                    g_string_append_c( cmd, ' ' );
+                    if (l->next)
+                        g_string_append_c( cmd, ' ' );
                     g_free( file );
                 }
                 add_files = TRUE;
@@ -1453,7 +1454,8 @@ static char* translate_app_exec_to_command_line( const char* pexec,
                     file = (char*)l->data;
                     tmp = g_shell_quote( file );
                     g_string_append( cmd, tmp );
-                    g_string_append_c( cmd, ' ' );
+                    if (l->next)
+                        g_string_append_c( cmd, ' ' );
                     g_free( tmp );
                 }
                 add_files = TRUE;
@@ -1476,7 +1478,8 @@ static char* translate_app_exec_to_command_line( const char* pexec,
                     file = g_shell_quote( tmp );
                     g_free( tmp );
                     g_string_append( cmd, file );
-                    g_string_append_c( cmd, ' ' );
+                    if (l->next)
+                        g_string_append_c( cmd, ' ' );
                     g_free( file );
                 }
                 add_files = TRUE;
@@ -1529,13 +1532,12 @@ static char* translate_app_exec_to_command_line( const char* pexec,
 _finish:
     if( ! add_files )
     {
-        g_string_append_c ( cmd, ' ' );
         for( l = file_list; l; l = l->next )
         {
+            g_string_append_c( cmd, ' ' );
             file = (char*)l->data;
             tmp = g_shell_quote( file );
             g_string_append( cmd, tmp );
-            g_string_append_c( cmd, ' ' );
             g_free( tmp );
         }
     }
@@ -1564,6 +1566,7 @@ gboolean lxpanel_launch_app(const char* exec, GList* files, gboolean in_terminal
             g_free(cmd);
         cmd = term_cmd;
     }
+    LOG(LOG_INFO, "lxpanel: spawning \"%s\"...\n", cmd);
     if (! g_spawn_command_line_async(cmd, &error) ) {
         ERR("can't spawn %s\nError is %s\n", cmd, error->message);
         g_error_free (error);

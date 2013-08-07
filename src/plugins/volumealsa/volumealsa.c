@@ -56,6 +56,12 @@ typedef struct {
     /* unloading and error handling */
     GIOChannel **channels;                      /* Channels that we listen to */
     guint num_channels;                         /* Number of channels */
+
+    /* Icons */
+    const char* icon;
+    const char* icon_panel;
+    const char* icon_fallback;
+
 } VolumeALSAPlugin;
 
 static gboolean asound_find_element(VolumeALSAPlugin * vol, const char * ename);
@@ -220,17 +226,21 @@ static void asound_deinitialize(VolumeALSAPlugin * vol)
 {
     int i;
 
-    if (vol->mixer_evt_idle != 0)
+    if (vol->mixer_evt_idle != 0) {
         g_source_remove(vol->mixer_evt_idle);
+        vol->mixer_evt_idle = 0;
+    }
 
     for (i = 0; i < vol->num_channels; i++) {
         g_io_channel_shutdown(vol->channels[i], FALSE, NULL);
         g_io_channel_unref(vol->channels[i]);
     }
     g_free(vol->channels);
-
     vol->channels = NULL;
     vol->num_channels = 0;
+
+    snd_mixer_close(vol->mixer);
+    vol->master_element = NULL;
 }
 
 /* Get the presence of the mute control from the sound system. */
@@ -277,8 +287,7 @@ static void asound_set_volume(VolumeALSAPlugin * vol, int volume)
 
 /*** Graphics ***/
 
-/* Do a full redraw of the display. */
-static void volumealsa_update_display(VolumeALSAPlugin * vol)
+static void volumealsa_update_current_icon(VolumeALSAPlugin * vol)
 {
     /* Mute status. */
     gboolean mute = asound_is_muted(vol);
@@ -313,12 +322,26 @@ static void volumealsa_update_display(VolumeALSAPlugin * vol)
          icon_fallback=ICONS_VOLUME_LOW;
     }
 
+    vol->icon_panel = icon_panel;
+    vol->icon = icon;
+    vol->icon_fallback= icon_fallback;
+}
+
+/* Do a full redraw of the display. */
+static void volumealsa_update_display(VolumeALSAPlugin * vol)
+{
+    /* Mute status. */
+    gboolean mute = asound_is_muted(vol);
+    int level = asound_get_volume(vol);
+
+    volumealsa_update_current_icon(vol);
+
     /* Change icon, fallback to default icon if theme doesn't exsit */
-    if ( ! panel_image_set_icon_theme(vol->plugin->panel, vol->tray_icon, icon_panel))
+    if ( ! panel_image_set_icon_theme(vol->plugin->panel, vol->tray_icon, vol->icon_panel))
     {
-        if ( ! panel_image_set_icon_theme(vol->plugin->panel, vol->tray_icon, icon))
+        if ( ! panel_image_set_icon_theme(vol->plugin->panel, vol->tray_icon, vol->icon))
         {
-            panel_image_set_from_file(vol->plugin->panel, vol->tray_icon, icon_fallback);
+            panel_image_set_from_file(vol->plugin->panel, vol->tray_icon, vol->icon_fallback);
         }
     }
 
@@ -340,6 +363,7 @@ static void volumealsa_update_display(VolumeALSAPlugin * vol)
     gtk_widget_set_tooltip_text(vol->plugin->pwid, tooltip);
     g_free(tooltip);
 }
+
 
 /* Handler for "button-press-event" signal on main widget. */
 static gboolean volumealsa_button_press_event(GtkWidget * widget, GdkEventButton * event, VolumeALSAPlugin * vol)
@@ -384,6 +408,17 @@ static gboolean volumealsa_popup_focus_out(GtkWidget * widget, GdkEvent * event,
 static void volumealsa_popup_map(GtkWidget * widget, VolumeALSAPlugin * vol)
 {
     plugin_adjust_popup_position(widget, vol->plugin);
+}
+
+static void volumealsa_theme_change(GtkWidget * widget, VolumeALSAPlugin * vol)
+{
+    if ( ! panel_image_set_icon_theme(vol->plugin->panel, vol->tray_icon, vol->icon_panel))
+    {
+        if ( ! panel_image_set_icon_theme(vol->plugin->panel, vol->tray_icon, vol->icon))
+        {
+            panel_image_set_from_file(vol->plugin->panel, vol->tray_icon, vol->icon_fallback);
+        }
+    }
 }
 
 /* Handler for "value_changed" signal on popup window vertical scale. */
@@ -518,6 +553,7 @@ static int volumealsa_constructor(Plugin * p, char ** fp)
     /* Connect signals. */
     g_signal_connect(G_OBJECT(p->pwid), "button-press-event", G_CALLBACK(volumealsa_button_press_event), vol);
     g_signal_connect(G_OBJECT(p->pwid), "scroll-event", G_CALLBACK(volumealsa_popup_scale_scrolled), vol );
+    g_signal_connect(p->panel->icon_theme, "changed", G_CALLBACK(volumealsa_theme_change), vol );
 
     /* Update the display, show the widget, and return. */
     volumealsa_update_display(vol);

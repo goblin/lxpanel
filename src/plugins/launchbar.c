@@ -16,6 +16,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+/* Modified by Giuseppe Penone <giuspen@gmail.com> starting from 2012-08 and lxpanel 0.5.10 */
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -68,7 +70,7 @@ enum {
     N_COLS
 };
 
-static const char desktop_ent[] = "Desktop Entry";
+static const char DESKTOP_ENTRY[] = "Desktop Entry";
 
 /* Representative of one launch button.
  * Note that the launch parameters come from the specified desktop file, or from the configuration file.
@@ -93,6 +95,7 @@ typedef struct {
     GSList * buttons;			/* Launchbar buttons */
     GtkWidget * config_dlg;		/* Configuration dialog */
     LaunchButton * bootstrap_button;	/* Bootstrapping button for empty launchbar */
+    GtkWidget     *p_button_add, *p_button_remove, *p_label_menu_app_exec, *p_label_def_app_exec;
 } LaunchbarPlugin;
 
 void panel_config_save(Panel * panel);  /* defined in configurator.c */
@@ -131,6 +134,105 @@ static void launchbutton_free(LaunchButton * btn)
     g_free(btn->action);
     g_free(btn->tooltip);
     g_free(btn);
+}
+
+static gboolean on_defined_view_button_press_event(GtkWidget *p_widget, GdkEventButton *p_event, gpointer p_data)
+{
+    if(p_event->button == 1)
+    {
+        if(p_event->type == GDK_2BUTTON_PRESS)
+        {
+            LaunchbarPlugin *lb = (LaunchbarPlugin *)p_data;
+            gtk_button_clicked(GTK_BUTTON(lb->p_button_remove));
+        }
+    }
+    return FALSE;
+}
+
+static void on_defined_view_cursor_changed(GtkTreeView *p_treeview, gpointer p_data)
+{
+    gboolean  label_set = FALSE;
+    LaunchbarPlugin *lb = (LaunchbarPlugin *)p_data;
+    GtkTreeIter  tree_iter_sel;
+    GtkTreeModel* p_treemodel = gtk_tree_view_get_model(p_treeview);
+    GtkTreeSelection *p_treeselection = gtk_tree_view_get_selection(p_treeview);
+    if(gtk_tree_selection_get_selected(p_treeselection,
+                                       (GtkTreeModel **)(&p_treemodel),
+                                       &tree_iter_sel))
+    {
+        LaunchButton * p_btn;
+        gtk_tree_model_get(p_treemodel, &tree_iter_sel, COL_BTN, &p_btn, -1);
+        if( (p_btn != NULL) && (p_btn->action != NULL) )
+        {
+            GString *p_gstring = g_string_new("");
+            g_string_printf(p_gstring, "<i>Exec =</i>  %s", p_btn->action);
+            gtk_label_set_markup(GTK_LABEL(lb->p_label_def_app_exec), p_gstring->str);
+            g_string_free(p_gstring, TRUE/*free also gstring->str*/);
+            gtk_widget_set_visible(lb->p_label_def_app_exec, TRUE);
+            label_set = TRUE;
+        }
+    }
+    if(!label_set)
+    {
+        gtk_widget_set_visible(lb->p_label_def_app_exec, FALSE);
+    }
+}
+
+static void on_menu_view_cursor_changed(GtkTreeView *p_treeview, gpointer p_data)
+{
+    gboolean  label_set = FALSE;
+    LaunchbarPlugin *lb = (LaunchbarPlugin *)p_data;
+    GtkTreeIter  tree_iter_sel;
+    GtkTreeModel* p_treemodel = gtk_tree_view_get_model(p_treeview);
+    GtkTreeSelection *p_treeselection = gtk_tree_view_get_selection(p_treeview);
+    if(gtk_tree_selection_get_selected(p_treeselection,
+                                       (GtkTreeModel **)(&p_treemodel),
+                                       &tree_iter_sel))
+    {
+        LaunchButton * p_btn;
+        gtk_tree_model_get(p_treemodel, &tree_iter_sel, COL_BTN, &p_btn, -1);
+        if( (p_btn != NULL) && (p_btn->action != NULL) )
+        {
+            GString *p_gstring = g_string_new("");
+            g_string_printf(p_gstring, "<i>Exec =</i>  %s", p_btn->action);
+            gtk_label_set_markup(GTK_LABEL(lb->p_label_menu_app_exec), p_gstring->str);
+            g_string_free(p_gstring, TRUE/*free also gstring->str*/);
+            gtk_widget_set_visible(lb->p_label_menu_app_exec, TRUE);
+            label_set = TRUE;
+        }
+    }
+    if(!label_set)
+    {
+        gtk_widget_set_visible(lb->p_label_menu_app_exec, FALSE);
+    }
+}
+
+static gboolean on_menu_view_button_press_event(GtkWidget *p_widget, GdkEventButton *p_event, gpointer p_data)
+{
+    if(p_event->button == 1)
+    {
+        if(p_event->type == GDK_2BUTTON_PRESS)
+        {
+            LaunchbarPlugin *lb = (LaunchbarPlugin *)p_data;
+            gtk_button_clicked(GTK_BUTTON(lb->p_button_add));
+        }
+    }
+    else if(p_event->button == 2)
+    {
+        GtkTreePath  *p_tree_path;
+        if(gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(p_widget),
+                                         p_event->x, p_event->y,
+                                         &p_tree_path,
+                                         NULL, NULL, NULL))
+        {
+            if(gtk_tree_view_row_expanded(GTK_TREE_VIEW(p_widget), p_tree_path))
+                gtk_tree_view_collapse_row(GTK_TREE_VIEW(p_widget), p_tree_path);
+            else
+                gtk_tree_view_expand_row(GTK_TREE_VIEW(p_widget), p_tree_path, FALSE);
+            gtk_tree_path_free(p_tree_path);
+        }
+    }
+    return FALSE;
 }
 
 /* Handler for "button-press-event" event from launchbar button. */
@@ -245,6 +347,25 @@ static void launchbutton_build_bootstrap(Plugin * p)
         icon_grid_set_visible(lb->icon_grid, lb->bootstrap_button->widget, TRUE);
 }
 
+static gboolean load_app_key_file(gchar *filepath, GKeyFile *p_gkeyfile)
+{
+    gboolean loaded;
+    if (g_path_is_absolute(filepath))
+    {
+        loaded = g_key_file_load_from_file(p_gkeyfile, filepath, G_KEY_FILE_NONE, NULL );
+    }
+    else
+    {
+        /* Load from the freedesktop.org specified data directories. */
+        gchar * full_id = g_strconcat("applications/", filepath, NULL);
+        loaded = g_key_file_load_from_data_dirs(
+            p_gkeyfile, full_id, &filepath, G_KEY_FILE_NONE, NULL);
+        g_free(full_id);
+    }
+    return loaded;
+}
+
+
 /* Build the graphic elements for a launchbar button.  The desktop_id field is already established. */
 static void launchbutton_build_gui(Plugin * p, LaunchButton * btn)
 {
@@ -254,39 +375,24 @@ static void launchbutton_build_gui(Plugin * p, LaunchButton * btn)
     {
         /* There is a valid desktop file name.  Try to open it. */
         GKeyFile * desktop = g_key_file_new();
-        
-	gchar * desktop_file = NULL;
-        gboolean loaded;	
-	if (g_path_is_absolute(btn->desktop_id))
-        {
-            desktop_file = g_strdup(btn->desktop_id);
-            loaded = g_key_file_load_from_file(desktop, desktop_file, G_KEY_FILE_NONE, NULL );
-	}
-	else 
-	{
-            /* Load from the freedesktop.org specified data directories. */
-            gchar * full_id = g_strconcat("applications/", btn->desktop_id, NULL);
-            loaded = g_key_file_load_from_data_dirs(
-                desktop, full_id, &desktop_file, G_KEY_FILE_NONE, NULL);
-            g_free(full_id);
-        }
+        gboolean loaded = load_app_key_file(btn->desktop_id, desktop);
 
-	if (loaded)
+        if (loaded)
         {
             /* Desktop file located.  Get Icon, Name, Exec, and Terminal parameters. */
-            gchar * icon = g_key_file_get_string(desktop, desktop_ent, "Icon", NULL);
-            gchar * title = g_key_file_get_locale_string(desktop, desktop_ent, "Name", NULL, NULL);
+            gchar * icon = g_key_file_get_string(desktop, DESKTOP_ENTRY, "Icon", NULL);
+            gchar * title = g_key_file_get_locale_string(desktop, DESKTOP_ENTRY, "Name", NULL, NULL);
             if ((btn->image == NULL) && (icon != NULL))
                 btn->image = icon;
 
             if ( ! btn->customize_action )
             {
-                gchar * exec = g_key_file_get_string(desktop, desktop_ent, "Exec", NULL);
-                btn->action = translate_exec_to_cmd(exec, icon, title, desktop_file);
+                gchar * exec = g_key_file_get_string(desktop, DESKTOP_ENTRY, "Exec", NULL);
+                btn->action = translate_exec_to_cmd(exec, icon, title, btn->desktop_id);
                 g_free(exec);
             }
 
-            btn->use_terminal = g_key_file_get_boolean(desktop, desktop_ent, "Terminal", NULL);
+            btn->use_terminal = g_key_file_get_boolean(desktop, DESKTOP_ENTRY, "Terminal", NULL);
 
             if ( ! btn->customize_tooltip)
                 btn->tooltip = title;
@@ -296,7 +402,6 @@ static void launchbutton_build_gui(Plugin * p, LaunchButton * btn)
                 g_free(title);
         }
 
-        g_free(desktop_file);
         g_key_file_free(desktop);
     }
 
@@ -543,6 +648,8 @@ static void launchbar_configure_remove_button(GtkButton * widget, Plugin * p)
         icon_grid_remove(lb->icon_grid, btn->widget);
         lb->buttons = g_slist_remove(lb->buttons, btn);
         launchbutton_free(btn);
+        
+        gtk_widget_set_visible(lb->p_label_def_app_exec, FALSE);
 
         /* Put the bootstrap button back if the list becomes empty. */
         if (lb->buttons == NULL)
@@ -700,6 +807,10 @@ static void launchbar_configure_add_menu_recursive(GtkTreeStore * tree, GtkTreeI
                 btn->image = g_strdup(menu_cache_item_get_icon(item));
                 btn->tooltip = g_strdup(menu_cache_item_get_name(item));
 
+                GKeyFile * desktop = g_key_file_new();
+                gboolean loaded = load_app_key_file(btn->desktop_id, desktop);
+                btn->action = loaded ? g_key_file_get_string(desktop, DESKTOP_ENTRY, "Exec", NULL) : NULL;
+
                 /* Add the row to the view. */
                 GtkTreeIter it;
                 gtk_tree_store_append(tree, &it, parent_it);
@@ -827,21 +938,28 @@ static void launchbar_configure(Plugin * p, GtkWindow * parent)
 
         defined_view = (GtkWidget*)gtk_builder_get_object(builder, "defined_view");
         menu_view = (GtkWidget*)gtk_builder_get_object(builder, "menu_view");
+        lb->p_label_def_app_exec = (GtkWidget*)gtk_builder_get_object(builder, "label_def_app_exec");
+        lb->p_label_menu_app_exec = (GtkWidget*)gtk_builder_get_object(builder, "label_menu_app_exec");
 
         /* Connect signals. */
         g_signal_connect(dlg, "response", G_CALLBACK(launchbar_configure_response), p);
 
-        btn = (GtkWidget*)gtk_builder_get_object(builder, "add");
-        g_signal_connect(btn, "clicked", G_CALLBACK(launchbar_configure_add_button), p);
+        lb->p_button_add = (GtkWidget*)gtk_builder_get_object(builder, "add");
+        g_signal_connect(lb->p_button_add, "clicked", G_CALLBACK(launchbar_configure_add_button), p);
 
-        btn = (GtkWidget*)gtk_builder_get_object(builder, "remove");
-        g_signal_connect(btn, "clicked", G_CALLBACK(launchbar_configure_remove_button), p);
+        lb->p_button_remove = (GtkWidget*)gtk_builder_get_object(builder, "remove");
+        g_signal_connect(lb->p_button_remove, "clicked", G_CALLBACK(launchbar_configure_remove_button), p);
 
         btn = (GtkWidget*)gtk_builder_get_object(builder, "up");
         g_signal_connect(btn, "clicked", G_CALLBACK(launchbar_configure_move_up_button), p);
 
         btn = (GtkWidget*)gtk_builder_get_object(builder, "down");
         g_signal_connect(btn, "clicked", G_CALLBACK(launchbar_configure_move_down_button), p);
+
+        g_signal_connect(defined_view, "button-press-event", G_CALLBACK(on_defined_view_button_press_event), lb);
+        g_signal_connect(defined_view, "cursor-changed", G_CALLBACK(on_defined_view_cursor_changed), lb);
+        g_signal_connect(menu_view, "button-press-event", G_CALLBACK(on_menu_view_button_press_event), lb);
+        g_signal_connect(menu_view, "cursor-changed", G_CALLBACK(on_menu_view_cursor_changed), lb);
 
         gtk_window_present(GTK_WINDOW(dlg));
         lb->config_dlg = dlg;
@@ -852,6 +970,9 @@ static void launchbar_configure(Plugin * p, GtkWindow * parent)
         /* Initialize the tree view contents. */
         launchbar_configure_initialize_list(p, dlg, GTK_TREE_VIEW(defined_view), FALSE);
         launchbar_configure_initialize_list(p, dlg, GTK_TREE_VIEW(menu_view), TRUE);
+
+        gtk_widget_set_visible(lb->p_label_menu_app_exec, FALSE);
+        gtk_widget_set_visible(lb->p_label_def_app_exec, FALSE);
 
         g_object_unref(builder);
         return;

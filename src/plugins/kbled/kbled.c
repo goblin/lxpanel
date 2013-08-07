@@ -35,6 +35,18 @@
 #include "plugin.h"
 #include "icon-grid.h"
 
+static const char * on_icons_theme[] = {
+    "capslock-on",
+    "numlock-on",
+    "scrllock-on"
+};
+
+static const char * off_icons_theme[] = {
+    "capslock-off",
+    "numlock-off",
+    "scrllock-off"
+};
+
 static const char * on_icons[] = {
     "capslock-on.png",
     "numlock-on.png",
@@ -59,6 +71,7 @@ typedef struct {
     gboolean visible[3];			/* True if control is visible (per user configuration) */
 } KeyboardLEDPlugin;
 
+static void kbled_theme_changed(GtkWidget * widget, Plugin * p);
 static void kbled_update_image(KeyboardLEDPlugin * kl, int i, unsigned int state);
 static void kbled_update_display(Plugin * p, unsigned int state);
 static GdkFilterReturn kbled_event_filter(GdkXEvent * gdkxevent, GdkEvent * event, Plugin * p);
@@ -69,15 +82,29 @@ static void kbled_configure(Plugin * p, GtkWindow * parent);
 static void kbled_save_configuration(Plugin * p, FILE * fp);
 static void kbled_panel_configuration_changed(Plugin * p);
 
+static void kbled_theme_changed(GtkWidget * widget, Plugin * p)
+{
+    /* Set orientation into the icon grid. */
+    KeyboardLEDPlugin * kl = (KeyboardLEDPlugin *) p->priv;
+
+    /* Do a full redraw. */
+    int current_state = kl->current_state;
+    kl->current_state = ~ kl->current_state;
+    kbled_update_display(p, current_state);
+}
+
 /* Update image to correspond to current state. */
 static void kbled_update_image(KeyboardLEDPlugin * kl, int i, unsigned int state)
 {
-    char * file = g_build_filename(
-        PACKAGE_DATA_DIR "/lxpanel/images",
-        ((state) ? on_icons[i] : off_icons[i]),
-        NULL);
-    panel_image_set_from_file(kl->plugin->panel, kl->indicator_image[i], file);
-    g_free(file);
+	if(panel_image_set_icon_theme(kl->plugin->panel, kl->indicator_image[i], (state ? on_icons_theme[i] : off_icons_theme[i])) != TRUE) {
+		char * file = g_build_filename(
+			PACKAGE_DATA_DIR "/lxpanel/images",
+			((state) ? on_icons[i] : off_icons[i]),
+			NULL);
+		panel_image_set_from_file(kl->plugin->panel, kl->indicator_image[i], file);
+		g_free(file);
+		
+	}
 }
 
 /* Redraw after Xkb event or initialization. */
@@ -158,6 +185,7 @@ static int kbled_constructor(Plugin * p, char ** fp)
     p->pwid = gtk_event_box_new();
     gtk_widget_add_events(p->pwid, GDK_BUTTON_PRESS_MASK);
     g_signal_connect(p->pwid, "button-press-event", G_CALLBACK(plugin_button_press_event), p);
+    g_signal_connect(p->panel->icon_theme, "changed", G_CALLBACK(kbled_theme_changed), p);
 
     /* Allocate an icon grid manager to manage the container.
      * Then allocate three images for the three indications, but make them visible only when the configuration requests. */

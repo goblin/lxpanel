@@ -17,6 +17,8 @@
  */
 
 #include <stdio.h>
+#include <stdbool.h>
+#include <cairo/cairo.h>
 
 #define ERR(fmt, args...) fprintf(stderr, fmt, ## args)
 #define DBG2(fmt, args...) fprintf(stderr, "%s:%s:%-5d: " fmt, __FILE__,  __FUNCTION__, __LINE__, ## args)
@@ -25,6 +27,11 @@
 return args; } while(0)
 
 enum { LOG_NONE, LOG_ERR, LOG_WARN, LOG_INFO, LOG_ALL };
+
+extern int log_level;
+extern bool log_level_set_on_commandline;
+extern int configured_log_level;
+
 #ifdef DEBUG
 
 #define ENTER          do { fprintf(stderr, "%s:%s:%-5d: ENTER\n",  __FILE__,__FUNCTION__, __LINE__); } while(0)
@@ -35,7 +42,6 @@ return args; } while(0)
 
 #else
 
-extern int log_level;
 #define ENTER         do {  } while(0)
 #define RET(args...)   return args
 #define DBG(fmt, args...)   do {  } while(0)
@@ -43,3 +49,9 @@ extern int log_level;
 
 #endif
 
+
+void _check_cairo_status(cairo_t* cr, char const* file, char const* func, int line);
+void _check_cairo_surface_status(cairo_surface_t** surf, char const* file, char const* func, int line);
+
+#define check_cairo_status(cr) _check_cairo_status(cr, __FILE__, __FUNCTION__, __LINE__)
+#define check_cairo_surface_status(surf) _check_cairo_surface_status(surf, __FILE__, __FUNCTION__, __LINE__)

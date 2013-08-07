@@ -254,7 +254,7 @@ static void wincmd_save_configuration(Plugin * p, FILE * fp)
 static void wincmd_panel_configuration_changed(Plugin * p)
 {
     WinCmdPlugin * wc = (WinCmdPlugin *) p->priv;
-    fb_button_set_from_file(p->pwid, wc->image, p->panel->icon_size, p->panel->icon_size, TRUE);
+	fb_button_set_from_file(p->pwid, wc->image, p->panel->icon_size, p->panel->icon_size, TRUE);
 }
 
 /* Plugin descriptor. */

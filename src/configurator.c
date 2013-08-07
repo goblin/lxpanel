@@ -66,6 +66,10 @@ extern GSList* all_panels;
 extern gchar *cprofile;
 extern int config;
 
+/* GtkColotButton expects a number between 0 and 65535, but p->alpha has range
+ * 0 to 255, and (2^(2n) - 1) / (2^n - 1) = 2^n + 1 = 257, with n = 8. */
+static guint16 const alpha_scale_factor = 257;
+
 void panel_global_config_save( Panel* p, FILE *fp);
 void panel_plugin_config_save( Panel* p, FILE *fp);
 
@@ -237,6 +241,15 @@ static void set_width_type( GtkWidget *item, Panel* p )
     update_panel_geometry(p);
 }
 
+static void set_log_level( GtkWidget *cbox, Panel* p)
+{
+    configured_log_level = gtk_combo_box_get_active(GTK_COMBO_BOX(cbox));
+    if (!log_level_set_on_commandline)
+        log_level = configured_log_level;
+    ERR("panel-pref: log level configured to %d, log_level is now %d\n",
+            configured_log_level, log_level);
+}
+
 static void transparency_toggle( GtkWidget *b, Panel* p)
 {
     GtkWidget* tr = (GtkWidget*)g_object_get_data(G_OBJECT(b), "tint_clr");
@@ -320,7 +333,7 @@ on_tint_color_set( GtkColorButton* clr,  Panel* p )
 {
     gtk_color_button_get_color( clr, &p->gtintcolor );
     p->tintcolor = gcolor2rgb24(&p->gtintcolor);
-    p->alpha = gtk_color_button_get_alpha( clr ) / 256;
+    p->alpha = gtk_color_button_get_alpha( clr ) / alpha_scale_factor;
     panel_update_background( p );
 }
 
@@ -968,7 +981,7 @@ void panel_configure( Panel* p, int sel_page )
     /* transparancy */
     tint_clr = w = (GtkWidget*)gtk_builder_get_object( builder, "tint_clr" );
     gtk_color_button_set_color((GtkColorButton*)w, &p->gtintcolor);
-    gtk_color_button_set_alpha((GtkColorButton*)w, 256 * p->alpha);
+    gtk_color_button_set_alpha((GtkColorButton*)w, alpha_scale_factor * p->alpha);
     if ( ! p->transparent )
         gtk_widget_set_sensitive( w, FALSE );
     g_signal_connect( w, "color-set", G_CALLBACK( on_tint_color_set ), p );
@@ -996,7 +1009,7 @@ void panel_configure( Panel* p, int sel_page )
         w = (GtkWidget*)gtk_builder_get_object( builder, "img_file" );
         g_object_set_data(G_OBJECT(img), "img_file", w);
         gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(w),
-            ((p->background_file != NULL) ? p->background_file : PACKAGE_DATA_DIR "/lxpanel/images/background.png"));
+            ((p->background_file != NULL) ? p->background_file : gtk_icon_info_get_filename(gtk_icon_theme_lookup_icon(p->icon_theme, "lxpanel-backkground", 0, 0))));
 
         if (!p->background)
             gtk_widget_set_sensitive( w, FALSE);
@@ -1081,6 +1094,11 @@ void panel_configure( Panel* p, int sel_page )
                         &logout_cmd);
     }
 
+    w = (GtkWidget*)gtk_builder_get_object( builder, "log_level" );
+    update_opt_menu(w, configured_log_level);
+    g_signal_connect(w, "changed", G_CALLBACK(set_log_level), p);
+
+
     panel_adjust_geometry_terminology(p);
     gtk_widget_show(GTK_WIDGET(p->pref_dialog));
     w = (GtkWidget*)gtk_builder_get_object( builder, "notebook" );
@@ -1115,6 +1133,7 @@ panel_global_config_save( Panel* p, FILE *fp)
     lxpanel_put_bool(fp, "background", p->background );
     lxpanel_put_str(fp, "backgroundfile", p->background_file);
     lxpanel_put_int(fp, "iconsize", p->icon_size);
+    lxpanel_put_int(fp, "loglevel", configured_log_level);
     lxpanel_put_line(fp, "}\n");
 }
 
