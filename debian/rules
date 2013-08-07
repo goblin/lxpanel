@@ -6,14 +6,7 @@ DEB_HOST_ARCH_OS ?= $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
 export DEB_BUILD_MAINT_OPTIONS = hardening=-all
 
 %:
-	dh ${@} --with autoreconf
-
-autoreconf:
-	autoreconf --install --force
-	intltoolize --copy --force --automake
-
-override_dh_autoreconf:
-	dh_autoreconf debian/rules -- autoreconf
+	dh ${@}
 
 override_dh_auto_configure:
 ifeq ($(DEB_HOST_ARCH_OS),linux)
@@ -22,12 +15,6 @@ else
 	# omit netstat plugin on non-linux, requires wireless-tools
 	dh_auto_configure -- --enable-man --with-plugins=netstatus,volume,volumealsa,cpu,deskno,batt,kbled,xkb,thermal,cpufreq,monitors,wnckpager
 endif
-
-override_dh_auto_install:
-	dh_auto_install -- DESTDIR=$(CURDIR)/debian/lxpanel
-
-override_dh_auto_test:
-	# disabled: test fails in po directory
 
 override_dh_builddeb:
 	dh_builddeb -- -Zxz -z9
