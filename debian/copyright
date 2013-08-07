@@ -11,6 +11,7 @@ Copyright: Hong Jen Yee (PCMan)  <pcman.tw@gmail.com>
            Daniel Kesler <kesler.daniel@gmail.com>
            Juergen Hoetzel <juergen@archlinux.org>
            Marty Jack <martyj19@comcast.net>
+           Alexander Iliev <sasoiliev@mamul.org>
 License: GPL-2+
 
 Files: src/{gtkbgbox,gtkbar}.*:
@@ -18,6 +19,11 @@ Copyright: 1995-1997 Peter Mattis
            1995-1997 Spencer Kimball
            1995-1997 Josh MacDonald
 License: LGPL-2+
+
+Files: src/plugins/indicator.c:
+Copyright: 2010, Julien Lavergne <gilir@ubuntu.com>
+           2009, Canonical Ltd.
+License: GPL-3
 
 Files: src/systray/eggtraymanager.*:
 Copyright: 2002 Anders Carlsson <andersca@gnu.org>
@@ -88,3 +94,20 @@ License: LGPL-2+
  .
  The complete text of the GNU Lesser General Public License
  can be found in /usr/share/common-licenses/LGPL-2 file.
+
+License: GPL-3
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ .
+ The complete text of the GNU General Public License
+ can be found in /usr/share/common-licenses/GPL-3 file.
