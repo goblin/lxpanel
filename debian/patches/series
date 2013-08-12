@@ -1,3 +1,4 @@
 01-default-config.patch
 02-desktop-number.patch
 03-run-in-background.patch
+fix_gtk_main.diff
