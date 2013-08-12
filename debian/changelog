@@ -1,3 +1,28 @@
+lxpanel (0.5.12-1) unstable; urgency=low
+
+  [ Andrew Lee (李健秋) ]
+  * Merging upstream version 0.5.12.
+
+  Grab from Mateusz's package changelog from mentors.d.n:
+  (Closes: #713305, #705057, #697405, #695427, #588532, #598824, #609909,
+  #638207, #656036, #661224, #667728, #694350, #586352, #693900, #687615, 
+  #670257, #669242)
+
+  [ Mateusz Łukasik ]
+  * debian/control: bumpped standard-version.
+  * debian/control: build-deps on libgtk2.0-dev (>= 2.16).
+  * debian/control: build-deps on libindicator-dev.
+  * debian/control: suggests indicator componments and provides 
+    indicator-renderer.
+  * debian/copyright: Update copyright for xkb and indicator plugins.
+  * debian/rules: drop override_dh_install, autoreconf.
+
+  [ Andrew Lee (李健秋) ]
+  * Merged changes from Mateusz's package from mentors.d.n.
+  * debian/control: build-deps on libmenu-cache-dev.
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Thu, 08 Aug 2013 00:07:17 +0800
+
 lxpanel (0.5.10-1) unstable; urgency=low
 
   * Merging upstream version 0.5.10.
