@@ -7,7 +7,7 @@ Uploaders:
 Build-Depends:
  debhelper (>= 9), dh-autoreconf, autotools-dev, autopoint, docbook-xml,
  docbook-xsl, intltool, intltool-debian, libasound2-dev, libglib2.0-dev,
- libgtk2.0-dev (>= 2.16), libiw-dev [linux-any], libmenu-cache1-dev,
+ libgtk2.0-dev (>= 2.16), libiw-dev [linux-any], libmenu-cache-dev,
  libwnck-dev, libxpm-dev, python, xsltproc
 Standards-Version: 3.9.4
 Homepage: http://www.lxde.org/
