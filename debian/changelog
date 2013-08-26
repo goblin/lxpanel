@@ -1,3 +1,9 @@
+lxpanel (0.5.12-3) unstable; urgency=low
+
+  * Revert fix_gtk_main.diff. (Closes:#720109)
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Mon, 26 Aug 2013 19:47:13 +0800
+
 lxpanel (0.5.12-2) unstable; urgency=low
 
   * debian/rules: re-added override_dh_install.
