@@ -6,7 +6,7 @@ DEB_HOST_ARCH_OS ?= $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
 export DEB_BUILD_MAINT_OPTIONS = hardening=-all
 
 %:
-	dh ${@}
+	dh ${@} --parallel
 
 override_dh_auto_configure:
 ifeq ($(DEB_HOST_ARCH_OS),linux)
