@@ -3,7 +3,8 @@ Section: x11
 Priority: optional
 Maintainer: Debian LXDE Maintainers <lxde-debian@lists.lxde.org>
 Uploaders:
- Andrew Lee (李健秋) <ajqlee@debian.org>
+ Andrew Lee (李健秋) <ajqlee@debian.org>,
+ Andriy Grytsenko <andrej@rep.kiev.ua>
 Build-Depends:
  debhelper (>= 9), dh-autoreconf, autotools-dev, autopoint, docbook-xml,
  docbook-xsl, intltool, intltool-debian, libasound2-dev, libglib2.0-dev,
