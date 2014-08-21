@@ -17,7 +17,8 @@ Vcs-Git: git://git.lxde.org/git/debian/lxpanel.git
 
 Package: lxpanel
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, lxmenu-data
+Depends: ${misc:Depends}, ${shlibs:Depends}, lxmenu-data,
+ lxpanel-data (= ${source:Version})
 Recommends: xkb-data
 Suggests: lxsession | menu, iceweasel | www-browser
 Description: LXDE panel
@@ -52,3 +53,14 @@ Description: LXDE panel (debug)
  (LXDE).
  .
  This package contains the debugging symbols.
+
+Package: lxpanel-data
+Architecture: all
+Depends: ${misc:Depends}
+Breaks: lxpanel (<< 0.7.0)
+Replaces: lxpanel (<< 0.7.0)
+Description: LXDE panel (data files)
+ LXPanel is a GUI application for the Lightweight X11 Desktop Environment
+ (LXDE).
+ .
+ This package contains the data required for panel.

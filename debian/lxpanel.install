@@ -1,1 +1,6 @@
-debian/desktop/*	/usr/share/applications
+debian/desktop/*	usr/share/applications
+etc/xdg/lxpanel
+usr/bin
+usr/lib
+usr/include
+usr/share/man
