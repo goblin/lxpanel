@@ -23,3 +23,7 @@ override_dh_builddeb:
 
 override_dh_strip:
 	dh_strip --dbg-package=lxpanel-dbg
+
+override_dh_makeshlibs:
+	# plugins are not shared libs so disable processing for them
+	dh_makeshlibs -X/plugins/
