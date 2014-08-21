@@ -2,69 +2,72 @@
 # Copyright (C) 2012 The LXDE team
 # This file is distributed under the same license as the LXDE package.
 # Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2012.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-23 15:11+0200\n"
-"PO-Revision-Date: 2012-09-06 17:41+0200\n"
-"Last-Translator: sotrud_nik2 <baurthefirst@gmail.com>\n"
+"POT-Creation-Date: 2014-08-17 22:00+0300\n"
+"PO-Revision-Date: 2014-08-20 02:59+0000\n"
+"Last-Translator: <baurthefirst@gmail.com>\n"
 "Language-Team: Kazakh <kk_KZ@googlegroups.com>\n"
 "Language: kk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Pootle 2.0.5\n"
-"X-Poedit-Language: Kazakh\n"
-"X-Poedit-Country: KAZAKHSTAN\n"
+"X-Generator: Pootle 2.6.0-rc1\n"
+"X-POOTLE-MTIME: 1408503571.000000\n"
 
-#: ../src/configurator.c:54 ../src/gtk-run.c:360
+#. { "configure", N_("Preferences"), configure },
+#: ../src/configurator.c:55 ../src/gtk-run.c:361 ../plugins/menu.c:748
 msgid "Run"
 msgstr "Жөнелту"
 
-#: ../src/configurator.c:56
+#: ../src/configurator.c:57 ../plugins/menu.c:749
 msgid "Restart"
 msgstr "Қайта қосу"
 
-#: ../src/configurator.c:57
+#: ../src/configurator.c:58 ../plugins/menu.c:750
 msgid "Logout"
 msgstr "Жүйеден шығу"
 
-#: ../src/configurator.c:481
+#: ../src/configurator.c:576
 msgid "Currently loaded plugins"
 msgstr "Ағымдағы жүктелген плагиндер"
 
-#: ../src/configurator.c:490
+#: ../src/configurator.c:585
 msgid "Stretch"
 msgstr "Созу"
 
-#: ../src/configurator.c:609
+#: ../src/configurator.c:707
 msgid "Add plugin to panel"
 msgstr "Панельге плагинді қосу"
 
-#: ../src/configurator.c:637
+#: ../src/configurator.c:735
 msgid "Available plugins"
 msgstr "Қолжетерлік плагиндер"
 
-#: ../src/configurator.c:1221
+#: ../src/configurator.c:1278
 msgid "Logout command is not set"
 msgstr "Жүйеден шығу командасы орнатылмаған"
 
-#: ../src/configurator.c:1274
+#: ../src/configurator.c:1346
 msgid "Select a directory"
 msgstr "Буманы таңдаңыз"
 
-#: ../src/configurator.c:1274 ../src/configurator.c:1365
+#: ../src/configurator.c:1346 ../src/configurator.c:1464
 msgid "Select a file"
 msgstr "Файлды таңдаңыз"
 
-#: ../src/configurator.c:1392
+#: ../src/configurator.c:1491
 msgid "_Browse"
 msgstr "Қара_п шығу"
 
-#: ../src/panel.c:658
+#: ../src/panel.c:941
+msgid "There is no room for another panel. All the edges are taken."
+msgstr "Жаңа панель үшін орын жоқ. Бұрыштардың барлығы қолдануда болып тұр."
+
+#: ../src/panel.c:968
 msgid ""
 "Really delete this panel?\n"
 "<b>Warning: This can not be recovered.</b>"
@@ -72,133 +75,133 @@ msgstr ""
 "Бұл панельді шынымен өшіру керек пе?\n"
 "<b>Ескерту: Бұл әрекетті қайтаруға болмайды.</b>"
 
-#: ../src/panel.c:660
+#: ../src/panel.c:970
 msgid "Confirm"
 msgstr "Растау"
 
 #. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../src/panel.c:693
+#: ../src/panel.c:1002
 msgid "translator-credits"
-msgstr "Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2012"
+msgstr "Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2012-2014"
 
-#: ../src/panel.c:698
+#: ../src/panel.c:1007
 msgid "LXPanel"
 msgstr "LXPanel"
 
-#: ../src/panel.c:716
-msgid "Copyright (C) 2008-2011"
-msgstr "Copyright (C) 2008-2011"
+#: ../src/panel.c:1025
+msgid "Copyright (C) 2008-2014"
+msgstr "Copyright (C) 2008-2014"
 
-#: ../src/panel.c:717
+#: ../src/panel.c:1026
 msgid "Desktop panel for LXDE project"
 msgstr "LXDE жобасы үшін жұмыс үстел панелі"
 
-#: ../src/panel.c:754
-msgid "Add / Remove Panel Items"
-msgstr "Панель элементтерін қосу не өшіру"
-
-#: ../src/panel.c:762
-#, c-format
-msgid "Remove \"%s\" From Panel"
-msgstr "Панельден \"%s\" өшіру"
-
-#: ../src/panel.c:774
-msgid "Panel Settings"
-msgstr "Панель баптаулары"
-
-#: ../src/panel.c:780
-msgid "Create New Panel"
-msgstr "Жаңа панельді жасау"
-
-#: ../src/panel.c:791
-msgid "Delete This Panel"
-msgstr "Бұл панельді өшіру"
-
-#: ../src/panel.c:802
-msgid "About"
-msgstr "Осы туралы"
-
-#: ../src/panel.c:810
-msgid "Panel"
-msgstr "Панель"
-
-#: ../src/panel.c:823
+#: ../src/panel.c:1068
 #, c-format
 msgid "\"%s\" Settings"
 msgstr "\"%s\" баптаулары"
 
-#: ../src/panel.c:1079 ../src/panel.c:1087 ../data/ui/panel-pref.glade.h:21
+#: ../src/panel.c:1088
+msgid "Add / Remove Panel Items"
+msgstr "Панель элементтерін қосу не өшіру"
+
+#: ../src/panel.c:1096
+#, c-format
+msgid "Remove \"%s\" From Panel"
+msgstr "Панельден \"%s\" өшіру"
+
+#: ../src/panel.c:1108
+msgid "Panel Settings"
+msgstr "Панель баптаулары"
+
+#: ../src/panel.c:1114
+msgid "Create New Panel"
+msgstr "Жаңа панельді жасау"
+
+#: ../src/panel.c:1120
+msgid "Delete This Panel"
+msgstr "Бұл панельді өшіру"
+
+#: ../src/panel.c:1131
+msgid "About"
+msgstr "Осы туралы"
+
+#: ../src/panel.c:1138
+msgid "Panel"
+msgstr "Панель"
+
+#: ../src/panel.c:1343 ../src/panel.c:1351 ../data/ui/panel-pref.glade.h:22
 msgid "Height:"
 msgstr "Биіктігі:"
 
-#: ../src/panel.c:1080 ../src/panel.c:1086 ../data/ui/panel-pref.glade.h:20
+#: ../src/panel.c:1344 ../src/panel.c:1350 ../data/ui/panel-pref.glade.h:21
 msgid "Width:"
 msgstr "Ені:"
 
-#: ../src/panel.c:1081 ../data/ui/panel-pref.glade.h:13
+#: ../src/panel.c:1345 ../data/ui/panel-pref.glade.h:13
 msgid "Left"
 msgstr "Сол жақ"
 
-#: ../src/panel.c:1082 ../data/ui/panel-pref.glade.h:14
+#: ../src/panel.c:1346 ../data/ui/panel-pref.glade.h:14
 msgid "Right"
 msgstr "Оң жақ"
 
-#: ../src/panel.c:1088 ../data/ui/panel-pref.glade.h:12
+#: ../src/panel.c:1352 ../data/ui/panel-pref.glade.h:12
 msgid "Top"
 msgstr "Жоғары"
 
-#: ../src/panel.c:1089 ../data/ui/panel-pref.glade.h:11
+#: ../src/panel.c:1353 ../data/ui/panel-pref.glade.h:11
 msgid "Bottom"
 msgstr "Төмен"
 
-#: ../src/panel.c:1501
+#: ../src/panel.c:1648
 #, c-format
 msgid "lxpanel %s - lightweight GTK2+ panel for UNIX desktops\n"
 msgstr "lxpanel %s - UNIX жұмыс үстелдері үшін жеңіл GTK2+ панелі\n"
 
-#: ../src/panel.c:1502
+#: ../src/panel.c:1649
 #, c-format
 msgid "Command line options:\n"
 msgstr "Командалық жол опциялары:\n"
 
-#: ../src/panel.c:1503
+#: ../src/panel.c:1650
 #, c-format
 msgid " --help      -- print this help and exit\n"
 msgstr " --help      -- бұл көмек ақпаратын шығару мен шығу\n"
 
-#: ../src/panel.c:1504
+#: ../src/panel.c:1651
 #, c-format
 msgid " --version   -- print version and exit\n"
 msgstr " --version   -- нұсқасын шығару мен шығу\n"
 
-#: ../src/panel.c:1505
+#: ../src/panel.c:1652
 #, c-format
 msgid " --log <number> -- set log level 0-5. 0 - none 5 - chatty\n"
 msgstr " --log <number> -- лог деңгейін орнату 0-5. 0 - жоқ 5 - көп\n"
 
 #. g_print(_(" --configure -- launch configuration utility\n"));
-#: ../src/panel.c:1507
+#: ../src/panel.c:1654
 #, c-format
 msgid " --profile name -- use specified profile\n"
 msgstr " --profile name -- көрсетілген профайлды қолдану\n"
 
-#: ../src/panel.c:1509
+#: ../src/panel.c:1656
 #, c-format
 msgid " -h  -- same as --help\n"
 msgstr " -h  -- тура --help сияқты\n"
 
-#: ../src/panel.c:1510
+#: ../src/panel.c:1657
 #, c-format
 msgid " -p  -- same as --profile\n"
 msgstr " -p  -- тура --profile сияқты\n"
 
-#: ../src/panel.c:1511
+#: ../src/panel.c:1658
 #, c-format
 msgid " -v  -- same as --version\n"
 msgstr " -v  -- тура --version сияқты\n"
 
 #. g_print(_(" -C  -- same as --configure\n"));
-#: ../src/panel.c:1513
+#: ../src/panel.c:1660
 #, c-format
 msgid ""
 "\n"
@@ -209,13 +212,86 @@ msgstr ""
 "Көбірек білу үшін http://lxde.org/ шолыңыз.\n"
 "\n"
 
-#: ../src/gtk-run.c:373
+#: ../src/plugin.c:414
+msgid "No file manager is configured."
+msgstr "Бапталған файлдар басқарушысы жоқ."
+
+#: ../src/gtk-run.c:375
 msgid "Enter the command you want to execute:"
 msgstr "Орындау үшін командалық жолды енгізіңіз:"
 
-#: ../data/ui/launchbar.glade.h:1 ../src/plugins/launchbar.c:912
-msgid "Application Launch Bar"
-msgstr "Қолданбаларды жөнелту панелі"
+#. vim: set sw=4 et sts=4 ts=4 :
+#: ../data/ui/launchtaskbar.glade.h:1 ../plugins/launchtaskbar.c:3477
+msgid "Application Launch and Task Bar"
+msgstr "Қолданбаларды жөнелту және тапсырмалар панелі"
+
+#: ../data/ui/launchtaskbar.glade.h:2
+msgid "<b>Mode:</b>"
+msgstr "<b>Режимі:</b>"
+
+#: ../data/ui/launchtaskbar.glade.h:3
+msgid "Launchers"
+msgstr "Жөнелткіштер"
+
+#: ../data/ui/launchtaskbar.glade.h:4
+msgid "<b>Launchbar</b>"
+msgstr "<b>Жөнелткіштер панелі</b>"
+
+#: ../data/ui/launchtaskbar.glade.h:5
+msgid "Show tooltips"
+msgstr "Қалқымалы кеңестерді көрсету"
+
+#: ../data/ui/launchtaskbar.glade.h:6
+msgid "Icons only"
+msgstr "Тек таңбашалар"
+
+#: ../data/ui/launchtaskbar.glade.h:7
+msgid "Flat buttons"
+msgstr "Жалпақ батырмалар"
+
+#: ../data/ui/launchtaskbar.glade.h:8
+msgid "Show windows from all desktops"
+msgstr "Барлық жұмыс орындарынан терезелерді көрсету"
+
+#: ../data/ui/launchtaskbar.glade.h:9
+msgid "Only show windows on the same monitor as the task bar"
+msgstr "Тек тапсырмалар панелімен бір мониторда орналасқан терезелерді көрсету"
+
+#: ../data/ui/launchtaskbar.glade.h:10
+msgid "Use mouse wheel"
+msgstr "Тышқан дөңгелегін қолдану"
+
+#: ../data/ui/launchtaskbar.glade.h:11
+msgid "Flash when there is any window requiring attention"
+msgstr "Терезе назарыңызды сұрап тұрса, батырманы жыпылықтау"
+
+#: ../data/ui/launchtaskbar.glade.h:12
+msgid "Combine multiple application windows into a single button"
+msgstr "Қолданбаның бірнеше терезесін бір батырмаға біріктіру"
+
+#: ../data/ui/launchtaskbar.glade.h:13
+msgid "Maximum width of task button"
+msgstr "Тапсырма батырмасының максималды ені"
+
+#: ../data/ui/launchtaskbar.glade.h:14
+msgid "Spacing"
+msgstr "Аралық"
+
+#: ../data/ui/launchtaskbar.glade.h:15
+msgid "<b>Taskbar</b>"
+msgstr "<b>Тапсырмалар панелі</b>"
+
+#: ../data/ui/launchtaskbar.glade.h:16
+msgid "Only Application Launch Bar"
+msgstr "Тек қолданбаларды жөнелту панелі"
+
+#: ../data/ui/launchtaskbar.glade.h:17
+msgid "Only Task Bar (Window List)"
+msgstr "Тек тапсырмалар жолағы (Терезелер тізімі)"
+
+#: ../data/ui/launchtaskbar.glade.h:18
+msgid "Integrated Application Launch Bar and Task Bar"
+msgstr "Құрамындағы қолданбаларды жөнелту және тапсырмалар панелдері"
 
 #: ../data/ui/netstatus.glade.h:1
 msgid "<b>Connection</b>"
@@ -266,8 +342,8 @@ msgstr "Адресі:"
 msgid "Destination:"
 msgstr "Мақсаты:"
 
-#: ../data/ui/netstatus.glade.h:14 ../src/plugins/netstat/netstat.c:362
-#: ../src/plugins/netstat/netstat.c:373
+#: ../data/ui/netstatus.glade.h:14 ../plugins/netstat/netstat.c:360
+#: ../plugins/netstat/netstat.c:371
 msgid "Broadcast:"
 msgstr "Кеңтаратылым:"
 
@@ -314,25 +390,23 @@ msgstr "% пайыз"
 
 #: ../data/ui/panel-pref.glade.h:5
 msgid "None"
-msgstr ""
+msgstr "Жоқ"
 
 #: ../data/ui/panel-pref.glade.h:6
-#, fuzzy
 msgid "Err"
 msgstr "Қате"
 
 #: ../data/ui/panel-pref.glade.h:7
-#, fuzzy
 msgid "Warn"
-msgstr "Warning1"
+msgstr "Ескерту"
 
 #: ../data/ui/panel-pref.glade.h:8
 msgid "Info"
-msgstr ""
+msgstr "Ақпарат"
 
 #: ../data/ui/panel-pref.glade.h:9
 msgid "All"
-msgstr ""
+msgstr "Барлығы"
 
 #: ../data/ui/panel-pref.glade.h:10
 msgid "Panel Preferences"
@@ -355,237 +429,220 @@ msgid "Margin:"
 msgstr "Шеті:"
 
 #: ../data/ui/panel-pref.glade.h:19
+msgid "Monitor:"
+msgstr "Монитор:"
+
+#: ../data/ui/panel-pref.glade.h:20
 msgid "<b>Position</b>"
 msgstr "<b>Орны</b>"
 
-#: ../data/ui/panel-pref.glade.h:22
-msgid "Icon size:"
-msgstr ""
-
 #: ../data/ui/panel-pref.glade.h:23
+msgid "Icon size:"
+msgstr "Таңбаша өлшемі:"
+
+#: ../data/ui/panel-pref.glade.h:24
 msgid "<b>Size</b>"
 msgstr "<b>Өлшемі</b>"
 
-#: ../data/ui/panel-pref.glade.h:24
+#: ../data/ui/panel-pref.glade.h:25
 msgid "Geometry"
 msgstr "Геометриясы"
 
-#: ../data/ui/panel-pref.glade.h:25
+#: ../data/ui/panel-pref.glade.h:26
 msgid "System theme"
 msgstr "Жүйелік тема"
 
-#: ../data/ui/panel-pref.glade.h:26
+#: ../data/ui/panel-pref.glade.h:27
 msgid "Solid color (with opacity)"
 msgstr "Түсті қолдану (мөлдірлілікпен)"
 
-#: ../data/ui/panel-pref.glade.h:27 ../src/plugins/xkb/xkb-plugin.c:1253
+#: ../data/ui/panel-pref.glade.h:28 ../plugins/xkb/xkb-plugin.c:1447
 msgid "Image"
 msgstr "Сурет"
 
-#: ../data/ui/panel-pref.glade.h:28
+#: ../data/ui/panel-pref.glade.h:29
 msgid "Select an image file"
 msgstr "Сурет файлын таңдаңыз"
 
-#: ../data/ui/panel-pref.glade.h:29
+#: ../data/ui/panel-pref.glade.h:30
 msgid "<b>Background</b>"
 msgstr "<b>Фон</b>"
 
-#: ../data/ui/panel-pref.glade.h:30
+#: ../data/ui/panel-pref.glade.h:31
 msgid "Custom color"
 msgstr "Таңдауыңызша түс"
 
-#: ../data/ui/panel-pref.glade.h:31 ../src/plugins/space.c:125
-#: ../src/plugins/batt/batt.c:564
+#: ../data/ui/panel-pref.glade.h:32 ../plugins/space.c:89
+#: ../plugins/batt/batt.c:652
 msgid "Size"
 msgstr "Өлшемі"
 
-#: ../data/ui/panel-pref.glade.h:32
+#: ../data/ui/panel-pref.glade.h:33
 msgid "<b>Font</b>"
 msgstr "<b>Қаріп</b>"
 
-#: ../data/ui/panel-pref.glade.h:33
+#: ../data/ui/panel-pref.glade.h:34
 msgid "Appearance"
 msgstr "Сыртқы түрі"
 
-#: ../data/ui/panel-pref.glade.h:34
+#: ../data/ui/panel-pref.glade.h:35
 msgid "Panel Applets"
 msgstr "Панель апплеттері"
 
-#: ../data/ui/panel-pref.glade.h:35
+#: ../data/ui/panel-pref.glade.h:36
 msgid "Logout Command:"
 msgstr "Жүйеден шығу командасы:"
 
-#: ../data/ui/panel-pref.glade.h:36
+#: ../data/ui/panel-pref.glade.h:37
 msgid "Terminal Emulator:"
 msgstr "Терминал эмуляторы:"
 
-#: ../data/ui/panel-pref.glade.h:37
+#: ../data/ui/panel-pref.glade.h:38
 msgid "File Manager:"
 msgstr "Файлдар басқарушысы:"
 
-#: ../data/ui/panel-pref.glade.h:38
+#: ../data/ui/panel-pref.glade.h:39
 msgid "<b>Set Preferred Applications</b>"
 msgstr "<b>Таңдамалы қолданбаларды көрсету</b>"
 
-#: ../data/ui/panel-pref.glade.h:39
+#: ../data/ui/panel-pref.glade.h:40
 msgid "Make window managers treat the panel as dock"
 msgstr "Панельдерді бір-біріне тіркеу"
 
-#: ../data/ui/panel-pref.glade.h:40
+#: ../data/ui/panel-pref.glade.h:41
 msgid "Reserve space, and not covered by maximized windows"
 msgstr "Орынды резервілеу және жазық терезелермен жаппау"
 
-#: ../data/ui/panel-pref.glade.h:41
+#: ../data/ui/panel-pref.glade.h:42
 msgid "<b>Properties</b>"
 msgstr "<b>Қасиеттер</b>"
 
-#: ../data/ui/panel-pref.glade.h:42
+#: ../data/ui/panel-pref.glade.h:43
 msgid "Minimize panel when not in use"
 msgstr "Қолданбаған кезде панельді қайыру"
 
-#: ../data/ui/panel-pref.glade.h:43
+#: ../data/ui/panel-pref.glade.h:44
 msgid "Size when minimized"
 msgstr "Қайырылған кездегі өлшемі"
 
-#: ../data/ui/panel-pref.glade.h:44
+#: ../data/ui/panel-pref.glade.h:45
 msgid "pixels"
 msgstr "пиксельдер"
 
-#: ../data/ui/panel-pref.glade.h:45
+#: ../data/ui/panel-pref.glade.h:46
 msgid "<b>Automatic hiding</b>"
 msgstr "<b>Автожасыру</b>"
 
-#: ../data/ui/panel-pref.glade.h:46
-msgid "Log level"
-msgstr ""
-
 #: ../data/ui/panel-pref.glade.h:47
-#, fuzzy
-msgid "<b>Log level</b>"
-msgstr "<b>Желілік құрылғы</b>"
+msgid "Log level"
+msgstr "Журналдау деңгейі"
 
 #: ../data/ui/panel-pref.glade.h:48
+msgid "<b>Log level</b>"
+msgstr "<b>Журналдау деңгейі</b>"
+
+#: ../data/ui/panel-pref.glade.h:49
 msgid "Advanced"
 msgstr "Кеңейтілген"
 
-#: ../src/plugins/cpu/cpu.c:277
+#: ../plugins/cpu/cpu.c:281
 msgid "CPU Usage Monitor"
 msgstr "CPU қолданылуы мониторы"
 
-#: ../src/plugins/cpu/cpu.c:279 ../src/plugins/monitors/monitors.c:711
+#: ../plugins/cpu/cpu.c:282 ../plugins/monitors/monitors.c:702
 msgid "Display CPU usage"
 msgstr "Процессор қолданылуын көрсету"
 
-#: ../src/plugins/deskno/deskno.c:207 ../src/plugins/dclock.c:440
-msgid "Bold font"
-msgstr "Жуан қаріп"
-
-#: ../src/plugins/deskno/deskno.c:208
-msgid "Display desktop names"
-msgstr "Жұмыс үстелдер аттарын көрсету"
-
-#: ../src/plugins/deskno/deskno.c:235
+#: ../plugins/deskno/deskno.c:174 ../plugins/deskno/deskno.c:194
 msgid "Desktop Number / Workspace Name"
 msgstr "Жұмыс үстел нөмірі/Жұмыс орны атауы"
 
-#: ../src/plugins/deskno/deskno.c:237
+#: ../plugins/deskno/deskno.c:176 ../plugins/dclock.c:427
+msgid "Bold font"
+msgstr "Жуан қаріп"
+
+#: ../plugins/deskno/deskno.c:177
+msgid "Display desktop names"
+msgstr "Жұмыс үстелдер аттарын көрсету"
+
+#: ../plugins/deskno/deskno.c:195
 msgid "Display workspace number, by cmeury@users.sf.net"
 msgstr "Жұмыс орын нөмірін көрсету, жазған cmeury@users.sf.net"
 
-#: ../src/plugins/image.c:161
-msgid "Display Image and Tooltip"
-msgstr "Сурет пен қалқымалы кеңесті көрсету"
+#: ../plugins/launchtaskbar.c:1419 ../plugins/launchtaskbar.c:3447
+msgid "Application Launch Bar"
+msgstr "Қолданбаларды жөнелту панелі"
 
-#: ../src/plugins/launchbar.c:914
-msgid "Bar with buttons to launch application"
-msgstr "Қолданбаларды жөнелту үшін батырмалары бар панель"
+#: ../plugins/launchtaskbar.c:1422 ../plugins/launchtaskbar.c:3458
+msgid "Task Bar (Window List)"
+msgstr "Тапсырмалар жолағы (Терезелер тізімі)"
+
+#: ../plugins/launchtaskbar.c:2447
+msgid "_Close all windows"
+msgstr "Барлық терезелерді ж_абу"
 
 #. Add Raise menu item.
-#: ../src/plugins/taskbar.c:1714
+#: ../plugins/launchtaskbar.c:3306
 msgid "_Raise"
 msgstr "Кө_теру"
 
 #. Add Restore menu item.
-#: ../src/plugins/taskbar.c:1719
+#: ../plugins/launchtaskbar.c:3311
 msgid "R_estore"
 msgstr "Қа_лпына келтіру"
 
 #. Add Maximize menu item.
-#: ../src/plugins/taskbar.c:1724
+#: ../plugins/launchtaskbar.c:3316
 msgid "Ma_ximize"
 msgstr "Ж_азық қылу"
 
 #. Add Iconify menu item.
-#: ../src/plugins/taskbar.c:1729
+#: ../plugins/launchtaskbar.c:3321
 msgid "Ico_nify"
 msgstr "Таңба_шамен"
 
-#: ../src/plugins/taskbar.c:1748
+#: ../plugins/launchtaskbar.c:3340
 #, c-format
 msgid "Workspace _%d"
 msgstr "Жұмыс орны _%d"
 
-#: ../src/plugins/taskbar.c:1753
+#: ../plugins/launchtaskbar.c:3345
 #, c-format
 msgid "Workspace %d"
 msgstr "Жұмыс орны %d"
 
 #. Add "move to all workspaces" item.  This causes the window to be visible no matter what desktop is active.
-#: ../src/plugins/taskbar.c:1767
+#: ../plugins/launchtaskbar.c:3361
 msgid "_All workspaces"
 msgstr "Б_арлық жұмыс орындары"
 
 #. Add Move to Workspace menu item as a submenu.
-#: ../src/plugins/taskbar.c:1773
+#: ../plugins/launchtaskbar.c:3367
 msgid "_Move to Workspace"
 msgstr "Жұмы_с орнына жылжыту"
 
 #. Add Close menu item.  By popular demand, we place this menu item closest to the cursor.
-#: ../src/plugins/taskbar.c:1779
+#: ../plugins/launchtaskbar.c:3373
 msgid "_Close Window"
 msgstr "Те_резені жабу"
 
-#: ../src/plugins/taskbar.c:1986
-msgid "Show tooltips"
-msgstr "Қалқымалы кеңестерді көрсету"
+#: ../plugins/launchtaskbar.c:3375
+msgid "A_dd to Launcher"
+msgstr "Жөнелткіштер панеліне қо_су"
 
-#: ../src/plugins/taskbar.c:1987
-msgid "Icons only"
-msgstr "Тек таңбашалар"
+#: ../plugins/launchtaskbar.c:3376
+msgid "Rem_ove from Launcher"
+msgstr "Жөнелткіштер панелінен ө_шіру"
 
-#: ../src/plugins/taskbar.c:1988
-msgid "Flat buttons"
-msgstr "Жалпақ батырмалар"
+#: ../plugins/launchtaskbar.c:3377
+msgid "_New Instance"
+msgstr "Ж_аңа экземпляр"
 
-#: ../src/plugins/taskbar.c:1989
-msgid "Show windows from all desktops"
-msgstr "Барлық жұмыс орындарынан терезелерді көрсету"
+#: ../plugins/launchtaskbar.c:3448
+msgid "Bar with buttons to launch application"
+msgstr "Қолданбаларды жөнелту үшін батырмалары бар панель"
 
-#: ../src/plugins/taskbar.c:1990
-msgid "Use mouse wheel"
-msgstr "Тышқан дөңгелегін қолдану"
-
-#: ../src/plugins/taskbar.c:1991
-msgid "Flash when there is any window requiring attention"
-msgstr "Терезе назарыңызды сұрап тұрса, батырманы жыпылықтау"
-
-#: ../src/plugins/taskbar.c:1992
-msgid "Combine multiple application windows into a single button"
-msgstr "Қолданбаның бірнеше терезесін бір батырмаға біріктіру"
-
-#: ../src/plugins/taskbar.c:1993
-msgid "Maximum width of task button"
-msgstr "Тапсырма батырмасының максималды ені"
-
-#: ../src/plugins/taskbar.c:1994
-msgid "Spacing"
-msgstr "Аралық"
-
-#: ../src/plugins/taskbar.c:2047
-msgid "Task Bar (Window List)"
-msgstr "Тапсырмалар жолағы (Терезелер тізімі)"
-
-#: ../src/plugins/taskbar.c:2049
+#: ../plugins/launchtaskbar.c:3459
 msgid ""
 "Taskbar shows all opened windows and allow to iconify them, shade or get "
 "focus"
@@ -593,199 +650,212 @@ msgstr ""
 "Тапсырмалар жолағы барлық ашық терезелерді көрсетеді, және оларды көлеңкелеу "
 "не оларнда фокусты алуға мүмкін қылады."
 
-#: ../src/plugins/dclock.c:436
-msgid "Clock Format"
-msgstr "Сағат пішімі"
+#: ../plugins/launchtaskbar.c:3478
+msgid "Bar with buttons to launch application and/or show all opened windows"
+msgstr ""
+"Қолданбаларды жөнелту немесе барлық ашық терезелерді көрсету үшін "
+"батырмалары бар панель"
 
-#: ../src/plugins/dclock.c:437
-msgid "Tooltip Format"
-msgstr "Хабарлама пішімі"
-
-#: ../src/plugins/dclock.c:438
-msgid "Format codes: man 3 strftime; \\n for line break"
-msgstr "Пішім кодтары: man 3 strftime; \\n жолды тасымалдау үшін"
-
-#: ../src/plugins/dclock.c:439
-msgid "Action when clicked (default: display calendar)"
-msgstr "Шерту кезіндегі әрекеті (бастапқы: күнтізбені көрсету)"
-
-#: ../src/plugins/dclock.c:441
-msgid "Tooltip only"
-msgstr "Тек қалқымалы кеңес"
-
-#: ../src/plugins/dclock.c:442
-msgid "Center text"
-msgstr "Мәтін ортасында"
-
-#: ../src/plugins/dclock.c:471
+#: ../plugins/dclock.c:421 ../plugins/dclock.c:441
 msgid "Digital Clock"
 msgstr "Цифрлық сағат"
 
-#: ../src/plugins/dclock.c:473
+#: ../plugins/dclock.c:423
+msgid "Clock Format"
+msgstr "Сағат пішімі"
+
+#: ../plugins/dclock.c:424
+msgid "Tooltip Format"
+msgstr "Хабарлама пішімі"
+
+#: ../plugins/dclock.c:425
+#, c-format
+msgid "Format codes: man 3 strftime; \\%n for line break"
+msgstr "Пішім кодтары: man 3 strftime; \\%n жолды тасымалдау үшін"
+
+#: ../plugins/dclock.c:426
+msgid "Action when clicked (default: display calendar)"
+msgstr "Шерту кезіндегі әрекеті (бастапқы: күнтізбені көрсету)"
+
+#: ../plugins/dclock.c:428
+msgid "Tooltip only"
+msgstr "Тек қалқымалы кеңес"
+
+#: ../plugins/dclock.c:429
+msgid "Center text"
+msgstr "Мәтін ортасында"
+
+#: ../plugins/dclock.c:442
 msgid "Display digital clock and tooltip"
 msgstr "Цифрлық сағатты мен қалқымалы кеңесті көрсету"
 
-#: ../src/plugins/menu.c:426
+#: ../plugins/menu.c:390
 msgid "Add to desktop"
 msgstr "Жұмыс үстеліне қосу"
 
-#: ../src/plugins/menu.c:436
+#: ../plugins/menu.c:397
 msgid "Properties"
 msgstr "Қасиеттері"
 
-#: ../src/plugins/menu.c:1084 ../src/plugins/dirmenu.c:413
-msgid "Icon"
-msgstr "Таңбаша"
-
-#: ../src/plugins/menu.c:1101
+#: ../plugins/menu.c:1019 ../plugins/menu.c:1032
 msgid "Menu"
 msgstr "Мәзір"
 
-#: ../src/plugins/menu.c:1103
+#: ../plugins/menu.c:1020 ../plugins/dirmenu.c:358
+msgid "Icon"
+msgstr "Таңбаша"
+
+#: ../plugins/menu.c:1033
 msgid "Application Menu"
 msgstr "Қолданбалар мәзірі"
 
-#: ../src/plugins/separator.c:102
+#: ../plugins/separator.c:68
 msgid "Separator"
 msgstr "Ажыратқыш"
 
-#: ../src/plugins/separator.c:104
+#: ../plugins/separator.c:69
 msgid "Add a separator to the panel"
 msgstr "Панельге ажыратқышты қосу"
 
-#: ../src/plugins/pager.c:842
+#: ../plugins/pager.c:93
+msgid "Sorry, there was no window manager configuration program found."
+msgstr "Кешіріңіз, терезелер басқарушысын баптау бағдарламасы табылмады."
+
+#: ../plugins/pager.c:144 ../plugins/pager.c:160
 msgid "Desktop Pager"
 msgstr "Жұмыс орындарын ауыстырғышы"
 
-#: ../src/plugins/pager.c:844
+#: ../plugins/pager.c:145 ../plugins/pager.c:161
 msgid "Simple pager plugin"
 msgstr "Жұмыс орындарын ауыстыру"
 
-#: ../src/plugins/space.c:143
+#: ../plugins/space.c:87 ../plugins/space.c:96
 msgid "Spacer"
 msgstr "Ажыратқыш"
 
-#: ../src/plugins/space.c:145
+#: ../plugins/space.c:97
 msgid "Allocate space"
 msgstr "Орынды бөлу"
 
-#: ../src/plugins/tray.c:757
+#: ../plugins/tray.c:685
 msgid "System Tray"
 msgstr "Жүйелік трей"
 
-#: ../src/plugins/tray.c:759
+#: ../plugins/tray.c:686
 msgid "System tray"
 msgstr "Жүйелік трей"
 
+#: ../plugins/xkb/xkb-plugin.c:401
+msgid "New session is required for this option to take effect"
+msgstr "Бұл өзгеріс іске асу үшін, сессияны қайта бастау керек"
+
 #. dialog
-#: ../src/plugins/xkb/xkb-plugin.c:513
+#: ../plugins/xkb/xkb-plugin.c:582
 msgid "Select Keyboard Model"
-msgstr ""
+msgstr "Пернетақта моделін таңдаңыз"
 
-#: ../src/plugins/xkb/xkb-plugin.c:536
-msgid "Model"
-msgstr ""
-
-#: ../src/plugins/xkb/xkb-plugin.c:540 ../src/plugins/xkb/xkb-plugin.c:629
-#: ../src/plugins/xkb/xkb-plugin.c:780
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:606 ../plugins/xkb/xkb-plugin.c:735
+#: ../plugins/xkb/xkb-plugin.c:913
 msgid "Description"
-msgstr "Мақсаты:"
+msgstr "Сипаттамасы"
+
+#: ../plugins/xkb/xkb-plugin.c:611 ../plugins/xkb/xkb-plugin.c:742
+msgid "Id"
+msgstr "Id"
 
 #. dialog
-#: ../src/plugins/xkb/xkb-plugin.c:602
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:706
 msgid "Select Layout Change Type"
-msgstr "Сурет файлын таңдаңыз"
-
-#: ../src/plugins/xkb/xkb-plugin.c:625
-msgid "Change Type"
-msgstr ""
+msgstr "Пернетақта жаймасын ауыстыру түрін таңдаңыз"
 
 #. dialog
-#: ../src/plugins/xkb/xkb-plugin.c:747
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:879
 msgid "Add Keyboard Layout"
-msgstr "Пернетақта жаймаларын ауыстырушысы"
+msgstr "Пернетақта жаймасын қосу"
 
-#: ../src/plugins/xkb/xkb-plugin.c:770 ../src/plugins/xkb/xkb-plugin.c:1136
+#: ../plugins/xkb/xkb-plugin.c:903 ../plugins/xkb/xkb-plugin.c:1294
 msgid "Flag"
-msgstr ""
+msgstr "Жалау"
 
-#: ../src/plugins/xkb/xkb-plugin.c:775 ../src/plugins/xkb/xkb-plugin.c:1140
+#: ../plugins/xkb/xkb-plugin.c:908 ../plugins/xkb/xkb-plugin.c:1298
 msgid "Layout"
-msgstr ""
+msgstr "Жайма"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1053 ../src/plugins/xkb/xkb-plugin.c:1359
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1204 ../plugins/xkb/xkb-plugin.c:1536
 msgid "Keyboard Layout Handler"
-msgstr "Пернетақта жаймаларын ауыстырушысы"
+msgstr "Пернетақта жаймасын талдаушысы"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1070
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1227
 msgid "Keyboard Model"
-msgstr "Пернетақта шамдары"
+msgstr "Пернетақта моделі"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1090
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1248
 msgid "Keyboard Layouts"
-msgstr "Пернетақта жаймаларын ауыстырушысы"
+msgstr "Пернетақта жаймалары"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1144
+#: ../plugins/xkb/xkb-plugin.c:1302
 msgid "Variant"
-msgstr ""
+msgstr "Нұсқасы"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1152
+#: ../plugins/xkb/xkb-plugin.c:1311
 msgid "Change Layout Option"
-msgstr ""
+msgstr "Жайма опцияларын ауыстыру"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1172
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1331
+msgid "Advanced setxkbmap Options"
+msgstr "setxkbmap кеңейтілген баптаулары"
+
+#: ../plugins/xkb/xkb-plugin.c:1352
+msgid "Do _not reset existing options"
+msgstr "Бар болып тұрған баптауларды таста_мау"
+
+#: ../plugins/xkb/xkb-plugin.c:1357
+msgid "Keep _system layouts"
+msgstr "Жү_елік жаймаларды сақтап қалу"
+
+#: ../plugins/xkb/xkb-plugin.c:1366
 msgid "Per Window Settings"
-msgstr "Панель баптаулары"
+msgstr "Әр терезе үшін баптау"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1184
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1378
 msgid "_Remember layout for each window"
-msgstr "Жеке қ_олданба үшін жайманы есте сақтау"
+msgstr "Әр т_ерезе үшін жайманы есте сақтау"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1193
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1387
 msgid "Show Layout as"
 msgstr "Жайманы қалайша көрсету"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1254
+#: ../plugins/xkb/xkb-plugin.c:1448
 msgid "Custom Image"
-msgstr ""
+msgstr "Суретті көрсету"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1255
+#: ../plugins/xkb/xkb-plugin.c:1449
 msgid "Text"
-msgstr ""
+msgstr "Мәтін"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1281
+#: ../plugins/xkb/xkb-plugin.c:1475
 msgid "Panel Icon Size"
-msgstr ""
+msgstr "Таңбашалар панелінің өлшемі"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1361
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1537
 msgid "Handle keyboard layouts"
-msgstr "Қолжетерлік пернетақта жаймалары арасында ауысу"
+msgstr "Пернетақта жаймасын талдау"
 
-#: ../src/plugins/wincmd.c:209
+#: ../plugins/wincmd.c:189
 msgid "Left click to iconify all windows.  Middle click to shade them."
 msgstr ""
 "Тышқанның сол жақ батырмасы барлық терезелерді қайырады. Орта батырмасы "
 "жасырады."
 
-#: ../src/plugins/wincmd.c:237
-msgid "Alternately iconify/shade and raise"
-msgstr "Альтернативті түрде таңбаша ету/қайыру мен қайтару"
-
-#: ../src/plugins/wincmd.c:266
+#: ../plugins/wincmd.c:223 ../plugins/wincmd.c:241
 msgid "Minimize All Windows"
 msgstr "Барлық терезелерді қайыру"
 
-#: ../src/plugins/wincmd.c:268
+#: ../plugins/wincmd.c:225
+msgid "Alternately iconify/shade and raise"
+msgstr "Альтернативті түрде таңбаша ету/қайыру мен қайтару"
+
+#: ../plugins/wincmd.c:242
 msgid ""
 "Sends commands to all desktop windows.\n"
 "Supported commands are 1) iconify and 2) shade"
@@ -793,195 +863,213 @@ msgstr ""
 "Барлық терезелерге командаларды жібереді.\n"
 "Мүмкін командалар 1) таңбаша ету мен 2) қайыру"
 
-#: ../src/plugins/dirmenu.c:246
+#: ../plugins/dirmenu.c:205
 msgid "Open in _Terminal"
 msgstr "Терм_иналда ашу"
 
-#: ../src/plugins/dirmenu.c:411
-msgid "Directory"
-msgstr "Бума"
-
-#: ../src/plugins/dirmenu.c:412
-msgid "Label"
-msgstr "Белгі"
-
-#: ../src/plugins/dirmenu.c:443
+#: ../plugins/dirmenu.c:354 ../plugins/dirmenu.c:370
 msgid "Directory Menu"
 msgstr "Бумалар мәзірі"
 
-#: ../src/plugins/dirmenu.c:445
-msgid "Browse directory tree via menu (Author: PCMan)"
-msgstr "Бумаларды ағаш түрінде шолу"
+#: ../plugins/dirmenu.c:356
+msgid "Directory"
+msgstr "Бума"
 
-#: ../src/plugins/thermal/thermal.c:474
-msgid "Normal"
-msgstr "Қалыпты"
+#: ../plugins/dirmenu.c:357
+msgid "Label"
+msgstr "Белгі"
 
-#: ../src/plugins/thermal/thermal.c:475
-msgid "Warning1"
-msgstr "Warning1"
+#: ../plugins/dirmenu.c:371
+msgid "Browse directory tree via menu (Author = PCMan)"
+msgstr "Бумаларды ағаш түрінде шолу (Авторы = PCMan)"
 
-#: ../src/plugins/thermal/thermal.c:476
-msgid "Warning2"
-msgstr "Warning2"
-
-#: ../src/plugins/thermal/thermal.c:477
-msgid "Automatic sensor location"
-msgstr "Сенсорларды автоанықтау"
-
-#: ../src/plugins/thermal/thermal.c:478
-msgid "Sensor"
-msgstr "Сенсор"
-
-#: ../src/plugins/thermal/thermal.c:479
-msgid "Automatic temperature levels"
-msgstr "Температураның автодеңгейлері"
-
-#: ../src/plugins/thermal/thermal.c:480
-msgid "Warning1 Temperature"
-msgstr "1-ші ескерту температурасы"
-
-#: ../src/plugins/thermal/thermal.c:481
-msgid "Warning2 Temperature"
-msgstr "2-ші ескерту температурасы"
-
-#: ../src/plugins/thermal/thermal.c:525
+#: ../plugins/thermal/thermal.c:517 ../plugins/thermal/thermal.c:535
 msgid "Temperature Monitor"
 msgstr "Температураны бақылаушысы"
 
-#: ../src/plugins/thermal/thermal.c:527
+#: ../plugins/thermal/thermal.c:519
+msgid "Normal"
+msgstr "Қалыпты"
+
+#: ../plugins/thermal/thermal.c:520
+msgid "Warning1"
+msgstr "Warning1"
+
+#: ../plugins/thermal/thermal.c:521
+msgid "Warning2"
+msgstr "Warning2"
+
+#: ../plugins/thermal/thermal.c:522
+msgid "Automatic sensor location"
+msgstr "Сенсорларды автоанықтау"
+
+#: ../plugins/thermal/thermal.c:523
+msgid "Sensor"
+msgstr "Сенсор"
+
+#: ../plugins/thermal/thermal.c:524
+msgid "Automatic temperature levels"
+msgstr "Температураның автодеңгейлері"
+
+#: ../plugins/thermal/thermal.c:525
+msgid "Warning1 Temperature"
+msgstr "1-ші ескерту температурасы"
+
+#: ../plugins/thermal/thermal.c:526
+msgid "Warning2 Temperature"
+msgstr "2-ші ескерту температурасы"
+
+#: ../plugins/thermal/thermal.c:536
 msgid "Display system temperature"
 msgstr "Жүйелік температураны көрсету"
 
+#: ../plugins/cpufreq/cpufreq.c:326
+#, c-format
+msgid ""
+"Frequency: %d MHz\n"
+"Governor: %s"
+msgstr ""
+"Жиілік: %d МГц\n"
+"Режимі: %s"
+
+#: ../plugins/cpufreq/cpufreq.c:409
+msgid "CPUFreq frontend"
+msgstr "CPUFreq фронтенді"
+
+#: ../plugins/cpufreq/cpufreq.c:410
+msgid "Display CPU frequency and allow to change governors and frequency"
+msgstr ""
+"Процессор жиілігін көрсетеді, режимін және жиілігін өзгерту мүмкіндігін "
+"береді"
+
 #. FIXME: display current level in tooltip. ex: "Volume Control: 80%"
 #. Display current level in tooltip.
-#: ../src/plugins/volume/volume.c:300
-#: ../src/plugins/volumealsa/volumealsa.c:362
-#: ../src/plugins/volumealsa/volumealsa.c:544
+#: ../plugins/volume/volume.c:278 ../plugins/volumealsa/volumealsa.c:354
+#: ../plugins/volumealsa/volumealsa.c:538
 msgid "Volume control"
 msgstr "Дыбыс деңгейі"
 
-#: ../src/plugins/volume/volume.c:312
-#: ../src/plugins/volumealsa/volumealsa.c:665
+#: ../plugins/volume/volume.c:286 ../plugins/volumealsa/volumealsa.c:642
 msgid "Volume Control"
 msgstr "Дыбыс деңгейі"
 
 #. Create a frame as the child of the viewport.
-#: ../src/plugins/volume/volume-impl.c:109
-#: ../src/plugins/volumealsa/volumealsa.c:502
+#: ../plugins/volume/volume-impl.c:109 ../plugins/volumealsa/volumealsa.c:492
 msgid "Volume"
 msgstr "Дыбыс"
 
 #. Create a check button as the child of the vertical box.
-#: ../src/plugins/volumealsa/volumealsa.c:521
+#: ../plugins/volumealsa/volumealsa.c:511
 msgid "Mute"
 msgstr "Басу"
 
-#: ../src/plugins/volumealsa/volumealsa.c:638
+#: ../plugins/volumealsa/volumealsa.c:624
 msgid ""
 "Error, you need to install an application to configure the sound "
-"(pavucontol, alsamixer ...)"
+"(pavucontrol, alsamixer ...)"
 msgstr ""
 "Қате, сізге дыбысты басқаратын қолданбаны орнату керек (pavucontol, "
 "alsamixer ...)"
 
-#: ../src/plugins/netstat/netstat.c:180
+#: ../plugins/volumealsa/volumealsa.c:643
+msgid "Display and control volume for ALSA"
+msgstr "ALSA үшін дыбыс деңгейін көрсету және басқару"
+
+#: ../plugins/netstat/netstat.c:178
 msgid "<Hidden Access Point>"
 msgstr "<Жасырын қатынау нүктесі>"
 
-#: ../src/plugins/netstat/netstat.c:213
+#: ../plugins/netstat/netstat.c:211
 msgid "Wireless Networks not found in range"
 msgstr "Сымсыз желілер табылмады"
 
 #. Repair
-#: ../src/plugins/netstat/netstat.c:247
+#: ../plugins/netstat/netstat.c:245
 msgid "Repair"
 msgstr "Түзету"
 
 #. interface down
-#: ../src/plugins/netstat/netstat.c:252
+#: ../plugins/netstat/netstat.c:250
 msgid "Disable"
 msgstr "Сөндіру"
 
-#: ../src/plugins/netstat/netstat.c:342
+#: ../plugins/netstat/netstat.c:340
 msgid "Wireless Connection has no connectivity"
 msgstr "Сымсыз байланыста байланыс жоқ"
 
-#: ../src/plugins/netstat/netstat.c:344
+#: ../plugins/netstat/netstat.c:342
 msgid "Network cable is plugged out"
 msgstr "Желілік кабель алынған"
 
-#: ../src/plugins/netstat/netstat.c:346
+#: ../plugins/netstat/netstat.c:344
 msgid "Connection has limited or no connectivity"
 msgstr "Байланыс шектелген немесе онда байланыс жоқ"
 
-#: ../src/plugins/netstat/netstat.c:350 ../src/plugins/netstat/netstat.c:361
-#: ../src/plugins/netstat/netstat.c:372
+#: ../plugins/netstat/netstat.c:348 ../plugins/netstat/netstat.c:359
+#: ../plugins/netstat/netstat.c:370
 msgid "IP Address:"
 msgstr "IP адресі:"
 
-#: ../src/plugins/netstat/netstat.c:351
+#: ../plugins/netstat/netstat.c:349
 msgid "Remote IP:"
 msgstr "Қашықтағы IP:"
 
-#: ../src/plugins/netstat/netstat.c:352 ../src/plugins/netstat/netstat.c:363
-#: ../src/plugins/netstat/netstat.c:374
+#: ../plugins/netstat/netstat.c:350 ../plugins/netstat/netstat.c:361
+#: ../plugins/netstat/netstat.c:372
 msgid "Netmask:"
 msgstr "Желі маскасы:"
 
-#: ../src/plugins/netstat/netstat.c:353 ../src/plugins/netstat/netstat.c:365
-#: ../src/plugins/netstat/netstat.c:376
+#: ../plugins/netstat/netstat.c:351 ../plugins/netstat/netstat.c:363
+#: ../plugins/netstat/netstat.c:374
 msgid "Activity"
 msgstr "Белсенділігі"
 
-#: ../src/plugins/netstat/netstat.c:353 ../src/plugins/netstat/netstat.c:365
-#: ../src/plugins/netstat/netstat.c:376
+#: ../plugins/netstat/netstat.c:351 ../plugins/netstat/netstat.c:363
+#: ../plugins/netstat/netstat.c:374
 msgid "Sent"
 msgstr "Жіберілген"
 
-#: ../src/plugins/netstat/netstat.c:353 ../src/plugins/netstat/netstat.c:365
-#: ../src/plugins/netstat/netstat.c:376
+#: ../plugins/netstat/netstat.c:351 ../plugins/netstat/netstat.c:363
+#: ../plugins/netstat/netstat.c:374
 msgid "Received"
 msgstr "Алынған"
 
-#: ../src/plugins/netstat/netstat.c:354 ../src/plugins/netstat/netstat.c:366
-#: ../src/plugins/netstat/netstat.c:377
+#: ../plugins/netstat/netstat.c:352 ../plugins/netstat/netstat.c:364
+#: ../plugins/netstat/netstat.c:375
 msgid "bytes"
 msgstr "байт"
 
-#: ../src/plugins/netstat/netstat.c:355 ../src/plugins/netstat/netstat.c:367
-#: ../src/plugins/netstat/netstat.c:378
+#: ../plugins/netstat/netstat.c:353 ../plugins/netstat/netstat.c:365
+#: ../plugins/netstat/netstat.c:376
 msgid "packets"
 msgstr "пакеттер"
 
-#: ../src/plugins/netstat/netstat.c:358
-#: ../src/plugins/netstatus/netstatus-iface.c:173
+#: ../plugins/netstat/netstat.c:356 ../plugins/netstatus/netstatus-iface.c:173
 msgid "Wireless"
 msgstr "Сымсыз"
 
-#: ../src/plugins/netstat/netstat.c:360
+#: ../plugins/netstat/netstat.c:358
 msgid "Protocol:"
 msgstr "Хаттама:"
 
-#: ../src/plugins/netstat/netstat.c:364 ../src/plugins/netstat/netstat.c:375
+#: ../plugins/netstat/netstat.c:362 ../plugins/netstat/netstat.c:373
 msgid "HW Address:"
 msgstr "HW адресі:"
 
-#: ../src/plugins/netstat/netstat.c:513
+#: ../plugins/netstat/netstat.c:484
 msgid "Manage Networks"
 msgstr "Желілерді басқару"
 
-#: ../src/plugins/netstat/netstat.c:515
+#: ../plugins/netstat/netstat.c:485
 msgid "Monitor and Manage networks"
 msgstr "Желілерді бақылау мен басқару"
 
 #. create dialog
-#: ../src/plugins/netstat/passwd_gui.c:86
+#: ../plugins/netstat/passwd_gui.c:87
 msgid "Setting Encryption Key"
 msgstr "Шифрлеу кілтін орнату"
 
-#. messages
-#: ../src/plugins/netstat/passwd_gui.c:96
+#: ../plugins/netstat/passwd_gui.c:98
 msgid ""
 "This wireless network was encrypted.\n"
 "You must have the encryption key."
@@ -989,47 +1077,47 @@ msgstr ""
 "Сымсыз желі шифрленген.\n"
 "Сізде шифрлеу кілті болуы керек."
 
-#: ../src/plugins/netstat/passwd_gui.c:101
+#: ../plugins/netstat/passwd_gui.c:103
 msgid "Encryption Key:"
 msgstr "Шифрлеу кілті:"
 
-#: ../src/plugins/netstatus/netstatus.c:179
-msgid "Interface to monitor"
-msgstr "Бақылау үшін интерфейс"
-
-#: ../src/plugins/netstatus/netstatus.c:180
-msgid "Config tool"
-msgstr "Баптау сайманы"
-
-#: ../src/plugins/netstatus/netstatus.c:197
+#: ../plugins/netstatus/netstatus.c:153 ../plugins/netstatus/netstatus.c:165
 msgid "Network Status Monitor"
 msgstr "Жүйелік қалып-күй бақылаушысы"
 
-#: ../src/plugins/netstatus/netstatus.c:199
+#: ../plugins/netstatus/netstatus.c:155
+msgid "Interface to monitor"
+msgstr "Бақылау үшін интерфейс"
+
+#: ../plugins/netstatus/netstatus.c:156
+msgid "Config tool"
+msgstr "Баптау сайманы"
+
+#: ../plugins/netstatus/netstatus.c:166
 msgid "Monitor network status"
 msgstr "Желі күйін бақылау"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:51
-#: ../src/plugins/netstatus/netstatus-dialog.c:312
+#: ../plugins/netstatus/netstatus-dialog.c:52
+#: ../plugins/netstatus/netstatus-dialog.c:313
 msgid "Unknown"
 msgstr "Белгісіз"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:116
+#: ../plugins/netstatus/netstatus-dialog.c:117
 msgid "Connection Properties"
 msgstr "Байланыс қасиеттері"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:122
+#: ../plugins/netstatus/netstatus-dialog.c:123
 #, c-format
 msgid "Connection Properties: %s"
 msgstr "Байланыс қасиеттері: %s"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:135
+#: ../plugins/netstatus/netstatus-dialog.c:136
 #, c-format
 msgid "%lu packet"
 msgid_plural "%lu packets"
 msgstr[0] "%lu пакет"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:396
+#: ../plugins/netstatus/netstatus-dialog.c:397
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -1038,53 +1126,48 @@ msgstr ""
 "Көмек ақпаратын көрсету кезінде қате кетті:\n"
 "%s"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:580
-#, c-format
-msgid "Failed to launch time configuration tool: %s"
-msgstr "Уақытты баптау қолданбасын жөнелту қатесі: %s"
-
-#: ../src/plugins/netstatus/netstatus-icon.c:380
+#: ../plugins/netstatus/netstatus-icon.c:379
 #, c-format
 msgid "Network Connection: %s"
 msgstr "Желілік байланыс: %s"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:385
+#: ../plugins/netstatus/netstatus-icon.c:384
 msgid "Network Connection"
 msgstr "Желілік байланыс"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:842
+#: ../plugins/netstatus/netstatus-icon.c:824
 msgid "Interface"
 msgstr "Сыртқы түрі"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:843
+#: ../plugins/netstatus/netstatus-icon.c:825
 msgid "The current interface the icon is monitoring."
 msgstr "Белсенді байланыстың таңбашасы."
 
-#: ../src/plugins/netstatus/netstatus-icon.c:850
+#: ../plugins/netstatus/netstatus-icon.c:832
 msgid "Orientation"
 msgstr "Бағдары"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:851
+#: ../plugins/netstatus/netstatus-icon.c:833
 msgid "The orientation of the tray."
 msgstr "Трей бағдары."
 
-#: ../src/plugins/netstatus/netstatus-icon.c:859
+#: ../plugins/netstatus/netstatus-icon.c:841
 msgid "Tooltips Enabled"
 msgstr "Қалқымалы кеңестер іске қосылған"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:860
+#: ../plugins/netstatus/netstatus-icon.c:842
 msgid "Whether or not the icon's tooltips are enabled."
 msgstr "Таңбашаның қалқымалы кеңестері іске қосылған ба, соны анықтайды."
 
-#: ../src/plugins/netstatus/netstatus-icon.c:867
+#: ../plugins/netstatus/netstatus-icon.c:849
 msgid "Show Signal"
 msgstr "Сигналды көрсету"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:868
+#: ../plugins/netstatus/netstatus-icon.c:850
 msgid "Whether or not the signal strength should be displayed."
 msgstr "Сигналдың деңгейін көрсету керек пе, соны анықтайды."
 
-#: ../src/plugins/netstatus/netstatus-icon.c:985
+#: ../plugins/netstatus/netstatus-icon.c:959
 #, c-format
 msgid ""
 "Please contact your system administrator to resolve the following problem:\n"
@@ -1095,412 +1178,727 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:148
+#: ../plugins/netstatus/netstatus-iface.c:148
 msgid "Name"
 msgstr "Аты"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:149
+#: ../plugins/netstatus/netstatus-iface.c:149
 msgid "The interface name"
 msgstr "Интерфейс аты"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:156
+#: ../plugins/netstatus/netstatus-iface.c:156
+#: ../plugins/weather/weatherwidget.c:2085
 msgid "State"
 msgstr "Күйі"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:157
+#: ../plugins/netstatus/netstatus-iface.c:157
 msgid "The interface state"
 msgstr "Интерфейс аты"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:165
+#: ../plugins/netstatus/netstatus-iface.c:165
 msgid "Stats"
 msgstr "Статистика"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:166
+#: ../plugins/netstatus/netstatus-iface.c:166
 msgid "The interface packets/bytes statistics"
 msgstr "Интерфейстің пакеттер/байттар статистикасы"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:174
+#: ../plugins/netstatus/netstatus-iface.c:174
 msgid "Whether the interface is a wireless interface"
 msgstr "Интерфейс сымсыз интерфейс пе"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:181
+#: ../plugins/netstatus/netstatus-iface.c:181
 msgid "Signal"
 msgstr "Сигнал"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:182
+#: ../plugins/netstatus/netstatus-iface.c:182
 msgid "Wireless signal strength percentage"
 msgstr "Сымсыз желі сигнал деңгейінің пайызы"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:191
-#: ../src/plugins/netstatus/netstatus-util.c:167
+#: ../plugins/netstatus/netstatus-iface.c:191
+#: ../plugins/netstatus/netstatus-util.c:167
 msgid "Error"
 msgstr "Қате"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:192
+#: ../plugins/netstatus/netstatus-iface.c:192
 msgid "The current error condition"
 msgstr "Қатенің ағымдағы қалып-күйі"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:434
-#: ../src/plugins/netstatus/netstatus-iface.c:1197
+#: ../plugins/netstatus/netstatus-iface.c:440
+#: ../plugins/netstatus/netstatus-iface.c:1205
 #, c-format
 msgid "Unable to open socket: %s"
 msgstr "Сокетті ашу мүмкін емес: %s"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:496
-#: ../src/plugins/netstatus/netstatus-iface.c:1223
+#: ../plugins/netstatus/netstatus-iface.c:502
+#: ../plugins/netstatus/netstatus-iface.c:1231
 #, c-format
 msgid "SIOCGIFFLAGS error: %s"
 msgstr "SIOCGIFFLAGS қатесі: %s"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:870
+#: ../plugins/netstatus/netstatus-iface.c:879
 msgid "AMPR NET/ROM"
 msgstr "AMPR NET/ROM"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:873
+#: ../plugins/netstatus/netstatus-iface.c:882
 msgid "Ethernet"
 msgstr "Ethernet"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:879
+#: ../plugins/netstatus/netstatus-iface.c:888
 msgid "AMPR AX.25"
 msgstr "AMPR AX.25"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:888
-#: ../src/plugins/netstatus/netstatus-iface.c:1008
+#: ../plugins/netstatus/netstatus-iface.c:897
+#: ../plugins/netstatus/netstatus-iface.c:1017
 msgid "16/4 Mbps Token Ring"
 msgstr "16/4 Mbps Token Ring"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:891
+#: ../plugins/netstatus/netstatus-iface.c:900
 msgid "ARCnet"
 msgstr "ARCnet"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:897
+#: ../plugins/netstatus/netstatus-iface.c:906
 msgid "Frame Relay DLCI"
 msgstr "Frame Relay DLCI"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:903
+#: ../plugins/netstatus/netstatus-iface.c:912
 msgid "Metricom Starmode IP"
 msgstr "Metricom Starmode IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:906
+#: ../plugins/netstatus/netstatus-iface.c:915
 msgid "Serial Line IP"
 msgstr "Serial Line IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:909
+#: ../plugins/netstatus/netstatus-iface.c:918
 msgid "VJ Serial Line IP"
 msgstr "VJ Serial Line IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:912
+#: ../plugins/netstatus/netstatus-iface.c:921
 msgid "6-bit Serial Line IP"
 msgstr "6-bit Serial Line IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:915
+#: ../plugins/netstatus/netstatus-iface.c:924
 msgid "VJ 6-bit Serial Line IP"
 msgstr "VJ 6-bit Serial Line IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:921
+#: ../plugins/netstatus/netstatus-iface.c:930
 msgid "Adaptive Serial Line IP"
 msgstr "Adaptive Serial Line IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:924
+#: ../plugins/netstatus/netstatus-iface.c:933
 msgid "AMPR ROSE"
 msgstr "AMPR ROSE"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:927
+#: ../plugins/netstatus/netstatus-iface.c:936
 msgid "Generic X.25"
 msgstr "Generic X.25"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:930
+#: ../plugins/netstatus/netstatus-iface.c:939
 msgid "Point-to-Point Protocol"
 msgstr "Point-to-Point Protocol"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:936
+#: ../plugins/netstatus/netstatus-iface.c:945
 msgid "(Cisco)-HDLC"
 msgstr "(Cisco)-HDLC"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:939
+#: ../plugins/netstatus/netstatus-iface.c:948
 msgid "LAPB"
 msgstr "LAPB"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:948
+#: ../plugins/netstatus/netstatus-iface.c:957
 msgid "IPIP Tunnel"
 msgstr "IPIP Tunnel"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:954
+#: ../plugins/netstatus/netstatus-iface.c:963
 msgid "Frame Relay Access Device"
 msgstr "Frame Relay Access Device"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:960
+#: ../plugins/netstatus/netstatus-iface.c:969
 msgid "Local Loopback"
 msgstr "Local Loopback"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:966
+#: ../plugins/netstatus/netstatus-iface.c:975
 msgid "Fiber Distributed Data Interface"
 msgstr "Fiber Distributed Data Interface"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:972
+#: ../plugins/netstatus/netstatus-iface.c:981
 msgid "IPv6-in-IPv4"
 msgstr "IPv6-in-IPv4"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:984
+#: ../plugins/netstatus/netstatus-iface.c:993
 msgid "HIPPI"
 msgstr "HIPPI"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:987
+#: ../plugins/netstatus/netstatus-iface.c:996
 msgid "Ash"
 msgstr "Ash"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:990
+#: ../plugins/netstatus/netstatus-iface.c:999
 msgid "Econet"
 msgstr "Econet"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:993
+#: ../plugins/netstatus/netstatus-iface.c:1002
 msgid "IrLAP"
 msgstr "IrLAP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:1155
+#: ../plugins/netstatus/netstatus-iface.c:1163
 #, c-format
 msgid "SIOCGIFCONF error: %s"
 msgstr "SIOCGIFCONF қатесі: %s"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:1248
+#: ../plugins/netstatus/netstatus-iface.c:1256
 #, c-format
 msgid "No network devices found"
 msgstr "Желілік құрылғылар табылмады"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:180
+#: ../plugins/netstatus/netstatus-sysdeps.c:180
 #, c-format
 msgid "Cannot open /proc/net/dev: %s"
 msgstr "/proc/net/dev ашу мүмкін емес: %s"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:189
+#: ../plugins/netstatus/netstatus-sysdeps.c:185
+msgid "Could not parse /proc/net/dev. No data."
+msgstr "/proc/net/dev талдау мүмкін емес. Деректер жоқ."
+
+#: ../plugins/netstatus/netstatus-sysdeps.c:190
 msgid "Could not parse /proc/net/dev. Unknown format."
 msgstr "/proc/net/dev талдау мүмкін емес. Пішімі белгісіз."
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:204
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:330
+#: ../plugins/netstatus/netstatus-sysdeps.c:205
+#: ../plugins/netstatus/netstatus-sysdeps.c:332
 #, c-format
 msgid "Could not parse interface name from '%s'"
 msgstr "'%s' ішінен интерфейс атын талдау мүмкін емес"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:217
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:645
+#: ../plugins/netstatus/netstatus-sysdeps.c:218
+#: ../plugins/netstatus/netstatus-sysdeps.c:647
 #, c-format
 msgid ""
 "Could not parse interface statistics from '%s'. prx_idx = %d; ptx_idx = %d; "
 "brx_idx = %d; btx_idx = %d;"
 msgstr ""
-"'%s' үшін интерфейс статистикасын талдау мүмкін емес. prx_idx = %d; ptx_idx "
-"= %d; brx_idx = %d; btx_idx = %d;"
+"'%s' үшін интерфейс статистикасын талдау мүмкін емес. prx_idx = %d; ptx_idx ="
+" %d; brx_idx = %d; btx_idx = %d;"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:314
+#: ../plugins/netstatus/netstatus-sysdeps.c:312
+msgid "Could not parse /proc/net/wireless. No data."
+msgstr "/proc/net/wireless талдау мүмкін емес. Деректер жоқ."
+
+#: ../plugins/netstatus/netstatus-sysdeps.c:316
 msgid "Could not parse /proc/net/wireless. Unknown format."
 msgstr "/proc/net/wireless талдау мүмкін емес. Пішімі белгісіз."
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:341
+#: ../plugins/netstatus/netstatus-sysdeps.c:343
 #, c-format
 msgid "Could not parse wireless details from '%s'. link_idx = %d;"
 msgstr "'%s' үшін сымсыз байланыс ақпаратын талдау мүмкін емес. link_idx = %d;"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:414
+#: ../plugins/netstatus/netstatus-sysdeps.c:416
 #, c-format
 msgid "Could not connect to interface, '%s'"
 msgstr "Интерфейске қатынау мүмкін емес, '%s'"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:420
+#: ../plugins/netstatus/netstatus-sysdeps.c:422
 #, c-format
 msgid "Could not send ioctl to interface, '%s'"
 msgstr "Интерфейске ioctl жіберу мүмкін емес, '%s'"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:598
+#: ../plugins/netstatus/netstatus-sysdeps.c:600
 #, c-format
 msgid "Could not parse command line '%s': %s"
 msgstr "'%s' командалық жолын талдау мүмкін емес: %s"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:635
+#: ../plugins/netstatus/netstatus-sysdeps.c:637
 msgid "Could not parse 'netstat' output. Unknown format"
 msgstr "'netstat' шығысын талдау мүмкін емес. Пішімі белгісіз"
 
-#: ../src/plugins/netstatus/netstatus-util.c:152
+#: ../plugins/netstatus/netstatus-util.c:152
 msgid "Disconnected"
 msgstr "Байланыспаған"
 
-#: ../src/plugins/netstatus/netstatus-util.c:155
+#: ../plugins/netstatus/netstatus-util.c:155
 msgid "Idle"
 msgstr "Іссіз"
 
-#: ../src/plugins/netstatus/netstatus-util.c:158
+#: ../plugins/netstatus/netstatus-util.c:158
 msgid "Sending"
 msgstr "Жіберу"
 
-#: ../src/plugins/netstatus/netstatus-util.c:161
+#: ../plugins/netstatus/netstatus-util.c:161
 msgid "Receiving"
 msgstr "Алу"
 
-#: ../src/plugins/netstatus/netstatus-util.c:164
+#: ../plugins/netstatus/netstatus-util.c:164
 msgid "Sending/Receiving"
 msgstr "Жіберу/Алу"
 
-#: ../src/plugins/batt/batt.c:133
-msgid "No batteries found"
-msgstr "Батареялар табылмады"
-
-#: ../src/plugins/batt/batt.c:179
+#: ../plugins/batt/batt.c:152
 #, c-format
 msgid "Battery: %d%% charged, %d:%02d until full"
 msgstr "Батарея: заряды %d%%, %d:%02d толғанша дейін"
 
-#: ../src/plugins/batt/batt.c:190
+#: ../plugins/batt/batt.c:163
 #, c-format
 msgid "Battery: %d%% charged, %d:%02d left"
 msgstr "Батарея: заряды %d%%, %d:%02d қалды"
 
-#: ../src/plugins/batt/batt.c:196
+#: ../plugins/batt/batt.c:169
 #, c-format
 msgid "Battery: %d%% charged"
 msgstr "Батарея: заряды %d%%"
 
-#: ../src/plugins/batt/batt.c:554
-msgid "Hide if there is no battery"
-msgstr "Батарея болмаса, жасыру"
+#: ../plugins/batt/batt.c:179
+#, c-format
+msgid ""
+"\n"
+"%sEnergy full design:\t\t%5d mWh"
+msgstr ""
+"\n"
+"%sТолық энергия (дизайн):\t\t%5d мВт*сағ"
 
-#: ../src/plugins/batt/batt.c:556
-msgid "Alarm command"
-msgstr "Ескерту командасы"
+#: ../plugins/batt/batt.c:181
+#, c-format
+msgid ""
+"\n"
+"%sEnergy full:\t\t\t%5d mWh"
+msgstr ""
+"\n"
+"%sТолық энергия:\t\t\t%5d мВт*сағ"
 
-#: ../src/plugins/batt/batt.c:557
-msgid "Alarm time (minutes left)"
-msgstr "Ескерту уақыты (минут қалды)"
+#: ../plugins/batt/batt.c:183
+#, c-format
+msgid ""
+"\n"
+"%sEnergy now:\t\t\t%5d mWh"
+msgstr ""
+"\n"
+"%sАғымдағы энергиясы:\t\t\t%5d мВт*сағ"
 
-#: ../src/plugins/batt/batt.c:558
-msgid "Background color"
-msgstr "Фон түсі"
+#: ../plugins/batt/batt.c:185
+#, c-format
+msgid ""
+"\n"
+"%sPower now:\t\t\t%5d mW"
+msgstr ""
+"\n"
+"%sАғымдағы қорегі:\t\t\t%5d мВт"
 
-#: ../src/plugins/batt/batt.c:559
-msgid "Charging color 1"
-msgstr "Зарядталу түсі 1"
+#: ../plugins/batt/batt.c:188
+#, c-format
+msgid ""
+"\n"
+"%sCharge full design:\t%5d mAh"
+msgstr ""
+"\n"
+"%sТолық заряд (дизайн):\t%5d мА*сағ"
 
-#: ../src/plugins/batt/batt.c:560
-msgid "Charging color 2"
-msgstr "Зарядталу түсі 2"
+#: ../plugins/batt/batt.c:190
+#, c-format
+msgid ""
+"\n"
+"%sCharge full:\t\t\t%5d mAh"
+msgstr ""
+"\n"
+"%sТолық заряд:\t\t\t%5d мА*сағ"
 
-#: ../src/plugins/batt/batt.c:561
-msgid "Discharging color 1"
-msgstr "Заряд беру түсі 1"
+#: ../plugins/batt/batt.c:192
+#, c-format
+msgid ""
+"\n"
+"%sCharge now:\t\t\t%5d mAh"
+msgstr ""
+"\n"
+"%sАғымдағы заряд:\t\t\t%5d мА*сағ"
 
-#: ../src/plugins/batt/batt.c:562
-msgid "Discharging color 2"
-msgstr "Заряд беру түсі 2"
+#: ../plugins/batt/batt.c:194
+#, c-format
+msgid ""
+"\n"
+"%sCurrent now:\t\t\t%5d mA"
+msgstr ""
+"\n"
+"%sАғымдағы ток:\t\t\t%5d мА"
 
-#: ../src/plugins/batt/batt.c:563
-msgid "Border width"
-msgstr "Шек ені"
+#: ../plugins/batt/batt.c:197
+#, c-format
+msgid ""
+"\n"
+"%sCurrent Voltage:\t\t%.3lf V"
+msgstr ""
+"\n"
+"%sАғымдағы кернеу:\t\t%.3lf В"
 
-#: ../src/plugins/batt/batt.c:593
+#: ../plugins/batt/batt.c:235
+msgid "No batteries found"
+msgstr "Батареялар табылмады"
+
+#: ../plugins/batt/batt.c:641 ../plugins/batt/batt.c:662
 msgid "Battery Monitor"
 msgstr "Батарея бақылаушысы"
 
-#: ../src/plugins/batt/batt.c:595
+#: ../plugins/batt/batt.c:643
+msgid "Hide if there is no battery"
+msgstr "Батарея болмаса, жасыру"
+
+#: ../plugins/batt/batt.c:644
+msgid "Alarm command"
+msgstr "Ескерту командасы"
+
+#: ../plugins/batt/batt.c:645
+msgid "Alarm time (minutes left)"
+msgstr "Ескерту уақыты (минут қалды)"
+
+#: ../plugins/batt/batt.c:646
+msgid "Background color"
+msgstr "Фон түсі"
+
+#: ../plugins/batt/batt.c:647
+msgid "Charging color 1"
+msgstr "Зарядталу түсі 1"
+
+#: ../plugins/batt/batt.c:648
+msgid "Charging color 2"
+msgstr "Зарядталу түсі 2"
+
+#: ../plugins/batt/batt.c:649
+msgid "Discharging color 1"
+msgstr "Заряд беру түсі 1"
+
+#: ../plugins/batt/batt.c:650
+msgid "Discharging color 2"
+msgstr "Заряд беру түсі 2"
+
+#: ../plugins/batt/batt.c:651
+msgid "Border width"
+msgstr "Шек ені"
+
+#: ../plugins/batt/batt.c:653
+msgid "Show Extended Information"
+msgstr "Кеңейтілген ақпаратты көрсету"
+
+#: ../plugins/batt/batt.c:663
 msgid "Display battery status using ACPI"
 msgstr "Батарея күйін ACPI көмегімен көрсету"
 
-#: ../src/plugins/kbled/kbled.c:258
-msgid "Show CapsLock"
-msgstr "CapsLock көрсету"
-
-#: ../src/plugins/kbled/kbled.c:259
-msgid "Show NumLock"
-msgstr "NumLock көрсету"
-
-#: ../src/plugins/kbled/kbled.c:260
-msgid "Show ScrollLock"
-msgstr "ScrollLock көрсету"
-
-#: ../src/plugins/kbled/kbled.c:295
+#: ../plugins/kbled/kbled.c:229 ../plugins/kbled/kbled.c:260
 msgid "Keyboard LED"
 msgstr "Пернетақта шамдары"
 
-#: ../src/plugins/kbled/kbled.c:297
+#: ../plugins/kbled/kbled.c:231
+msgid "Show CapsLock"
+msgstr "CapsLock көрсету"
+
+#: ../plugins/kbled/kbled.c:232
+msgid "Show NumLock"
+msgstr "NumLock көрсету"
+
+#: ../plugins/kbled/kbled.c:233
+msgid "Show ScrollLock"
+msgstr "ScrollLock көрсету"
+
+#: ../plugins/kbled/kbled.c:261
 msgid "Indicators for CapsLock, NumLock, and ScrollLock keys"
 msgstr "CapsLock, NumLock пен ScrollLock пернелері үшін индикатор"
 
 #. A label to allow for click through
-#: ../src/plugins/indicator/indicator.c:698
+#: ../plugins/indicator/indicator.c:690
 msgid "No Indicators"
 msgstr "Индикаторлар жоқ"
 
-#: ../src/plugins/indicator/indicator.c:897
-msgid "Indicator Applications"
-msgstr "Индикатор қолданбалары"
-
-#: ../src/plugins/indicator/indicator.c:898
-msgid "Clock Indicator"
-msgstr "Сағат индикаторы"
-
-#: ../src/plugins/indicator/indicator.c:899
-msgid "Messaging Menu"
-msgstr "Хабарламалар мәзірі"
-
-#: ../src/plugins/indicator/indicator.c:900
-msgid "Network Menu"
-msgstr "Желілік мәзір"
-
-#: ../src/plugins/indicator/indicator.c:901
-msgid "Session Menu"
-msgstr "Сессия мәзірі"
-
-#: ../src/plugins/indicator/indicator.c:902
-msgid "Sound Menu"
-msgstr "Дыбыс мәзірі"
-
-#: ../src/plugins/indicator/indicator.c:928
+#: ../plugins/indicator/indicator.c:864 ../plugins/indicator/indicator.c:882
 msgid "Indicator applets"
 msgstr "Индикатор апплеттері"
 
-#: ../src/plugins/indicator/indicator.c:930
+#: ../plugins/indicator/indicator.c:866
+msgid "Indicator Applications"
+msgstr "Индикатор қолданбалары"
+
+#: ../plugins/indicator/indicator.c:867
+msgid "Clock Indicator"
+msgstr "Сағат индикаторы"
+
+#: ../plugins/indicator/indicator.c:868
+msgid "Messaging Menu"
+msgstr "Хабарламалар мәзірі"
+
+#: ../plugins/indicator/indicator.c:869
+msgid "Network Menu"
+msgstr "Желілік мәзір"
+
+#: ../plugins/indicator/indicator.c:870
+msgid "Session Menu"
+msgstr "Сессия мәзірі"
+
+#: ../plugins/indicator/indicator.c:871
+msgid "Sound Menu"
+msgstr "Дыбыс мәзірі"
+
+#: ../plugins/indicator/indicator.c:883
 msgid "Add indicator applets to the panel"
 msgstr "Панельге индикатор апплеттерін қосу"
 
-#: ../src/plugins/monitors/monitors.c:277
+#: ../plugins/monitors/monitors.c:270
 #, c-format
 msgid "CPU usage: %.2f%%"
 msgstr "CPU қолданылуы: %.2f%%"
 
-#: ../src/plugins/monitors/monitors.c:360
+#: ../plugins/monitors/monitors.c:367
 #, c-format
 msgid "RAM usage: %.1fMB (%.2f%%)"
 msgstr "Жады қолданылуы: %.1fMB (%.2f%%)"
 
-#: ../src/plugins/monitors/monitors.c:712
-msgid "CPU color"
-msgstr "Процессор түсі"
-
-#: ../src/plugins/monitors/monitors.c:713
-msgid "Display RAM usage"
-msgstr "Жады қолданылуын көрсету"
-
-#: ../src/plugins/monitors/monitors.c:714
-msgid "RAM color"
-msgstr "Жады түсі"
-
-#: ../src/plugins/monitors/monitors.c:715
-msgid "Action when clicked (default: lxtask)"
-msgstr "Шерту кезіндегі әрекеті (бастапқы: lxtask)"
-
-#: ../src/plugins/monitors/monitors.c:808
+#: ../plugins/monitors/monitors.c:700 ../plugins/monitors/monitors.c:785
 msgid "Resource monitors"
 msgstr "Ресурстар бақылаушысы"
 
-#: ../src/plugins/monitors/monitors.c:810
+#: ../plugins/monitors/monitors.c:703
+msgid "CPU color"
+msgstr "Процессор түсі"
+
+#: ../plugins/monitors/monitors.c:704
+msgid "Display RAM usage"
+msgstr "Жады қолданылуын көрсету"
+
+#: ../plugins/monitors/monitors.c:705
+msgid "RAM color"
+msgstr "Жады түсі"
+
+#: ../plugins/monitors/monitors.c:706
+msgid "Action when clicked (default: lxtask)"
+msgstr "Шерту кезіндегі әрекеті (бастапқы: lxtask)"
+
+#: ../plugins/monitors/monitors.c:786
 msgid "Display monitors (CPU, RAM)"
 msgstr "Мониторларды көрсету (процессор, жады)"
 
-#: ../src/plugins/wnckpager/wnckpager.c:720
-msgid "WNCKPager"
-msgstr "WNCKPager"
+#: ../plugins/weather/weatherwidget.c:50
+msgid "[N/A]"
+msgstr "[Қолжетерсіз]"
 
-#: ../src/plugins/wnckpager/wnckpager.c:722
-msgid "WNCKpager plugin"
-msgstr "WNCKpager плагині"
+#: ../plugins/weather/weatherwidget.c:796
+msgid "Enter New Location"
+msgstr "Жаңа орналасуды енгізіңіз"
+
+#: ../plugins/weather/weatherwidget.c:810
+msgid "_New Location:"
+msgstr "Жаңа ор_наласу:"
+
+#: ../plugins/weather/weatherwidget.c:821
+msgid ""
+"Enter the:\n"
+"- city, or\n"
+"- city and state/country, or\n"
+"- postal code\n"
+"for which to retrieve the weather forecast."
+msgstr ""
+"Ауа райы болжамын алу үшін енгізіңіз:\n"
+"- қала, немесе\n"
+"- қала және штат/ел, немесе\n"
+"- пошта индесі."
+
+#: ../plugins/weather/weatherwidget.c:858
+#: ../plugins/weather/weatherwidget.c:991
+msgid "You must specify a location."
+msgstr "Орналасуды көрсетуіңіз керек."
+
+#: ../plugins/weather/weatherwidget.c:905
+#, c-format
+msgid "Location '%s' not found!"
+msgstr "'%s' орналасуы табылмады!"
+
+#: ../plugins/weather/weatherwidget.c:1063
+msgid "Preferences"
+msgstr "Баптаулар"
+
+#: ../plugins/weather/weatherwidget.c:1069
+msgid "Refresh"
+msgstr "Жаңарту"
+
+#: ../plugins/weather/weatherwidget.c:1075
+msgid "Quit"
+msgstr "Шығу"
+
+#: ../plugins/weather/weatherwidget.c:1236
+msgid "Weather Preferences"
+msgstr "Ауа райы баптаулары"
+
+#: ../plugins/weather/weatherwidget.c:1250
+msgid "Current Location"
+msgstr "Ағымдағы орналасу"
+
+#: ../plugins/weather/weatherwidget.c:1254
+#: ../plugins/weather/weatherwidget.c:1529
+msgid "None configured"
+msgstr "Ешбірі бапталмаған"
+
+#: ../plugins/weather/weatherwidget.c:1256
+#: ../plugins/weather/weatherwidget.c:1526
+msgid "_Set"
+msgstr "Ор_нату"
+
+#: ../plugins/weather/weatherwidget.c:1277
+msgid "Display"
+msgstr "Көрсету"
+
+#: ../plugins/weather/weatherwidget.c:1281
+msgid "Name:"
+msgstr "Аты:"
+
+#: ../plugins/weather/weatherwidget.c:1285
+msgid "Units:"
+msgstr "Өлшем бірліктері:"
+
+#: ../plugins/weather/weatherwidget.c:1289
+msgid "_Metric (°C)"
+msgstr "_Метрлік (°C)"
+
+#: ../plugins/weather/weatherwidget.c:1291
+msgid "_English (°F)"
+msgstr "Ағ_ылшын (°F)"
+
+#: ../plugins/weather/weatherwidget.c:1326
+msgid "Forecast"
+msgstr "Болжам"
+
+#: ../plugins/weather/weatherwidget.c:1330
+msgid "Updates:"
+msgstr "Жаңартулар:"
+
+#: ../plugins/weather/weatherwidget.c:1334
+msgid "Ma_nual"
+msgstr "Қолме_н"
+
+#: ../plugins/weather/weatherwidget.c:1338
+msgid "_Automatic, every"
+msgstr "_Автоматты түрде, әр"
+
+#: ../plugins/weather/weatherwidget.c:1359
+msgid "minutes"
+msgstr "минут"
+
+#: ../plugins/weather/weatherwidget.c:1368
+msgid "Source:"
+msgstr "Көзі:"
+
+#: ../plugins/weather/weatherwidget.c:1482
+msgid "C_hange"
+msgstr "Ө_згерту"
+
+#. Both are available
+#: ../plugins/weather/weatherwidget.c:1570
+#, c-format
+msgid "Current Conditions for %s"
+msgstr "%s үшін ағымдағы күйі"
+
+#: ../plugins/weather/weatherwidget.c:1594
+msgid "Location:"
+msgstr "Орналасу:"
+
+#: ../plugins/weather/weatherwidget.c:1617
+msgid "Last updated:"
+msgstr "Соңғы жаңартылған:"
+
+#: ../plugins/weather/weatherwidget.c:1644
+msgid "Feels like:"
+msgstr "Сезіледі:"
+
+#: ../plugins/weather/weatherwidget.c:1669
+msgid "Humidity:"
+msgstr "Ылғалдылық:"
+
+#: ../plugins/weather/weatherwidget.c:1696
+msgid "Pressure:"
+msgstr "Қысым:"
+
+#: ../plugins/weather/weatherwidget.c:1723
+msgid "Visibility:"
+msgstr "Көріну:"
+
+#: ../plugins/weather/weatherwidget.c:1751
+msgid "Wind:"
+msgstr "Жел:"
+
+#: ../plugins/weather/weatherwidget.c:1774
+msgid "Sunrise:"
+msgstr "Күннің шығуы:"
+
+#: ../plugins/weather/weatherwidget.c:1797
+msgid "Sunset:"
+msgstr "Күннің батуы:"
+
+#: ../plugins/weather/weatherwidget.c:1903
+#: ../plugins/weather/weatherwidget.c:2239
+#, c-format
+msgid "Forecast for %s unavailable."
+msgstr "%s үшін болжам қолжетерсіз."
+
+#: ../plugins/weather/weatherwidget.c:1912
+#: ../plugins/weather/weatherwidget.c:2244
+#, c-format
+msgid "Location not set."
+msgstr "Орналасу көрсетілмеген."
+
+#: ../plugins/weather/weatherwidget.c:1929
+#, c-format
+msgid "Searching for '%s'..."
+msgstr "'%s' іздеу..."
+
+#: ../plugins/weather/weatherwidget.c:2055
+#, c-format
+msgid "Location matches for '%s'"
+msgstr "'%s' үшін сәйкес орналасулар"
+
+#: ../plugins/weather/weatherwidget.c:2075
+msgid "City"
+msgstr "Қала"
+
+#: ../plugins/weather/weatherwidget.c:2095
+msgid "Country"
+msgstr "Ел"
+
+#. make it nice and pretty
+#: ../plugins/weather/weatherwidget.c:2226
+msgid "Currently in "
+msgstr "Ағымдағы "
+
+#: ../plugins/weather/weatherwidget.c:2228
+msgid "Today: "
+msgstr "Бүгін: "
+
+#: ../plugins/weather/weatherwidget.c:2229
+msgid "Tomorrow: "
+msgstr "Ертең: "
+
+#: ../plugins/weather/weather.c:307
+msgid "Weather Plugin"
+msgstr "Ауа райы плагині"
+
+#: ../plugins/weather/weather.c:308
+msgid "Show weather conditions for a location."
+msgstr "Орналасу үшін ауа райы күйін көрсету."
+
+#~ msgid "Copyright (C) 2008-2013"
+#~ msgstr "Copyright (C) 2008-2013"
+
+#~ msgid "Display Image and Tooltip"
+#~ msgstr "Сурет пен қалқымалы кеңесті көрсету"
+
+#~ msgid ""
+#~ "Error, you need to install an application to configure the sound "
+#~ "(pavucontol, alsamixer ...)"
+#~ msgstr ""
+#~ "Қате, сізге дыбысты басқаратын қолданбаны орнату керек (pavucontol, "
+#~ "alsamixer ...)"
+
+#, c-format
+#~ msgid "Failed to launch time configuration tool: %s"
+#~ msgstr "Уақытты баптау қолданбасын жөнелту қатесі: %s"
+
+#~ msgid "Model"
+#~ msgstr "Модель"
+
+#~ msgid "WNCKPager"
+#~ msgstr "WNCKPager"
 
 #~ msgid "<b>Icon</b>"
 #~ msgstr "<b>Таңбаша</b>"

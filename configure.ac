@@ -1,7 +1,8 @@
 AC_PREREQ(2.53)
-AC_INIT(lxpanel, 0.5.12, http://lxde.org/)
-AM_INIT_AUTOMAKE([-Wall foreign])
+AC_INIT(lxpanel, 0.7.0, http://lxde.org/)
+AM_INIT_AUTOMAKE([-Wall foreign no-dist-gzip dist-xz])
 AC_CONFIG_HEADER([config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
 # Support silent build rules. Disable by either passing --disable-silent-rules
 # to configure or passing V=1 to make
@@ -16,7 +17,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_INTLTOOL(, [no-xml])
 AM_PROG_CC_C_O
-AM_PROG_AR
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
 #Initialize libtool
 LT_PREREQ([2.2])
@@ -33,17 +34,15 @@ esac],[])
 
 if test "x$enable_gtk3" = "xyes" ; then
   CFLAGS="$CFLAGS -DENABLE_GTK3"
-  pkg_modules="$pkg_modules gtk+-3.0"
+  pkg_modules="$pkg_modules gtk+-3.0 libfm-gtk3 >= 1.2.0 libwnck-3.0"
 else
-  pkg_modules="$pkg_modules gtk+-2.0 >= 2.16.0"
+  pkg_modules="$pkg_modules gtk+-2.0 >= 2.18.0 libfm-gtk >= 1.2.0 libwnck-1.0"
 fi
 
 pkg_modules="$pkg_modules \
              gio-unix-2.0 \
              gthread-2.0 \
-             gmodule-2.0 \
-             libmenu-cache"
-#             libstartup-notification-1.0"
+             gmodule-2.0"
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
@@ -80,11 +79,6 @@ pkg_modules="x11"
 PKG_CHECK_MODULES(X11, [$pkg_modules])
 AC_SUBST(X11_LIBS)
 
-pkg_modules="libwnck-1.0"
-PKG_CHECK_MODULES(WNCK, [$pkg_modules])
-AC_SUBST(WNCK_CFLAGS)
-AC_SUBST(WNCK_LIBS)
-
 pkg_modules="libmenu-cache"
 PKG_CHECK_MODULES(MENU_CACHE, [$pkg_modules],
 		  enable_menu_cache=yes, enable_menu_cache=no)
@@ -117,16 +111,6 @@ AC_ARG_ENABLE(man,
 	[enable_man="${enableval}"],
 	[enable_man=no]
 )
-
-AC_ARG_ENABLE([cast-checks],
-    AS_HELP_STRING([--enable-cast-checks],
-               [enable Glib casting checks (default: disable)]),
-               cast_checks=$enableval, cast_checks="no")
-G_CAST_CHECKS=""
-if test x"$cast_checks" = "xno"; then
-    G_CAST_CHECKS="-DG_DISABLE_CAST_CHECKS"
-fi
-AC_SUBST(G_CAST_CHECKS)
 
 dnl linker tweaking
 # The function of the link flag --as-needed is to prevent unnecesary linking.
@@ -231,7 +215,6 @@ plugin_kbled=
 plugin_thermal=
 plugin_cpufreq=
 plugin_monitors=
-plugin_wnckpager=
 plugin_indicator=
 
 AC_MSG_CHECKING([which plugins should be built dynamically])
@@ -242,7 +225,7 @@ AC_ARG_WITH(plugins,
 [                         plugins prefixed with '-' are not built]
 [                         Possible plugins are: ]
 [                         netstatus, netstat, volume, volumealsa, cpu, deskno, batt,]
-[                         kbled, xkb, thermal, cpufreq, monitors, wnckpager]
+[                         kbled, xkb, thermal, cpufreq, monitors, weather]
 , plugins="$withval",[plugins="all"])
 
 if test x"$plugins" != xall -a x"$plugins" != xnone; then
@@ -252,7 +235,7 @@ if test x"$plugins" != xall -a x"$plugins" != xnone; then
     fi
 fi
 
-ALL_PLUGINS_LIST="netstatus netstat volume volumealsa cpu deskno batt kbled xkb thermal cpufreq monitors wnckpager indicator"
+ALL_PLUGINS_LIST="netstatus netstat volume volumealsa cpu deskno batt kbled xkb thermal cpufreq monitors indicator weather"
 AC_SUBST(ALL_PLUGINS_LIST)
 
 AC_DEFUN([check_plugin_name],[
@@ -321,8 +304,8 @@ PLUGINS_LIST="\
     $plugin_thermal \
     $plugin_cpufreq \
     $plugin_monitors \
-    $plugin_wnckpager\
-    $plugin_indicator"
+    $plugin_indicator \
+    $plugin_weather"
 
 AC_SUBST(PLUGINS_LIST)
 
@@ -331,6 +314,13 @@ AC_SUBST(PLUGINS_LIST)
 if test x"$plugin_netstat" != "x";then
 AC_CHECK_HEADER([iwlib.h],,
  AC_MSG_ERROR([netstat plugin requires wireless-tools-devel]))
+fi
+
+# weather
+if test x"$plugin_weather" != "x";then
+PKG_CHECK_MODULES([LIBXML2], [libxml-2.0])
+AC_SUBST(LIBXML2_CFLAGS)
+AC_SUBST(LIBXML2_LIBS)
 fi
 
 # Checks for header files.
@@ -352,6 +342,12 @@ AC_FUNC_STAT
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([bzero memset mkdir setlocale strchr])
 
+dnl check for menu-cache versions 0.4.x since no macro MENU_CACHE_CHECK_VERSION
+dnl is available in those versions
+LIBS_save="${LIBS}"
+LIBS="${LIBS} ${MENU_CACHE_LIBS}"
+AC_CHECK_FUNCS(menu_cache_dir_list_children)
+LIBS="${LIBS_save}"
 
 # Generate po/LINGUAS on the fly rather than relying on translators
 # to maintain it manually. This also overcome the problem that Transifex
@@ -364,7 +360,7 @@ do
 done
 
 GETTEXT_PACKAGE=lxpanel
-#AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION(0.14.1)
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package.])
@@ -386,25 +382,54 @@ fi
 
 AM_CONDITIONAL(ENABLE_REGENERATE_MAN, test "x$enable_man" != "xno")
 
+AC_ARG_ENABLE(debug,
+    [AC_HELP_STRING([--enable-debug],
+        [enable debug support @<:@default=no@:>@])],
+    [enable_debug="${enableval}"],
+    [enable_debug=no]
+)
+if test "$enable_debug" = "yes"; then
+    # turn on debug and disable optimization
+    CPPFLAGS="$CPPFLAGS -DG_ENABLE_DEBUG -O0 -g"
+    case "$CC" in
+    gcc*)
+        CPPFLAGS="$CPPFLAGS -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Werror=implicit-function-declaration"
+        ;;
+    *)
+        ;;
+    esac
+    dnl Be more strict on portability
+    #CPPFLAGS="$CPPFLAGS -D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=700"
+else
+    # turn off glib debug checks
+    CPPFLAGS="$CPPFLAGS -DG_DISABLE_ASSERT -DG_DISABLE_CHECKS -DG_DISABLE_CAST_CHECKS"
+fi
+
+dnl Fix invalid sysconfdir when --prefix=/usr
+if test `eval "echo $sysconfdir"` = /usr/etc
+then
+    sysconfdir=/etc
+fi
+
 AC_CONFIG_FILES([
     lxpanel.pc
     Makefile
     src/Makefile
-    src/plugins/Makefile
-    src/plugins/netstatus/Makefile
-    src/plugins/netstat/Makefile
-    src/plugins/volume/Makefile
-    src/plugins/volumealsa/Makefile
-    src/plugins/cpu/Makefile
-    src/plugins/deskno/Makefile
-    src/plugins/batt/Makefile
-    src/plugins/kbled/Makefile
-    src/plugins/xkb/Makefile
-    src/plugins/thermal/Makefile
-    src/plugins/cpufreq/Makefile
-    src/plugins/monitors/Makefile
-    src/plugins/wnckpager/Makefile
-    src/plugins/indicator/Makefile
+    plugins/Makefile
+    plugins/netstatus/Makefile
+    plugins/netstat/Makefile
+    plugins/volume/Makefile
+    plugins/volumealsa/Makefile
+    plugins/cpu/Makefile
+    plugins/deskno/Makefile
+    plugins/batt/Makefile
+    plugins/kbled/Makefile
+    plugins/xkb/Makefile
+    plugins/thermal/Makefile
+    plugins/cpufreq/Makefile
+    plugins/monitors/Makefile
+    plugins/indicator/Makefile
+    plugins/weather/Makefile
     po/Makefile.in
     data/Makefile
     data/default/panels/panel
@@ -418,6 +443,9 @@ echo
 echo lxpanel ......................... : Version $VERSION
 echo
 echo Prefix........................... : $prefix
+echo System config directory.......... : `eval "echo $sysconfdir"`
+echo
+
 if test x$plugins_loading = xyes; then
 echo Building dynamic plugins:
     if test x"$plugin_netstatus" != x; then
@@ -445,7 +473,7 @@ echo Building dynamic plugins:
         AC_MSG_RESULT([    kbled - Indicator for CapsLock, NumLock, and ScrLock])
     fi
     if test x"$plugin_xkb" != x; then
-        AC_MSG_RESULT([    xkb - Keyboard layout switcher])
+        AC_MSG_RESULT([    xkb - Keyboard layout handler])
     fi
     if test x"$plugin_thermal" != x; then
         AC_MSG_RESULT([    thermal - Temperature monitor])
@@ -456,14 +484,20 @@ echo Building dynamic plugins:
     if test x"$plugin_monitors" != x; then
         AC_MSG_RESULT([    monitors - Monitors for CPU & RAM])
     fi
-    if test x"$plugin_wnckpager" != x; then
-        AC_MSG_RESULT([    wnckpager - Pager which support openbox and compiz])
-    fi
     if test x"$plugin_indicator" != x; then
         AC_MSG_RESULT([    indicator - Indicator support])
     fi
+    if test x"$plugin_weather" != x; then
+        AC_MSG_RESULT([    weather - Weather conditions and forecast])
+    fi
 else
 echo Dynamic loader for plugins....... : disabled.
+fi
+
+if test x"$sysconfdir" != x'/etc'; then
+    echo
+    echo 'Warning: sysconfdir is not /etc. It might be not what you want.'
+    echo 'Please consider passing --sysconfdir=/etc to configure.'
 fi
 
 echo

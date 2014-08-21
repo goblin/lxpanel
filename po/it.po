@@ -8,64 +8,68 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lxpanel 0.3.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-23 15:11+0200\n"
-"PO-Revision-Date: 2012-08-26 12:13+0200\n"
+"POT-Creation-Date: 2014-08-20 13:56+0300\n"
+"PO-Revision-Date: 2014-08-21 07:42+0000\n"
 "Last-Translator: Daniele Forsi <daniele@forsi.it>\n"
-"Language-Team: Italian\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.7.1\n"
-"X-Poedit-Language: Italian\n"
-"X-Poedit-Country: ITALY\n"
+"X-Generator: Pootle 2.6.0-rc1\n"
+"X-POOTLE-MTIME: 1408606975.000000\n"
 
-#: ../src/configurator.c:54 ../src/gtk-run.c:360
+#. { "configure", N_("Preferences"), configure },
+#: ../src/configurator.c:50 ../src/gtk-run.c:373 ../plugins/menu.c:749
 msgid "Run"
 msgstr "Esegui"
 
-#: ../src/configurator.c:56
+#: ../src/configurator.c:51 ../plugins/menu.c:750
 msgid "Restart"
 msgstr "Riavvia"
 
-#: ../src/configurator.c:57
+#: ../src/configurator.c:52 ../plugins/menu.c:751
 msgid "Logout"
 msgstr "Chiudi sessione"
 
-#: ../src/configurator.c:481
+#: ../src/configurator.c:558
 msgid "Currently loaded plugins"
 msgstr "Plugin attualmente caricati"
 
-#: ../src/configurator.c:490
+#: ../src/configurator.c:567
 msgid "Stretch"
 msgstr "Estendi"
 
-#: ../src/configurator.c:609
+#: ../src/configurator.c:689
 msgid "Add plugin to panel"
 msgstr "Aggiungi plugin al pannello"
 
-#: ../src/configurator.c:637
+#: ../src/configurator.c:717
 msgid "Available plugins"
 msgstr "Plugin disponibili"
 
-#: ../src/configurator.c:1221
+#: ../src/configurator.c:1255
 msgid "Logout command is not set"
 msgstr "Il comando di chiusura sessione non è impostato"
 
-#: ../src/configurator.c:1274
+#: ../src/configurator.c:1323
 msgid "Select a directory"
 msgstr "Scegliere una directory"
 
-#: ../src/configurator.c:1274 ../src/configurator.c:1365
+#: ../src/configurator.c:1323 ../src/configurator.c:1441
 msgid "Select a file"
 msgstr "Scegliere un file"
 
-#: ../src/configurator.c:1392
+#: ../src/configurator.c:1468
 msgid "_Browse"
 msgstr "_Sfoglia"
 
-#: ../src/panel.c:658
+#: ../src/panel.c:926
+msgid "There is no room for another panel. All the edges are taken."
+msgstr "Non c'è spazio per un altro pannello. Tutti i bordi sono occupati."
+
+#: ../src/panel.c:951
 msgid ""
 "Really delete this panel?\n"
 "<b>Warning: This can not be recovered.</b>"
@@ -73,137 +77,131 @@ msgstr ""
 "Eliminare davvero questo pannello?\n"
 "<b>Attenzione: non potrà essere recuperato</b>"
 
-#: ../src/panel.c:660
+#: ../src/panel.c:953
 msgid "Confirm"
 msgstr "Conferma"
 
 #. TRANSLATORS: Replace this string with your names, one name per line.
-#: ../src/panel.c:693
+#: ../src/panel.c:988
 msgid "translator-credits"
 msgstr ""
 "Alessandro Pellizzari\n"
 "Daniele Forsi <daniele@forsi.it>"
 
-#: ../src/panel.c:698
+#: ../src/panel.c:993
 msgid "LXPanel"
 msgstr "LXPanel"
 
-#: ../src/panel.c:716
-msgid "Copyright (C) 2008-2011"
-msgstr "Copyright © 2008-2011"
+#: ../src/panel.c:1011
+msgid "Copyright (C) 2008-2014"
+msgstr "Copyright © 2008-2014"
 
-#: ../src/panel.c:717
+#: ../src/panel.c:1012
 msgid "Desktop panel for LXDE project"
 msgstr "Pannello del desktop per il Progetto LXDE"
 
-#: ../src/panel.c:754
-msgid "Add / Remove Panel Items"
-msgstr "Aggiungi/Rimuovi elementi pannello"
-
-#: ../src/panel.c:762
-#, c-format
-msgid "Remove \"%s\" From Panel"
-msgstr "Elimina «%s» dal pannello"
-
-#: ../src/panel.c:774
-msgid "Panel Settings"
-msgstr "Impostazioni pannello"
-
-#: ../src/panel.c:780
-msgid "Create New Panel"
-msgstr "Crea nuovo pannello"
-
-#: ../src/panel.c:791
-msgid "Delete This Panel"
-msgstr "Elimina questo pannello"
-
-#: ../src/panel.c:802
-msgid "About"
-msgstr "Informazioni"
-
-#: ../src/panel.c:810
-msgid "Panel"
-msgstr "Pannello"
-
-#: ../src/panel.c:823
+#: ../src/panel.c:1054
 #, c-format
 msgid "\"%s\" Settings"
 msgstr "Impostazioni di «%s»"
 
-#: ../src/panel.c:1079 ../src/panel.c:1087 ../data/ui/panel-pref.glade.h:21
+#: ../src/panel.c:1074
+msgid "Add / Remove Panel Items"
+msgstr "Aggiungi/Rimuovi elementi pannello"
+
+#: ../src/panel.c:1082
+#, c-format
+msgid "Remove \"%s\" From Panel"
+msgstr "Elimina «%s» dal pannello"
+
+#: ../src/panel.c:1094
+msgid "Panel Settings"
+msgstr "Impostazioni pannello"
+
+#: ../src/panel.c:1100
+msgid "Create New Panel"
+msgstr "Crea nuovo pannello"
+
+#: ../src/panel.c:1106
+msgid "Delete This Panel"
+msgstr "Elimina questo pannello"
+
+#: ../src/panel.c:1117
+msgid "About"
+msgstr "Informazioni"
+
+#: ../src/panel.c:1124
+msgid "Panel"
+msgstr "Pannello"
+
+#: ../src/panel.c:1309 ../src/panel.c:1317 ../data/ui/panel-pref.glade.h:22
 msgid "Height:"
 msgstr "Altezza:"
 
-#: ../src/panel.c:1080 ../src/panel.c:1086 ../data/ui/panel-pref.glade.h:20
+#: ../src/panel.c:1310 ../src/panel.c:1316 ../data/ui/panel-pref.glade.h:21
 msgid "Width:"
 msgstr "Larghezza:"
 
-#: ../src/panel.c:1081 ../data/ui/panel-pref.glade.h:13
+#: ../src/panel.c:1311 ../data/ui/panel-pref.glade.h:13
 msgid "Left"
 msgstr "Sinistra"
 
-#: ../src/panel.c:1082 ../data/ui/panel-pref.glade.h:14
+#: ../src/panel.c:1312 ../data/ui/panel-pref.glade.h:14
 msgid "Right"
 msgstr "Destra"
 
-#: ../src/panel.c:1088 ../data/ui/panel-pref.glade.h:12
+#: ../src/panel.c:1318 ../data/ui/panel-pref.glade.h:12
 msgid "Top"
 msgstr "Superiore"
 
-#: ../src/panel.c:1089 ../data/ui/panel-pref.glade.h:11
+#: ../src/panel.c:1319 ../data/ui/panel-pref.glade.h:11
 msgid "Bottom"
 msgstr "Inferiore"
 
-#: ../src/panel.c:1501
+#: ../src/panel.c:1609
 #, c-format
 msgid "lxpanel %s - lightweight GTK2+ panel for UNIX desktops\n"
 msgstr "lxpanel %s - pannello GTK2+ leggero per desktop UNIX\n"
 
-#: ../src/panel.c:1502
+#: ../src/panel.c:1610
 #, c-format
 msgid "Command line options:\n"
 msgstr "Opzioni da riga di comando:\n"
 
-#: ../src/panel.c:1503
+#: ../src/panel.c:1611
 #, c-format
 msgid " --help      -- print this help and exit\n"
 msgstr " --help         -- mostra questo aiuto e termina\n"
 
-#: ../src/panel.c:1504
+#: ../src/panel.c:1612
 #, c-format
 msgid " --version   -- print version and exit\n"
 msgstr " --version      -- mostra la versione e termina\n"
 
-#: ../src/panel.c:1505
-#, c-format
-msgid " --log <number> -- set log level 0-5. 0 - none 5 - chatty\n"
-msgstr ""
-" --log <numero> -- definisce il livello di log 0-5. 0 - nessuno, 5 - "
-"completo\n"
-
+#. g_print(_(" --log <number> -- set log level 0-5. 0 - none 5 - chatty\n"));
 #. g_print(_(" --configure -- launch configuration utility\n"));
-#: ../src/panel.c:1507
+#: ../src/panel.c:1615
 #, c-format
 msgid " --profile name -- use specified profile\n"
-msgstr " --profile nome -- usa il profilo specificato\n"
+msgstr " --profile NOME -- usa il profilo specificato\n"
 
-#: ../src/panel.c:1509
+#: ../src/panel.c:1617
 #, c-format
 msgid " -h  -- same as --help\n"
 msgstr " -h  -- analogo a --help\n"
 
-#: ../src/panel.c:1510
+#: ../src/panel.c:1618
 #, c-format
 msgid " -p  -- same as --profile\n"
 msgstr " -p  -- analogo a --profile\n"
 
-#: ../src/panel.c:1511
+#: ../src/panel.c:1619
 #, c-format
 msgid " -v  -- same as --version\n"
 msgstr " -v  -- analogo a --version\n"
 
 #. g_print(_(" -C  -- same as --configure\n"));
-#: ../src/panel.c:1513
+#: ../src/panel.c:1621
 #, c-format
 msgid ""
 "\n"
@@ -214,13 +212,87 @@ msgstr ""
 "Visitare http://lxde.org/ per informazioni dettagliate.\n"
 "\n"
 
-#: ../src/gtk-run.c:373
+#: ../src/plugin.c:388
+msgid "No file manager is configured."
+msgstr "Nessun gestore di file configurato."
+
+#: ../src/gtk-run.c:387
 msgid "Enter the command you want to execute:"
 msgstr "Digitare il comando da eseguire:"
 
-#: ../data/ui/launchbar.glade.h:1 ../src/plugins/launchbar.c:912
-msgid "Application Launch Bar"
-msgstr "Barra avvio applicazioni"
+#. vim: set sw=4 et sts=4 ts=4 :
+#: ../data/ui/launchtaskbar.glade.h:1 ../plugins/launchtaskbar.c:3475
+msgid "Application Launch and Task Bar"
+msgstr "Avvio applicazioni e Barra dei task"
+
+#. Launchtaskbar mode: launchbar, taskbar, or combined
+#: ../data/ui/launchtaskbar.glade.h:3
+msgid "<b>Mode:</b>"
+msgstr "<b>Modo:</b>"
+
+#: ../data/ui/launchtaskbar.glade.h:4
+msgid "Launchers"
+msgstr "Lanciatori"
+
+#: ../data/ui/launchtaskbar.glade.h:5
+msgid "<b>Launchbar</b>"
+msgstr "<b>Barra di lancio</b>"
+
+#: ../data/ui/launchtaskbar.glade.h:6
+msgid "Show tooltips"
+msgstr "Mostra suggerimenti"
+
+#: ../data/ui/launchtaskbar.glade.h:7
+msgid "Icons only"
+msgstr "Solo icone"
+
+#: ../data/ui/launchtaskbar.glade.h:8
+msgid "Flat buttons"
+msgstr "Pulsanti piatti"
+
+#: ../data/ui/launchtaskbar.glade.h:9
+msgid "Show windows from all desktops"
+msgstr "Mostra finestre da tutte le scrivanie"
+
+#: ../data/ui/launchtaskbar.glade.h:10
+msgid "Only show windows on the same monitor as the task bar"
+msgstr "Mostra solo le finestre dello stesso monitor della barar dei task"
+
+#: ../data/ui/launchtaskbar.glade.h:11
+msgid "Use mouse wheel"
+msgstr "Usa rotellina del mouse"
+
+#: ../data/ui/launchtaskbar.glade.h:12
+msgid "Flash when there is any window requiring attention"
+msgstr "Lampeggia quando una finestra richiede attenzione"
+
+#: ../data/ui/launchtaskbar.glade.h:13
+msgid "Combine multiple application windows into a single button"
+msgstr "Combina finestre multiple applicazione in un singolo pulsante"
+
+#: ../data/ui/launchtaskbar.glade.h:14
+msgid "Maximum width of task button"
+msgstr "Larghezza massima di un pulsante applicazione"
+
+#: ../data/ui/launchtaskbar.glade.h:15
+msgid "Spacing"
+msgstr "Spaziatura"
+
+#: ../data/ui/launchtaskbar.glade.h:16
+msgid "<b>Taskbar</b>"
+msgstr "<b>Barra dei task</b>"
+
+#: ../data/ui/launchtaskbar.glade.h:17
+msgid "Only Application Launch Bar"
+msgstr "Solo barra avvio applicazioni"
+
+#: ../data/ui/launchtaskbar.glade.h:18
+msgid "Only Task Bar (Window List)"
+msgstr "Solo barra dei task (Elenco finestre)"
+
+#: ../data/ui/launchtaskbar.glade.h:19
+msgid "Integrated Application Launch Bar and Task Bar"
+msgstr "Barra avvio applicazioni e barra dei task integrate"
 
 #: ../data/ui/netstatus.glade.h:1
 msgid "<b>Connection</b>"
@@ -273,8 +345,8 @@ msgstr "Indirizzo:"
 msgid "Destination:"
 msgstr "Destinazione:"
 
-#: ../data/ui/netstatus.glade.h:14 ../src/plugins/netstat/netstat.c:362
-#: ../src/plugins/netstat/netstat.c:373
+#: ../data/ui/netstatus.glade.h:14 ../plugins/netstat/netstat.c:360
+#: ../plugins/netstat/netstat.c:371
 msgid "Broadcast:"
 msgstr "Broadcast:"
 
@@ -317,29 +389,31 @@ msgstr "Pixel"
 #: ../data/ui/panel-pref.glade.h:4
 #, no-c-format
 msgid "% Percent"
-msgstr "% percento"
+msgstr "% Percento"
 
+# è un'opzione per "Livello registro:"
 #: ../data/ui/panel-pref.glade.h:5
 msgid "None"
-msgstr ""
+msgstr "Niente"
 
+# è un'opzione per "Livello registro:"
 #: ../data/ui/panel-pref.glade.h:6
-#, fuzzy
 msgid "Err"
-msgstr "Errore"
+msgstr "Errori"
 
+# è un'opzione per "Livello registro:"
 #: ../data/ui/panel-pref.glade.h:7
-#, fuzzy
 msgid "Warn"
-msgstr "Avvertimento1"
+msgstr "Avvertimenti"
 
+# è un'opzione per "Livello registro:"
 #: ../data/ui/panel-pref.glade.h:8
 msgid "Info"
-msgstr ""
+msgstr "Informazioni"
 
 #: ../data/ui/panel-pref.glade.h:9
 msgid "All"
-msgstr ""
+msgstr "Tutto"
 
 #: ../data/ui/panel-pref.glade.h:10
 msgid "Panel Preferences"
@@ -362,237 +436,220 @@ msgid "Margin:"
 msgstr "Margine:"
 
 #: ../data/ui/panel-pref.glade.h:19
+msgid "Monitor:"
+msgstr "Monitor:"
+
+#: ../data/ui/panel-pref.glade.h:20
 msgid "<b>Position</b>"
 msgstr "<b>Posizione</b>"
 
-#: ../data/ui/panel-pref.glade.h:22
-msgid "Icon size:"
-msgstr ""
-
 #: ../data/ui/panel-pref.glade.h:23
+msgid "Icon size:"
+msgstr "Dimensioni icona:"
+
+#: ../data/ui/panel-pref.glade.h:24
 msgid "<b>Size</b>"
 msgstr "<b>Dimensioni</b>"
 
-#: ../data/ui/panel-pref.glade.h:24
+#: ../data/ui/panel-pref.glade.h:25
 msgid "Geometry"
 msgstr "Geometria"
 
-#: ../data/ui/panel-pref.glade.h:25
+#: ../data/ui/panel-pref.glade.h:26
 msgid "System theme"
 msgstr "Tema di sistema"
 
-#: ../data/ui/panel-pref.glade.h:26
+#: ../data/ui/panel-pref.glade.h:27
 msgid "Solid color (with opacity)"
 msgstr "Tinta unita (con opacità)"
 
-#: ../data/ui/panel-pref.glade.h:27 ../src/plugins/xkb/xkb-plugin.c:1253
+#: ../data/ui/panel-pref.glade.h:28 ../plugins/xkb/xkb-plugin.c:1447
 msgid "Image"
 msgstr "Immagine"
 
-#: ../data/ui/panel-pref.glade.h:28
-msgid "Select an image file"
-msgstr "Seleziona una immagine"
-
 #: ../data/ui/panel-pref.glade.h:29
+msgid "Select an image file"
+msgstr "Seleziona un file immagine"
+
+#: ../data/ui/panel-pref.glade.h:30
 msgid "<b>Background</b>"
 msgstr "<b>Sfondo</b>"
 
-#: ../data/ui/panel-pref.glade.h:30
+#: ../data/ui/panel-pref.glade.h:31
 msgid "Custom color"
 msgstr "Colore personalizzato"
 
-#: ../data/ui/panel-pref.glade.h:31 ../src/plugins/space.c:125
-#: ../src/plugins/batt/batt.c:564
+#: ../data/ui/panel-pref.glade.h:32 ../plugins/space.c:88
+#: ../plugins/batt/batt.c:651
 msgid "Size"
 msgstr "Dimensione"
 
-#: ../data/ui/panel-pref.glade.h:32
+#: ../data/ui/panel-pref.glade.h:33
 msgid "<b>Font</b>"
 msgstr "<b>Carattere</b>"
 
-#: ../data/ui/panel-pref.glade.h:33
+#: ../data/ui/panel-pref.glade.h:34
 msgid "Appearance"
 msgstr "Aspetto"
 
-#: ../data/ui/panel-pref.glade.h:34
+#: ../data/ui/panel-pref.glade.h:35
 msgid "Panel Applets"
 msgstr "Applet pannello"
 
-#: ../data/ui/panel-pref.glade.h:35
+#: ../data/ui/panel-pref.glade.h:36
 msgid "Logout Command:"
 msgstr "Comando chiusura sessione:"
 
-#: ../data/ui/panel-pref.glade.h:36
+#: ../data/ui/panel-pref.glade.h:37
 msgid "Terminal Emulator:"
 msgstr "Emulatore terminale:"
 
-#: ../data/ui/panel-pref.glade.h:37
+#: ../data/ui/panel-pref.glade.h:38
 msgid "File Manager:"
 msgstr "Gestore file:"
 
-#: ../data/ui/panel-pref.glade.h:38
+#: ../data/ui/panel-pref.glade.h:39
 msgid "<b>Set Preferred Applications</b>"
 msgstr "<b>Seleziona applicazioni preferite</b>"
 
-#: ../data/ui/panel-pref.glade.h:39
-msgid "Make window managers treat the panel as dock"
-msgstr "I window manager tratteranno il pannello come dock"
-
 #: ../data/ui/panel-pref.glade.h:40
+msgid "Make window managers treat the panel as dock"
+msgstr "I window manager trattano il pannello come dock"
+
+#: ../data/ui/panel-pref.glade.h:41
 msgid "Reserve space, and not covered by maximized windows"
 msgstr "Riserva spazio e non è coperto da finestre massimizzate"
 
-#: ../data/ui/panel-pref.glade.h:41
+#: ../data/ui/panel-pref.glade.h:42
 msgid "<b>Properties</b>"
 msgstr "<b>Proprietà</b>"
 
-#: ../data/ui/panel-pref.glade.h:42
+#: ../data/ui/panel-pref.glade.h:43
 msgid "Minimize panel when not in use"
 msgstr "Minimizza il pannello quando non è in uso"
 
-#: ../data/ui/panel-pref.glade.h:43
+#: ../data/ui/panel-pref.glade.h:44
 msgid "Size when minimized"
 msgstr "Dimensione quando minimizzato"
 
-#: ../data/ui/panel-pref.glade.h:44
+#: ../data/ui/panel-pref.glade.h:45
 msgid "pixels"
 msgstr "pixel"
 
-#: ../data/ui/panel-pref.glade.h:45
+#: ../data/ui/panel-pref.glade.h:46
 msgid "<b>Automatic hiding</b>"
 msgstr "<b>Nascondere automaticamente</b>"
 
-#: ../data/ui/panel-pref.glade.h:46
-msgid "Log level"
-msgstr ""
-
 #: ../data/ui/panel-pref.glade.h:47
-#, fuzzy
-msgid "<b>Log level</b>"
-msgstr "<b>Scheda di rete</b>"
+msgid "Log level"
+msgstr "Livello registro"
 
 #: ../data/ui/panel-pref.glade.h:48
+msgid "<b>Log level</b>"
+msgstr "<b>Livello registro</b>"
+
+#: ../data/ui/panel-pref.glade.h:49
 msgid "Advanced"
 msgstr "Avanzate"
 
-#: ../src/plugins/cpu/cpu.c:277
+#: ../plugins/cpu/cpu.c:281
 msgid "CPU Usage Monitor"
-msgstr "Monitoraggio CPU"
+msgstr "Monitor uso CPU"
 
-#: ../src/plugins/cpu/cpu.c:279 ../src/plugins/monitors/monitors.c:711
+#: ../plugins/cpu/cpu.c:282 ../plugins/monitors/monitors.c:700
 msgid "Display CPU usage"
 msgstr "Mostra uso CPU"
 
-#: ../src/plugins/deskno/deskno.c:207 ../src/plugins/dclock.c:440
-msgid "Bold font"
-msgstr "Carattere grassetto"
-
-#: ../src/plugins/deskno/deskno.c:208
-msgid "Display desktop names"
-msgstr "Mostra nomi scrivanie"
-
-#: ../src/plugins/deskno/deskno.c:235
+#: ../plugins/deskno/deskno.c:174 ../plugins/deskno/deskno.c:194
 msgid "Desktop Number / Workspace Name"
 msgstr "Numero scrivania / Nome area di lavoro"
 
-#: ../src/plugins/deskno/deskno.c:237
+#: ../plugins/deskno/deskno.c:176 ../plugins/dclock.c:426
+msgid "Bold font"
+msgstr "Carattere grassetto"
+
+#: ../plugins/deskno/deskno.c:177
+msgid "Display desktop names"
+msgstr "Mostra nomi scrivanie"
+
+#: ../plugins/deskno/deskno.c:195
 msgid "Display workspace number, by cmeury@users.sf.net"
 msgstr "Mostra il numero dell'area di lavoro, di cmeury@users.sf.net"
 
-#: ../src/plugins/image.c:161
-msgid "Display Image and Tooltip"
-msgstr "Mostra immagine e suggerimenti"
+#: ../plugins/launchtaskbar.c:1418 ../plugins/launchtaskbar.c:3445
+msgid "Application Launch Bar"
+msgstr "Barra avvio applicazioni"
 
-#: ../src/plugins/launchbar.c:914
-msgid "Bar with buttons to launch application"
-msgstr "Barra con pulsanti per avviare applicazioni"
+#: ../plugins/launchtaskbar.c:1421 ../plugins/launchtaskbar.c:3456
+msgid "Task Bar (Window List)"
+msgstr "Barra delle applicazioni (Elenco finestre)"
+
+#: ../plugins/launchtaskbar.c:2445
+msgid "_Close all windows"
+msgstr "_Chiudi tutte le finestre"
 
 #. Add Raise menu item.
-#: ../src/plugins/taskbar.c:1714
+#: ../plugins/launchtaskbar.c:3304
 msgid "_Raise"
 msgstr "_Rivela"
 
 #. Add Restore menu item.
-#: ../src/plugins/taskbar.c:1719
+#: ../plugins/launchtaskbar.c:3309
 msgid "R_estore"
 msgstr "R_ipristina"
 
 #. Add Maximize menu item.
-#: ../src/plugins/taskbar.c:1724
+#: ../plugins/launchtaskbar.c:3314
 msgid "Ma_ximize"
 msgstr "Massimi_zza"
 
 #. Add Iconify menu item.
-#: ../src/plugins/taskbar.c:1729
+#: ../plugins/launchtaskbar.c:3319
 msgid "Ico_nify"
 msgstr "Ico_nifica"
 
-#: ../src/plugins/taskbar.c:1748
+#: ../plugins/launchtaskbar.c:3338
 #, c-format
 msgid "Workspace _%d"
 msgstr "Area di lavoro _%d"
 
-#: ../src/plugins/taskbar.c:1753
+#: ../plugins/launchtaskbar.c:3343
 #, c-format
 msgid "Workspace %d"
 msgstr "Area di lavoro %d"
 
 #. Add "move to all workspaces" item.  This causes the window to be visible no matter what desktop is active.
-#: ../src/plugins/taskbar.c:1767
+#: ../plugins/launchtaskbar.c:3359
 msgid "_All workspaces"
 msgstr "_Tutte le aree di lavoro"
 
 #. Add Move to Workspace menu item as a submenu.
-#: ../src/plugins/taskbar.c:1773
+#: ../plugins/launchtaskbar.c:3365
 msgid "_Move to Workspace"
 msgstr "_Muovi ad area di lavoro"
 
 #. Add Close menu item.  By popular demand, we place this menu item closest to the cursor.
-#: ../src/plugins/taskbar.c:1779
+#: ../plugins/launchtaskbar.c:3371
 msgid "_Close Window"
 msgstr "_Chiudi finestra"
 
-#: ../src/plugins/taskbar.c:1986
-msgid "Show tooltips"
-msgstr "Mostra aiuti"
+#: ../plugins/launchtaskbar.c:3373
+msgid "A_dd to Launcher"
+msgstr "A_ggiungi al lanciatore"
 
-#: ../src/plugins/taskbar.c:1987
-msgid "Icons only"
-msgstr "Solo icone"
+#: ../plugins/launchtaskbar.c:3374
+msgid "Rem_ove from Launcher"
+msgstr "Elimina dal lanciat_ore"
 
-#: ../src/plugins/taskbar.c:1988
-msgid "Flat buttons"
-msgstr "Pulsanti piatti"
+#: ../plugins/launchtaskbar.c:3375
+msgid "_New Instance"
+msgstr "_Nuova istanza"
 
-#: ../src/plugins/taskbar.c:1989
-msgid "Show windows from all desktops"
-msgstr "Mostra finestre su tutte le scrivanie"
+#: ../plugins/launchtaskbar.c:3446
+msgid "Bar with buttons to launch application"
+msgstr "Barra con pulsanti per avviare applicazioni"
 
-#: ../src/plugins/taskbar.c:1990
-msgid "Use mouse wheel"
-msgstr "Usa rotellina del mouse"
-
-#: ../src/plugins/taskbar.c:1991
-msgid "Flash when there is any window requiring attention"
-msgstr "Lampeggia quando una finestra richiede attenzione"
-
-#: ../src/plugins/taskbar.c:1992
-msgid "Combine multiple application windows into a single button"
-msgstr "Combina finestre multiple applicazione in un singolo pulsante"
-
-#: ../src/plugins/taskbar.c:1993
-msgid "Maximum width of task button"
-msgstr "Larghezza massima di un pulsante applicazione"
-
-#: ../src/plugins/taskbar.c:1994
-msgid "Spacing"
-msgstr "Spaziatura"
-
-#: ../src/plugins/taskbar.c:2047
-msgid "Task Bar (Window List)"
-msgstr "Barra delle applicazioni (Lista finestre)"
-
-#: ../src/plugins/taskbar.c:2049
+#: ../plugins/launchtaskbar.c:3457
 msgid ""
 "Taskbar shows all opened windows and allow to iconify them, shade or get "
 "focus"
@@ -600,198 +657,212 @@ msgstr ""
 "La barra delle applicazioni mostra tutte le finestre aperte e permette di "
 "minimizzarle, arrotolarle o attivarle"
 
-#: ../src/plugins/dclock.c:436
-msgid "Clock Format"
-msgstr "Formato orologio"
+#: ../plugins/launchtaskbar.c:3476
+msgid "Bar with buttons to launch application and/or show all opened windows"
+msgstr ""
+"Barra con pulsanti per avviare applicazioni e/o mostrare tutte le finestre "
+"aperte"
 
-#: ../src/plugins/dclock.c:437
-msgid "Tooltip Format"
-msgstr "Formato suggerimenti"
-
-#: ../src/plugins/dclock.c:438
-msgid "Format codes: man 3 strftime; \\n for line break"
-msgstr "Codici formato: man 3 strftime; \\n per ritorno a capo"
-
-#: ../src/plugins/dclock.c:439
-msgid "Action when clicked (default: display calendar)"
-msgstr "Azione al clic (predefinita: mostra calendario)"
-
-#: ../src/plugins/dclock.c:441
-msgid "Tooltip only"
-msgstr "Solo suggerimenti"
-
-#: ../src/plugins/dclock.c:442
-msgid "Center text"
-msgstr "Testo centrato"
-
-#: ../src/plugins/dclock.c:471
+#: ../plugins/dclock.c:420 ../plugins/dclock.c:440
 msgid "Digital Clock"
 msgstr "Orologio digitale"
 
-#: ../src/plugins/dclock.c:473
-msgid "Display digital clock and tooltip"
-msgstr "Mostra orologio digitale e suggerimenti"
+#: ../plugins/dclock.c:422
+msgid "Clock Format"
+msgstr "Formato orologio"
 
-#: ../src/plugins/menu.c:426
+#: ../plugins/dclock.c:423
+msgid "Tooltip Format"
+msgstr "Formato suggerimenti"
+
+#: ../plugins/dclock.c:424
+#, c-format, fuzzy
+msgid "Format codes: man 3 strftime; %n for line break"
+msgstr "Codici formato: man 3 strftime; \\%n per ritorno a capo"
+
+#: ../plugins/dclock.c:425
+msgid "Action when clicked (default: display calendar)"
+msgstr "Azione al clic (predefinita: mostra calendario)"
+
+#: ../plugins/dclock.c:427
+msgid "Tooltip only"
+msgstr "Solo suggerimenti"
+
+#: ../plugins/dclock.c:428
+msgid "Center text"
+msgstr "Testo centrato"
+
+#: ../plugins/dclock.c:441
+msgid "Display digital clock and tooltip"
+msgstr "Mostra orologio digitale e suggerimento"
+
+#: ../plugins/menu.c:390
 msgid "Add to desktop"
 msgstr "Aggiungere alla scrivania"
 
-#: ../src/plugins/menu.c:436
+#: ../plugins/menu.c:397
 msgid "Properties"
 msgstr "Proprietà"
 
-#: ../src/plugins/menu.c:1084 ../src/plugins/dirmenu.c:413
-msgid "Icon"
-msgstr "Icona"
-
-#: ../src/plugins/menu.c:1101
+#: ../plugins/menu.c:1020 ../plugins/menu.c:1033
 msgid "Menu"
 msgstr "Menu"
 
-#: ../src/plugins/menu.c:1103
+#: ../plugins/menu.c:1021 ../plugins/dirmenu.c:358
+msgid "Icon"
+msgstr "Icona"
+
+#: ../plugins/menu.c:1034
 msgid "Application Menu"
 msgstr "Menu applicazioni"
 
-#: ../src/plugins/separator.c:102
+#: ../plugins/separator.c:68
 msgid "Separator"
 msgstr "Separatore"
 
-#: ../src/plugins/separator.c:104
+#: ../plugins/separator.c:69
 msgid "Add a separator to the panel"
 msgstr "Aggiunge un separatore al pannello"
 
-#: ../src/plugins/pager.c:842
+#: ../plugins/pager.c:92
+msgid "Sorry, there was no window manager configuration program found."
+msgstr ""
+"Non è stato trovato alcun programma di configurazione del gestore delle "
+"finestre."
+
+#: ../plugins/pager.c:143 ../plugins/pager.c:159
 msgid "Desktop Pager"
 msgstr "Pager scrivania"
 
-#: ../src/plugins/pager.c:844
+#: ../plugins/pager.c:144 ../plugins/pager.c:160
 msgid "Simple pager plugin"
 msgstr "Plugin pager semplice"
 
-#: ../src/plugins/space.c:143
+#: ../plugins/space.c:86 ../plugins/space.c:95
 msgid "Spacer"
 msgstr "Spaziatore"
 
-#: ../src/plugins/space.c:145
+#: ../plugins/space.c:96
 msgid "Allocate space"
 msgstr "Alloca spazio"
 
-#: ../src/plugins/tray.c:757
+#: ../plugins/tray.c:679
 msgid "System Tray"
 msgstr "Pannello di sistema"
 
-#: ../src/plugins/tray.c:759
+#: ../plugins/tray.c:680
 msgid "System tray"
 msgstr "Pannello di sistema"
 
+#: ../plugins/xkb/xkb-plugin.c:401
+msgid "New session is required for this option to take effect"
+msgstr "È richiesta una nuova sessione perché questa opzione abbia effetto"
+
 #. dialog
-#: ../src/plugins/xkb/xkb-plugin.c:513
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:582
 msgid "Select Keyboard Model"
-msgstr "LED Tastiera"
+msgstr "Scegli modello di tastiera"
 
-#: ../src/plugins/xkb/xkb-plugin.c:536
-msgid "Model"
-msgstr ""
-
-#: ../src/plugins/xkb/xkb-plugin.c:540 ../src/plugins/xkb/xkb-plugin.c:629
-#: ../src/plugins/xkb/xkb-plugin.c:780
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:606 ../plugins/xkb/xkb-plugin.c:735
+#: ../plugins/xkb/xkb-plugin.c:913
 msgid "Description"
-msgstr "Destinazione:"
+msgstr "Descrizione"
+
+#: ../plugins/xkb/xkb-plugin.c:611 ../plugins/xkb/xkb-plugin.c:742
+msgid "Id"
+msgstr "Id"
 
 #. dialog
-#: ../src/plugins/xkb/xkb-plugin.c:602
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:706
 msgid "Select Layout Change Type"
-msgstr "Seleziona una immagine"
-
-#: ../src/plugins/xkb/xkb-plugin.c:625
-msgid "Change Type"
-msgstr ""
+msgstr "Seleziona tipo cambiamento disposizione"
 
 #. dialog
-#: ../src/plugins/xkb/xkb-plugin.c:747
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:879
 msgid "Add Keyboard Layout"
-msgstr "Cambia disposizione tastiera"
+msgstr "Aggiungi disposizione tastiera"
 
-#: ../src/plugins/xkb/xkb-plugin.c:770 ../src/plugins/xkb/xkb-plugin.c:1136
+#: ../plugins/xkb/xkb-plugin.c:903 ../plugins/xkb/xkb-plugin.c:1294
 msgid "Flag"
-msgstr ""
+msgstr "Bandiera"
 
-#: ../src/plugins/xkb/xkb-plugin.c:775 ../src/plugins/xkb/xkb-plugin.c:1140
+#: ../plugins/xkb/xkb-plugin.c:908 ../plugins/xkb/xkb-plugin.c:1298
 msgid "Layout"
-msgstr ""
+msgstr "Disposizione"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1053 ../src/plugins/xkb/xkb-plugin.c:1359
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1204 ../plugins/xkb/xkb-plugin.c:1536
 msgid "Keyboard Layout Handler"
-msgstr "Cambia disposizione tastiera"
+msgstr "Gestore disposizione tastiera"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1070
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1227
 msgid "Keyboard Model"
-msgstr "LED Tastiera"
+msgstr "Modello tastiera"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1090
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1248
 msgid "Keyboard Layouts"
-msgstr "Cambia disposizione tastiera"
+msgstr "Disposizioni della tastiera"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1144
+#: ../plugins/xkb/xkb-plugin.c:1302
 msgid "Variant"
-msgstr ""
+msgstr "Variante"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1152
+#: ../plugins/xkb/xkb-plugin.c:1311
 msgid "Change Layout Option"
-msgstr ""
+msgstr "Modifica opzione della disposizione"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1172
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1331
+msgid "Advanced setxkbmap Options"
+msgstr "Opzioni avanzate per setxkbmap"
+
+#: ../plugins/xkb/xkb-plugin.c:1352
+msgid "Do _not reset existing options"
+msgstr "_Non reimpostare le opzioni esistenti"
+
+#: ../plugins/xkb/xkb-plugin.c:1357
+msgid "Keep _system layouts"
+msgstr "Mantenere le di_sposizioni di sistema"
+
+#: ../plugins/xkb/xkb-plugin.c:1366
 msgid "Per Window Settings"
-msgstr "Impostazioni pannello"
+msgstr "Impostazioni finestra"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1184
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1378
 msgid "_Remember layout for each window"
-msgstr "_Ricorda la disposizione per ogni applicazione"
+msgstr "_Ricordare la disposizione per ogni finestra"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1193
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1387
 msgid "Show Layout as"
-msgstr "Mostra layout come"
+msgstr "Mostrare la disposizione come"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1254
+#: ../plugins/xkb/xkb-plugin.c:1448
 msgid "Custom Image"
-msgstr ""
+msgstr "Immagine personalizzata"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1255
+#: ../plugins/xkb/xkb-plugin.c:1449
 msgid "Text"
-msgstr ""
+msgstr "Testo"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1281
+#: ../plugins/xkb/xkb-plugin.c:1475
 msgid "Panel Icon Size"
-msgstr ""
+msgstr "Dimensioni icona pannello"
 
-#: ../src/plugins/xkb/xkb-plugin.c:1361
-#, fuzzy
+#: ../plugins/xkb/xkb-plugin.c:1537
 msgid "Handle keyboard layouts"
-msgstr "Cambia la disposizione della tastiera tra quelle disponibili"
+msgstr "Gestisce le disposizioni della tastiera"
 
-#: ../src/plugins/wincmd.c:209
+#: ../plugins/wincmd.c:189
 msgid "Left click to iconify all windows.  Middle click to shade them."
 msgstr "Clic sinistro per iconificare. Clic centrale per arrotolare."
 
-#: ../src/plugins/wincmd.c:237
-msgid "Alternately iconify/shade and raise"
-msgstr "Iconifica/Riduci e Rivela alternativamente"
-
-#: ../src/plugins/wincmd.c:266
+#: ../plugins/wincmd.c:223 ../plugins/wincmd.c:241
 msgid "Minimize All Windows"
 msgstr "Minimizza tutte le finestre"
 
-#: ../src/plugins/wincmd.c:268
+#: ../plugins/wincmd.c:225
+msgid "Alternately iconify/shade and raise"
+msgstr "Iconificare/arrotolare e rivelare alternativamente"
+
+#: ../plugins/wincmd.c:242
 msgid ""
 "Sends commands to all desktop windows.\n"
 "Supported commands are 1) iconify and 2) shade"
@@ -799,195 +870,213 @@ msgstr ""
 "Manda comandi a tutte le finestre della scrivania.\n"
 "Comandi supportati: 1) iconifica e 2) arrotola"
 
-#: ../src/plugins/dirmenu.c:246
+#: ../plugins/dirmenu.c:205
 msgid "Open in _Terminal"
-msgstr "Apri nel _terminale"
+msgstr "Aprire nel _terminale"
 
-#: ../src/plugins/dirmenu.c:411
-msgid "Directory"
-msgstr "Directory"
-
-#: ../src/plugins/dirmenu.c:412
-msgid "Label"
-msgstr "Etichetta"
-
-#: ../src/plugins/dirmenu.c:443
+#: ../plugins/dirmenu.c:354 ../plugins/dirmenu.c:370
 msgid "Directory Menu"
 msgstr "Menu directory"
 
-#: ../src/plugins/dirmenu.c:445
-msgid "Browse directory tree via menu (Author: PCMan)"
-msgstr "Sfoglia l'albero di cartelle tramite menu (Autore: PCMan)"
+#: ../plugins/dirmenu.c:356
+msgid "Directory"
+msgstr "Directory"
 
-#: ../src/plugins/thermal/thermal.c:474
-msgid "Normal"
-msgstr "Normale"
+#: ../plugins/dirmenu.c:357
+msgid "Label"
+msgstr "Etichetta"
 
-#: ../src/plugins/thermal/thermal.c:475
-msgid "Warning1"
-msgstr "Avvertimento1"
+#: ../plugins/dirmenu.c:371
+msgid "Browse directory tree via menu (Author = PCMan)"
+msgstr "Sfoglia l'albero di cartelle tramite menu (autore: PCMan)"
 
-#: ../src/plugins/thermal/thermal.c:476
-msgid "Warning2"
-msgstr "Avvertimento2"
-
-#: ../src/plugins/thermal/thermal.c:477
-msgid "Automatic sensor location"
-msgstr "Posizionamento automatico sensore"
-
-#: ../src/plugins/thermal/thermal.c:478
-msgid "Sensor"
-msgstr "Sensore"
-
-#: ../src/plugins/thermal/thermal.c:479
-msgid "Automatic temperature levels"
-msgstr "Livelli di temperatura automatici"
-
-#: ../src/plugins/thermal/thermal.c:480
-msgid "Warning1 Temperature"
-msgstr "Temperatura Avvertimento1"
-
-#: ../src/plugins/thermal/thermal.c:481
-msgid "Warning2 Temperature"
-msgstr "Temperatura Avvertimento2"
-
-#: ../src/plugins/thermal/thermal.c:525
+#: ../plugins/thermal/thermal.c:521 ../plugins/thermal/thermal.c:539
 msgid "Temperature Monitor"
 msgstr "Monitor temperatura"
 
-#: ../src/plugins/thermal/thermal.c:527
+#: ../plugins/thermal/thermal.c:523
+msgid "Normal color"
+msgstr "Colore normale"
+
+#: ../plugins/thermal/thermal.c:524
+msgid "Warning1 color"
+msgstr "Colore avvertimento 1"
+
+#: ../plugins/thermal/thermal.c:525
+msgid "Warning2 color"
+msgstr "Colore avvertimento 2"
+
+#: ../plugins/thermal/thermal.c:526
+msgid "Automatic sensor location"
+msgstr "Posizionamento automatico sensore"
+
+#: ../plugins/thermal/thermal.c:527
+msgid "Sensor"
+msgstr "Sensore"
+
+#: ../plugins/thermal/thermal.c:528
+msgid "Automatic temperature levels"
+msgstr "Livelli di temperatura automatici"
+
+#: ../plugins/thermal/thermal.c:529
+msgid "Warning1 temperature"
+msgstr "Temperatura avvertimento 1"
+
+#: ../plugins/thermal/thermal.c:530
+msgid "Warning2 temperature"
+msgstr "Temperatura avvertimento 2"
+
+#: ../plugins/thermal/thermal.c:540
 msgid "Display system temperature"
 msgstr "Mostra la temperatura del sistema"
 
+#: ../plugins/cpufreq/cpufreq.c:325
+#, c-format
+msgid ""
+"Frequency: %d MHz\n"
+"Governor: %s"
+msgstr ""
+"Frequenza: %d MHz\n"
+"Governor: %s"
+
+#: ../plugins/cpufreq/cpufreq.c:408
+msgid "CPUFreq frontend"
+msgstr "Interfaccia CPUFreq"
+
+#: ../plugins/cpufreq/cpufreq.c:409
+msgid "Display CPU frequency and allow to change governors and frequency"
+msgstr ""
+"Mostra la frequenza della CPU e permette di cambiare «governor» e frequenza"
+
 #. FIXME: display current level in tooltip. ex: "Volume Control: 80%"
 #. Display current level in tooltip.
-#: ../src/plugins/volume/volume.c:300
-#: ../src/plugins/volumealsa/volumealsa.c:362
-#: ../src/plugins/volumealsa/volumealsa.c:544
+#: ../plugins/volume/volume.c:278 ../plugins/volumealsa/volumealsa.c:353
+#: ../plugins/volumealsa/volumealsa.c:537
 msgid "Volume control"
 msgstr "Controllo volume"
 
-#: ../src/plugins/volume/volume.c:312
-#: ../src/plugins/volumealsa/volumealsa.c:665
+#: ../plugins/volume/volume.c:286 ../plugins/volumealsa/volumealsa.c:641
 msgid "Volume Control"
 msgstr "Controllo volume"
 
 #. Create a frame as the child of the viewport.
-#: ../src/plugins/volume/volume-impl.c:109
-#: ../src/plugins/volumealsa/volumealsa.c:502
+#: ../plugins/volume/volume-impl.c:109 ../plugins/volumealsa/volumealsa.c:491
 msgid "Volume"
 msgstr "Volume"
 
 #. Create a check button as the child of the vertical box.
-#: ../src/plugins/volumealsa/volumealsa.c:521
+#: ../plugins/volumealsa/volumealsa.c:510
 msgid "Mute"
 msgstr "Muto"
 
-#: ../src/plugins/volumealsa/volumealsa.c:638
+#: ../plugins/volumealsa/volumealsa.c:623
 msgid ""
 "Error, you need to install an application to configure the sound "
-"(pavucontol, alsamixer ...)"
+"(pavucontrol, alsamixer ...)"
 msgstr ""
-"Errore: è necessario installare un'applicazione per configurare il suono "
-"(pavucontol, alsamixer, ...)"
+"Errore: è necessario installare un'applicazione per configurare il suono ("
+"pavucontrol, alsamixer, ...)"
 
-#: ../src/plugins/netstat/netstat.c:180
+#: ../plugins/volumealsa/volumealsa.c:642
+msgid "Display and control volume for ALSA"
+msgstr "Mostra e controlla il volume per ALSA"
+
+#: ../plugins/netstat/netstat.c:178
 msgid "<Hidden Access Point>"
 msgstr "<Punto di accesso nascosto>"
 
-#: ../src/plugins/netstat/netstat.c:213
+#: ../plugins/netstat/netstat.c:211
 msgid "Wireless Networks not found in range"
-msgstr "Nessuna rete wireless localizzata nell'area"
+msgstr "Nessuna rete wireless trovata nell'area"
 
 #. Repair
-#: ../src/plugins/netstat/netstat.c:247
+#: ../plugins/netstat/netstat.c:245
 msgid "Repair"
 msgstr "Ripara"
 
 #. interface down
-#: ../src/plugins/netstat/netstat.c:252
+#: ../plugins/netstat/netstat.c:250
 msgid "Disable"
 msgstr "Disattiva"
 
-#: ../src/plugins/netstat/netstat.c:342
+# simile a "Connetività limitata o assente"
+#: ../plugins/netstat/netstat.c:340
 msgid "Wireless Connection has no connectivity"
-msgstr "La rete wireless non ha connettività"
+msgstr "Connettività wireless assente"
 
-#: ../src/plugins/netstat/netstat.c:344
+#: ../plugins/netstat/netstat.c:342
 msgid "Network cable is plugged out"
 msgstr "Cavo di rete disconnesso"
 
-#: ../src/plugins/netstat/netstat.c:346
+#: ../plugins/netstat/netstat.c:344
 msgid "Connection has limited or no connectivity"
 msgstr "Connettività limitata o assente"
 
-#: ../src/plugins/netstat/netstat.c:350 ../src/plugins/netstat/netstat.c:361
-#: ../src/plugins/netstat/netstat.c:372
+#: ../plugins/netstat/netstat.c:348 ../plugins/netstat/netstat.c:359
+#: ../plugins/netstat/netstat.c:370
 msgid "IP Address:"
 msgstr "Indirizzo IP:"
 
-#: ../src/plugins/netstat/netstat.c:351
+#: ../plugins/netstat/netstat.c:349
 msgid "Remote IP:"
 msgstr "IP remoto:"
 
-#: ../src/plugins/netstat/netstat.c:352 ../src/plugins/netstat/netstat.c:363
-#: ../src/plugins/netstat/netstat.c:374
+#: ../plugins/netstat/netstat.c:350 ../plugins/netstat/netstat.c:361
+#: ../plugins/netstat/netstat.c:372
 msgid "Netmask:"
 msgstr "Maschera di rete:"
 
-#: ../src/plugins/netstat/netstat.c:353 ../src/plugins/netstat/netstat.c:365
-#: ../src/plugins/netstat/netstat.c:376
+#: ../plugins/netstat/netstat.c:351 ../plugins/netstat/netstat.c:363
+#: ../plugins/netstat/netstat.c:374
 msgid "Activity"
 msgstr "Attività"
 
-#: ../src/plugins/netstat/netstat.c:353 ../src/plugins/netstat/netstat.c:365
-#: ../src/plugins/netstat/netstat.c:376
+#: ../plugins/netstat/netstat.c:351 ../plugins/netstat/netstat.c:363
+#: ../plugins/netstat/netstat.c:374
 msgid "Sent"
-msgstr "Inviato"
+msgstr "Inviati"
 
-#: ../src/plugins/netstat/netstat.c:353 ../src/plugins/netstat/netstat.c:365
-#: ../src/plugins/netstat/netstat.c:376
+#: ../plugins/netstat/netstat.c:351 ../plugins/netstat/netstat.c:363
+#: ../plugins/netstat/netstat.c:374
 msgid "Received"
-msgstr "Ricevuto"
+msgstr "Ricevuti"
 
-#: ../src/plugins/netstat/netstat.c:354 ../src/plugins/netstat/netstat.c:366
-#: ../src/plugins/netstat/netstat.c:377
+#: ../plugins/netstat/netstat.c:352 ../plugins/netstat/netstat.c:364
+#: ../plugins/netstat/netstat.c:375
 msgid "bytes"
 msgstr "byte"
 
-#: ../src/plugins/netstat/netstat.c:355 ../src/plugins/netstat/netstat.c:367
-#: ../src/plugins/netstat/netstat.c:378
+#: ../plugins/netstat/netstat.c:353 ../plugins/netstat/netstat.c:365
+#: ../plugins/netstat/netstat.c:376
 msgid "packets"
 msgstr "pacchetti"
 
-#: ../src/plugins/netstat/netstat.c:358
-#: ../src/plugins/netstatus/netstatus-iface.c:173
+#: ../plugins/netstat/netstat.c:356 ../plugins/netstatus/netstatus-iface.c:173
 msgid "Wireless"
 msgstr "Wireless"
 
-#: ../src/plugins/netstat/netstat.c:360
+#: ../plugins/netstat/netstat.c:358
 msgid "Protocol:"
 msgstr "Protocollo:"
 
-#: ../src/plugins/netstat/netstat.c:364 ../src/plugins/netstat/netstat.c:375
+#: ../plugins/netstat/netstat.c:362 ../plugins/netstat/netstat.c:373
 msgid "HW Address:"
 msgstr "Indirizzo HW:"
 
-#: ../src/plugins/netstat/netstat.c:513
+#: ../plugins/netstat/netstat.c:484
 msgid "Manage Networks"
 msgstr "Amministra reti"
 
-#: ../src/plugins/netstat/netstat.c:515
+#: ../plugins/netstat/netstat.c:485
 msgid "Monitor and Manage networks"
 msgstr "Monitora e amministra reti"
 
 #. create dialog
-#: ../src/plugins/netstat/passwd_gui.c:86
+#: ../plugins/netstat/passwd_gui.c:87
 msgid "Setting Encryption Key"
 msgstr "Configurazione chiave di crittazione"
 
-#. messages
-#: ../src/plugins/netstat/passwd_gui.c:96
+#: ../plugins/netstat/passwd_gui.c:98
 msgid ""
 "This wireless network was encrypted.\n"
 "You must have the encryption key."
@@ -995,48 +1084,48 @@ msgstr ""
 "La rete wireless è crittata.\n"
 "È necessaria la chiave di crittazione."
 
-#: ../src/plugins/netstat/passwd_gui.c:101
+#: ../plugins/netstat/passwd_gui.c:103
 msgid "Encryption Key:"
 msgstr "Chiave di crittazione:"
 
-#: ../src/plugins/netstatus/netstatus.c:179
-msgid "Interface to monitor"
-msgstr "Interfaccia da monitorare"
-
-#: ../src/plugins/netstatus/netstatus.c:180
-msgid "Config tool"
-msgstr "Strumento di configurazione"
-
-#: ../src/plugins/netstatus/netstatus.c:197
+#: ../plugins/netstatus/netstatus.c:152 ../plugins/netstatus/netstatus.c:164
 msgid "Network Status Monitor"
 msgstr "Monitor stato rete"
 
-#: ../src/plugins/netstatus/netstatus.c:199
+#: ../plugins/netstatus/netstatus.c:154
+msgid "Interface to monitor"
+msgstr "Interfaccia da monitorare"
+
+#: ../plugins/netstatus/netstatus.c:155
+msgid "Config tool"
+msgstr "Strumento di configurazione"
+
+#: ../plugins/netstatus/netstatus.c:165
 msgid "Monitor network status"
 msgstr "Monitora lo stato della rete"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:51
-#: ../src/plugins/netstatus/netstatus-dialog.c:312
+#: ../plugins/netstatus/netstatus-dialog.c:52
+#: ../plugins/netstatus/netstatus-dialog.c:313
 msgid "Unknown"
 msgstr "Sconosciuto"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:116
+#: ../plugins/netstatus/netstatus-dialog.c:117
 msgid "Connection Properties"
 msgstr "Proprietà della connessione"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:122
+#: ../plugins/netstatus/netstatus-dialog.c:123
 #, c-format
 msgid "Connection Properties: %s"
 msgstr "Proprietà della connessione: %s"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:135
+#: ../plugins/netstatus/netstatus-dialog.c:136
 #, c-format
 msgid "%lu packet"
 msgid_plural "%lu packets"
 msgstr[0] "%lu pacchetto"
 msgstr[1] "%lu pacchetti"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:396
+#: ../plugins/netstatus/netstatus-dialog.c:397
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -1045,470 +1134,805 @@ msgstr ""
 "Errore alla visualizzazione dell'aiuto:\n"
 "%s"
 
-#: ../src/plugins/netstatus/netstatus-dialog.c:580
-#, c-format
-msgid "Failed to launch time configuration tool: %s"
-msgstr "Impossibile avviare strumento configurazione orario: %s"
-
-#: ../src/plugins/netstatus/netstatus-icon.c:380
+#: ../plugins/netstatus/netstatus-icon.c:379
 #, c-format
 msgid "Network Connection: %s"
 msgstr "Connessione rete: %s"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:385
+#: ../plugins/netstatus/netstatus-icon.c:384
 msgid "Network Connection"
 msgstr "Connessione rete"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:842
+#: ../plugins/netstatus/netstatus-icon.c:824
 msgid "Interface"
 msgstr "Interfaccia"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:843
+#: ../plugins/netstatus/netstatus-icon.c:825
 msgid "The current interface the icon is monitoring."
 msgstr "L'interfaccia che l'icona sta monitorando attualmente."
 
-#: ../src/plugins/netstatus/netstatus-icon.c:850
+#: ../plugins/netstatus/netstatus-icon.c:832
 msgid "Orientation"
 msgstr "Orientamento"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:851
+#: ../plugins/netstatus/netstatus-icon.c:833
 msgid "The orientation of the tray."
 msgstr "L'orientamento della barra di sistema."
 
-#: ../src/plugins/netstatus/netstatus-icon.c:859
+#: ../plugins/netstatus/netstatus-icon.c:841
 msgid "Tooltips Enabled"
 msgstr "Suggerimenti attivi"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:860
+#: ../plugins/netstatus/netstatus-icon.c:842
 msgid "Whether or not the icon's tooltips are enabled."
 msgstr "Se i suggerimenti delle icone sono abilitati o meno."
 
-#: ../src/plugins/netstatus/netstatus-icon.c:867
+#: ../plugins/netstatus/netstatus-icon.c:849
 msgid "Show Signal"
 msgstr "Mostra segnale"
 
-#: ../src/plugins/netstatus/netstatus-icon.c:868
+#: ../plugins/netstatus/netstatus-icon.c:850
 msgid "Whether or not the signal strength should be displayed."
 msgstr "Se l'intensità del segnale deve essere mostrata o meno."
 
-#: ../src/plugins/netstatus/netstatus-icon.c:985
+#: ../plugins/netstatus/netstatus-icon.c:959
 #, c-format
 msgid ""
 "Please contact your system administrator to resolve the following problem:\n"
 "\n"
 "%s"
 msgstr ""
-"Per favore contattare con l'amministratore del sistema per risolvere il "
-"seguente problema:\n"
+"Contattare l'amministratore del sistema per risolvere il seguente problema:\n"
 "\n"
 "%s"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:148
+#: ../plugins/netstatus/netstatus-iface.c:148
 msgid "Name"
 msgstr "Nome"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:149
+#: ../plugins/netstatus/netstatus-iface.c:149
 msgid "The interface name"
 msgstr "Nome dell'interfaccia"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:156
+#: ../plugins/netstatus/netstatus-iface.c:156
+#: ../plugins/weather/weatherwidget.c:2085
 msgid "State"
 msgstr "Stato"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:157
+#: ../plugins/netstatus/netstatus-iface.c:157
 msgid "The interface state"
 msgstr "Stato dell'interfaccia"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:165
+#: ../plugins/netstatus/netstatus-iface.c:165
 msgid "Stats"
 msgstr "Statistiche"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:166
+#: ../plugins/netstatus/netstatus-iface.c:166
 msgid "The interface packets/bytes statistics"
 msgstr "Le statistiche pacchetti/byte dell'interfaccia"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:174
+#: ../plugins/netstatus/netstatus-iface.c:174
 msgid "Whether the interface is a wireless interface"
 msgstr "Se l'interfaccia è senza fili"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:181
+#: ../plugins/netstatus/netstatus-iface.c:181
 msgid "Signal"
 msgstr "Segnale"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:182
+#: ../plugins/netstatus/netstatus-iface.c:182
 msgid "Wireless signal strength percentage"
 msgstr "Percentuale di intensità del segnale"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:191
-#: ../src/plugins/netstatus/netstatus-util.c:167
+#: ../plugins/netstatus/netstatus-iface.c:191
+#: ../plugins/netstatus/netstatus-util.c:167
 msgid "Error"
 msgstr "Errore"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:192
+#: ../plugins/netstatus/netstatus-iface.c:192
 msgid "The current error condition"
 msgstr "L'attuale condizione di errore"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:434
-#: ../src/plugins/netstatus/netstatus-iface.c:1197
+#: ../plugins/netstatus/netstatus-iface.c:440
+#: ../plugins/netstatus/netstatus-iface.c:1205
 #, c-format
 msgid "Unable to open socket: %s"
 msgstr "Impossibile aprire il socket: %s"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:496
-#: ../src/plugins/netstatus/netstatus-iface.c:1223
+#: ../plugins/netstatus/netstatus-iface.c:502
+#: ../plugins/netstatus/netstatus-iface.c:1231
 #, c-format
 msgid "SIOCGIFFLAGS error: %s"
 msgstr "Errore SIOCGIFFLAGS: %s"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:870
+#: ../plugins/netstatus/netstatus-iface.c:879
 msgid "AMPR NET/ROM"
 msgstr "AMPR NET/ROM"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:873
+#: ../plugins/netstatus/netstatus-iface.c:882
 msgid "Ethernet"
 msgstr "Ethernet"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:879
+#: ../plugins/netstatus/netstatus-iface.c:888
 msgid "AMPR AX.25"
 msgstr "AMPR AX.25"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:888
-#: ../src/plugins/netstatus/netstatus-iface.c:1008
+#: ../plugins/netstatus/netstatus-iface.c:897
+#: ../plugins/netstatus/netstatus-iface.c:1017
 msgid "16/4 Mbps Token Ring"
 msgstr "16/4 Mbps Token Ring"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:891
+#: ../plugins/netstatus/netstatus-iface.c:900
 msgid "ARCnet"
 msgstr "ARCnet"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:897
+#: ../plugins/netstatus/netstatus-iface.c:906
 msgid "Frame Relay DLCI"
 msgstr "Frame Relay DLCI"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:903
+#: ../plugins/netstatus/netstatus-iface.c:912
 msgid "Metricom Starmode IP"
 msgstr "Metricom Starmode IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:906
+#: ../plugins/netstatus/netstatus-iface.c:915
 msgid "Serial Line IP"
 msgstr "Serial Line IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:909
+#: ../plugins/netstatus/netstatus-iface.c:918
 msgid "VJ Serial Line IP"
 msgstr "VJ Serial Line IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:912
+#: ../plugins/netstatus/netstatus-iface.c:921
 msgid "6-bit Serial Line IP"
 msgstr "6-bit Serial Line IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:915
+#: ../plugins/netstatus/netstatus-iface.c:924
 msgid "VJ 6-bit Serial Line IP"
 msgstr "VJ 6-bit Serial Line IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:921
+#: ../plugins/netstatus/netstatus-iface.c:930
 msgid "Adaptive Serial Line IP"
 msgstr "Adaptive Serial Line IP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:924
+#: ../plugins/netstatus/netstatus-iface.c:933
 msgid "AMPR ROSE"
 msgstr "AMPR ROSE"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:927
+#: ../plugins/netstatus/netstatus-iface.c:936
 msgid "Generic X.25"
 msgstr "Generico X.25"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:930
+#: ../plugins/netstatus/netstatus-iface.c:939
 msgid "Point-to-Point Protocol"
 msgstr "Point-to-Point Protocol"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:936
+#: ../plugins/netstatus/netstatus-iface.c:945
 msgid "(Cisco)-HDLC"
 msgstr "(Cisco)-HDLC"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:939
+#: ../plugins/netstatus/netstatus-iface.c:948
 msgid "LAPB"
 msgstr "LAPB"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:948
+#: ../plugins/netstatus/netstatus-iface.c:957
 msgid "IPIP Tunnel"
 msgstr "Tunnel IPIP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:954
+#: ../plugins/netstatus/netstatus-iface.c:963
 msgid "Frame Relay Access Device"
 msgstr "Dispositivo Frame Relay Access"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:960
+#: ../plugins/netstatus/netstatus-iface.c:969
 msgid "Local Loopback"
 msgstr "Loopback locale"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:966
+#: ../plugins/netstatus/netstatus-iface.c:975
 msgid "Fiber Distributed Data Interface"
 msgstr "Fiber Distributed Data Interface"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:972
+#: ../plugins/netstatus/netstatus-iface.c:981
 msgid "IPv6-in-IPv4"
 msgstr "IPv6-in-IPv4"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:984
+#: ../plugins/netstatus/netstatus-iface.c:993
 msgid "HIPPI"
 msgstr "HIPPI"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:987
+#: ../plugins/netstatus/netstatus-iface.c:996
 msgid "Ash"
 msgstr "Ash"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:990
+#: ../plugins/netstatus/netstatus-iface.c:999
 msgid "Econet"
 msgstr "Econet"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:993
+#: ../plugins/netstatus/netstatus-iface.c:1002
 msgid "IrLAP"
 msgstr "IrLAP"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:1155
+#: ../plugins/netstatus/netstatus-iface.c:1163
 #, c-format
 msgid "SIOCGIFCONF error: %s"
 msgstr "Errore SIOCGIFCONF: %s"
 
-#: ../src/plugins/netstatus/netstatus-iface.c:1248
+#: ../plugins/netstatus/netstatus-iface.c:1256
 #, c-format
 msgid "No network devices found"
 msgstr "Nessun dispositivo di rete rilevato"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:180
+#: ../plugins/netstatus/netstatus-sysdeps.c:180
 #, c-format
 msgid "Cannot open /proc/net/dev: %s"
 msgstr "Impossibile aprire /proc/net/dev: %s"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:189
+#: ../plugins/netstatus/netstatus-sysdeps.c:185
+msgid "Could not parse /proc/net/dev. No data."
+msgstr "Impossibile analizzare /proc/net/dev. Nessun dato."
+
+#: ../plugins/netstatus/netstatus-sysdeps.c:190
 msgid "Could not parse /proc/net/dev. Unknown format."
 msgstr "Impossibile analizzare /proc/net/dev. Formato sconosciuto."
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:204
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:330
+#: ../plugins/netstatus/netstatus-sysdeps.c:205
+#: ../plugins/netstatus/netstatus-sysdeps.c:332
 #, c-format
 msgid "Could not parse interface name from '%s'"
-msgstr "Impossibile determinare nome interfaccia da \"%s\""
+msgstr "Impossibile analizzare il nome dell'interfaccia da '%s'"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:217
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:645
+#: ../plugins/netstatus/netstatus-sysdeps.c:218
+#: ../plugins/netstatus/netstatus-sysdeps.c:647
 #, c-format
 msgid ""
 "Could not parse interface statistics from '%s'. prx_idx = %d; ptx_idx = %d; "
 "brx_idx = %d; btx_idx = %d;"
 msgstr ""
-"Impossibile analizzare statistiche di interfaccia da \"%s\". prx_idx = %d; "
-"ptx_idx = %d; brx_idx = %d; btx_idx = %d;"
+"Impossibile analizzare le statistiche dell'interfaccia da \"%s\". prx_idx = "
+"%d; ptx_idx = %d; brx_idx = %d; btx_idx = %d;"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:314
+#: ../plugins/netstatus/netstatus-sysdeps.c:312
+msgid "Could not parse /proc/net/wireless. No data."
+msgstr "Impossibile analizzare /proc/net/wireless. Nessun dato."
+
+#: ../plugins/netstatus/netstatus-sysdeps.c:316
 msgid "Could not parse /proc/net/wireless. Unknown format."
 msgstr "Impossibile analizzare /proc/net/wireless. Formato sconosciuto."
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:341
+#: ../plugins/netstatus/netstatus-sysdeps.c:343
 #, c-format
 msgid "Could not parse wireless details from '%s'. link_idx = %d;"
-msgstr "Impossibile analizzare dettagli wireless da \"%s\". link_idx = %d;"
+msgstr "Impossibile analizzare i dettagli wireless da \"%s\". link_idx = %d;"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:414
+#: ../plugins/netstatus/netstatus-sysdeps.c:416
 #, c-format
 msgid "Could not connect to interface, '%s'"
 msgstr "Impossibile connettersi all'interfaccia, \"%s\""
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:420
+#: ../plugins/netstatus/netstatus-sysdeps.c:422
 #, c-format
 msgid "Could not send ioctl to interface, '%s'"
 msgstr "Impossibile inviare ioctl all'interfaccia, \"%s\""
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:598
+#: ../plugins/netstatus/netstatus-sysdeps.c:600
 #, c-format
 msgid "Could not parse command line '%s': %s"
-msgstr "Impossibile interpretare la riga di comando \"%s\": %s"
+msgstr "Impossibile analizzare la riga di comando \"%s\": %s"
 
-#: ../src/plugins/netstatus/netstatus-sysdeps.c:635
+#: ../plugins/netstatus/netstatus-sysdeps.c:637
 msgid "Could not parse 'netstat' output. Unknown format"
 msgstr "Impossibile analizzare l'output di \"netstat\". Formato sconosciuto."
 
-#: ../src/plugins/netstatus/netstatus-util.c:152
+#: ../plugins/netstatus/netstatus-util.c:152
 msgid "Disconnected"
-msgstr "Disconnessa"
+msgstr "Disconnesso"
 
-#: ../src/plugins/netstatus/netstatus-util.c:155
+#: ../plugins/netstatus/netstatus-util.c:155
 msgid "Idle"
 msgstr "Inattiva"
 
-#: ../src/plugins/netstatus/netstatus-util.c:158
+#: ../plugins/netstatus/netstatus-util.c:158
 msgid "Sending"
 msgstr "In invio"
 
-#: ../src/plugins/netstatus/netstatus-util.c:161
+#: ../plugins/netstatus/netstatus-util.c:161
 msgid "Receiving"
 msgstr "In ricezione"
 
-#: ../src/plugins/netstatus/netstatus-util.c:164
+#: ../plugins/netstatus/netstatus-util.c:164
 msgid "Sending/Receiving"
 msgstr "In invio/ricezione"
 
-#: ../src/plugins/batt/batt.c:133
+#: ../plugins/batt/batt.c:151
+#, c-format
+msgid "Battery: %d%% charged, %d:%02d until full"
+msgstr "Batteria: %d%% carica, %d:%02d alla carica completa"
+
+#: ../plugins/batt/batt.c:162
+#, c-format
+msgid "Battery: %d%% charged, %d:%02d left"
+msgstr "Batteria: %d%% carica, %d:%02d rimanenti"
+
+#: ../plugins/batt/batt.c:168
+#, c-format
+msgid "Battery: %d%% charged"
+msgstr "Batteria: %d%% carica"
+
+#: ../plugins/batt/batt.c:178
+#, c-format
+msgid ""
+"\n"
+"%sEnergy full design:\t\t%5d mWh"
+msgstr ""
+"\n"
+"%sEnergia massima teorica:\t\t%5d mWh"
+
+#: ../plugins/batt/batt.c:180
+#, c-format
+msgid ""
+"\n"
+"%sEnergy full:\t\t\t%5d mWh"
+msgstr ""
+"\n"
+"%sEnergia massima:\t\t\t%5d mWh"
+
+#: ../plugins/batt/batt.c:182
+#, c-format
+msgid ""
+"\n"
+"%sEnergy now:\t\t\t%5d mWh"
+msgstr ""
+"\n"
+"%sEnergia ora:\t\t\t%5d mWh"
+
+#: ../plugins/batt/batt.c:184
+#, c-format
+msgid ""
+"\n"
+"%sPower now:\t\t\t%5d mW"
+msgstr ""
+"\n"
+"%sPotenza ora:\t\t\t%5d mW"
+
+#: ../plugins/batt/batt.c:187
+#, c-format
+msgid ""
+"\n"
+"%sCharge full design:\t%5d mAh"
+msgstr ""
+"\n"
+"%sCarica massima teorica:\t%5d mAh"
+
+#: ../plugins/batt/batt.c:189
+#, c-format
+msgid ""
+"\n"
+"%sCharge full:\t\t\t%5d mAh"
+msgstr ""
+"\n"
+"%sCarica massima:\t\t\t%5d mAh"
+
+#: ../plugins/batt/batt.c:191
+#, c-format
+msgid ""
+"\n"
+"%sCharge now:\t\t\t%5d mAh"
+msgstr ""
+"\n"
+"%sCarica ora:\t\t\t%5d mAh"
+
+#: ../plugins/batt/batt.c:193
+#, c-format
+msgid ""
+"\n"
+"%sCurrent now:\t\t\t%5d mA"
+msgstr ""
+"\n"
+"%sCorrente ora:\t\t\t%5d mA"
+
+#: ../plugins/batt/batt.c:196
+#, c-format
+msgid ""
+"\n"
+"%sCurrent Voltage:\t\t%.3lf V"
+msgstr ""
+"\n"
+"%sVoltaggio corrente:\t\t%.3lf V"
+
+#: ../plugins/batt/batt.c:234
 msgid "No batteries found"
 msgstr "Nessuna batteria rilevata"
 
-#: ../src/plugins/batt/batt.c:179
-#, c-format
-msgid "Battery: %d%% charged, %d:%02d until full"
-msgstr "Batteria: %d%% caricata, %d:%02d alla carica completa"
-
-#: ../src/plugins/batt/batt.c:190
-#, c-format
-msgid "Battery: %d%% charged, %d:%02d left"
-msgstr "Batteria: %d%% caricata, %d:%02d rimanenti"
-
-#: ../src/plugins/batt/batt.c:196
-#, c-format
-msgid "Battery: %d%% charged"
-msgstr "Batteria: %d%% caricata"
-
-#: ../src/plugins/batt/batt.c:554
-msgid "Hide if there is no battery"
-msgstr "Nascondi se non ci sono batterie"
-
-#: ../src/plugins/batt/batt.c:556
-msgid "Alarm command"
-msgstr "Comando di allarme"
-
-#: ../src/plugins/batt/batt.c:557
-msgid "Alarm time (minutes left)"
-msgstr "Tempo allarme (minuti restanti)"
-
-#: ../src/plugins/batt/batt.c:558
-msgid "Background color"
-msgstr "Colore sfondo"
-
-#: ../src/plugins/batt/batt.c:559
-msgid "Charging color 1"
-msgstr "Colore 1 ricarica"
-
-#: ../src/plugins/batt/batt.c:560
-msgid "Charging color 2"
-msgstr "Colore 2 ricarica"
-
-#: ../src/plugins/batt/batt.c:561
-msgid "Discharging color 1"
-msgstr "Colore 1 scarica"
-
-#: ../src/plugins/batt/batt.c:562
-msgid "Discharging color 2"
-msgstr "Colore 2 scarica"
-
-#: ../src/plugins/batt/batt.c:563
-msgid "Border width"
-msgstr "Larghezza bordo"
-
-#: ../src/plugins/batt/batt.c:593
+#: ../plugins/batt/batt.c:640 ../plugins/batt/batt.c:661
 msgid "Battery Monitor"
 msgstr "Monitor batteria"
 
-#: ../src/plugins/batt/batt.c:595
+#: ../plugins/batt/batt.c:642
+msgid "Hide if there is no battery"
+msgstr "Nascondi se non ci sono batterie"
+
+#: ../plugins/batt/batt.c:643
+msgid "Alarm command"
+msgstr "Comando di allarme"
+
+#: ../plugins/batt/batt.c:644
+msgid "Alarm time (minutes left)"
+msgstr "Tempo allarme (minuti restanti)"
+
+#: ../plugins/batt/batt.c:645
+msgid "Background color"
+msgstr "Colore sfondo"
+
+#: ../plugins/batt/batt.c:646
+msgid "Charging color 1"
+msgstr "Colore 1 ricarica"
+
+#: ../plugins/batt/batt.c:647
+msgid "Charging color 2"
+msgstr "Colore 2 ricarica"
+
+#: ../plugins/batt/batt.c:648
+msgid "Discharging color 1"
+msgstr "Colore 1 scarica"
+
+#: ../plugins/batt/batt.c:649
+msgid "Discharging color 2"
+msgstr "Colore 2 scarica"
+
+#: ../plugins/batt/batt.c:650
+msgid "Border width"
+msgstr "Larghezza bordo"
+
+#: ../plugins/batt/batt.c:652
+msgid "Show Extended Information"
+msgstr "Mostra informazioni dettagliate"
+
+#: ../plugins/batt/batt.c:662
 msgid "Display battery status using ACPI"
 msgstr "Mostra stato batteria tramite ACPI"
 
-#: ../src/plugins/kbled/kbled.c:258
-msgid "Show CapsLock"
-msgstr "Mostra BlocMaiusc"
-
-#: ../src/plugins/kbled/kbled.c:259
-msgid "Show NumLock"
-msgstr "Mostra BlocNum"
-
-#: ../src/plugins/kbled/kbled.c:260
-msgid "Show ScrollLock"
-msgstr "Mostra BlocScorr"
-
-#: ../src/plugins/kbled/kbled.c:295
+#: ../plugins/kbled/kbled.c:228 ../plugins/kbled/kbled.c:259
 msgid "Keyboard LED"
 msgstr "LED tastiera"
 
-#: ../src/plugins/kbled/kbled.c:297
+#: ../plugins/kbled/kbled.c:230
+msgid "Show CapsLock"
+msgstr "Mostra BlocMaiusc"
+
+#: ../plugins/kbled/kbled.c:231
+msgid "Show NumLock"
+msgstr "Mostra BlocNum"
+
+#: ../plugins/kbled/kbled.c:232
+msgid "Show ScrollLock"
+msgstr "Mostra BlocScorr"
+
+#: ../plugins/kbled/kbled.c:260
 msgid "Indicators for CapsLock, NumLock, and ScrollLock keys"
 msgstr "Indicatori per i tasti BlocMaiusc, BlocNum e BlocScorr"
 
 #. A label to allow for click through
-#: ../src/plugins/indicator/indicator.c:698
+#: ../plugins/indicator/indicator.c:689
 msgid "No Indicators"
 msgstr "Nessun indicatore"
 
-#: ../src/plugins/indicator/indicator.c:897
-msgid "Indicator Applications"
-msgstr "Applicazioni Indicatore"
-
-#: ../src/plugins/indicator/indicator.c:898
-msgid "Clock Indicator"
-msgstr "Indicatore orologio"
-
-#: ../src/plugins/indicator/indicator.c:899
-msgid "Messaging Menu"
-msgstr "Menu messaggi"
-
-#: ../src/plugins/indicator/indicator.c:900
-msgid "Network Menu"
-msgstr "Menu rete"
-
-#: ../src/plugins/indicator/indicator.c:901
-msgid "Session Menu"
-msgstr "Menu sessione"
-
-#: ../src/plugins/indicator/indicator.c:902
-msgid "Sound Menu"
-msgstr "Menu suono"
-
-#: ../src/plugins/indicator/indicator.c:928
+#: ../plugins/indicator/indicator.c:863 ../plugins/indicator/indicator.c:881
 msgid "Indicator applets"
 msgstr "Applet Indicatore"
 
-#: ../src/plugins/indicator/indicator.c:930
+#: ../plugins/indicator/indicator.c:865
+msgid "Indicator Applications"
+msgstr "Applicazioni Indicatore"
+
+#: ../plugins/indicator/indicator.c:866
+msgid "Clock Indicator"
+msgstr "Indicatore orologio"
+
+#: ../plugins/indicator/indicator.c:867
+msgid "Messaging Menu"
+msgstr "Menu messaggi"
+
+#: ../plugins/indicator/indicator.c:868
+msgid "Network Menu"
+msgstr "Menu rete"
+
+#: ../plugins/indicator/indicator.c:869
+msgid "Session Menu"
+msgstr "Menu sessione"
+
+#: ../plugins/indicator/indicator.c:870
+msgid "Sound Menu"
+msgstr "Menu suono"
+
+#: ../plugins/indicator/indicator.c:882
 msgid "Add indicator applets to the panel"
 msgstr "Aggiunge applet Indicatore al pannello"
 
-#: ../src/plugins/monitors/monitors.c:277
+#: ../plugins/monitors/monitors.c:269
 #, c-format
 msgid "CPU usage: %.2f%%"
 msgstr "Uso CPU: %.2f%%"
 
-#: ../src/plugins/monitors/monitors.c:360
+#: ../plugins/monitors/monitors.c:366
 #, c-format
 msgid "RAM usage: %.1fMB (%.2f%%)"
 msgstr "Uso RAM: %.1fMB (%.2f%%)"
 
-#: ../src/plugins/monitors/monitors.c:712
+#: ../plugins/monitors/monitors.c:698 ../plugins/monitors/monitors.c:783
+msgid "Resource monitors"
+msgstr "Monitor risorse"
+
+#: ../plugins/monitors/monitors.c:701
 msgid "CPU color"
 msgstr "Colore CPU"
 
-#: ../src/plugins/monitors/monitors.c:713
+#: ../plugins/monitors/monitors.c:702
 msgid "Display RAM usage"
 msgstr "Mostra uso RAM"
 
-#: ../src/plugins/monitors/monitors.c:714
+#: ../plugins/monitors/monitors.c:703
 msgid "RAM color"
 msgstr "Colore RAM"
 
-#: ../src/plugins/monitors/monitors.c:715
+#: ../plugins/monitors/monitors.c:704
 msgid "Action when clicked (default: lxtask)"
 msgstr "Azione al clic (predefinita: lxtask)"
 
-#: ../src/plugins/monitors/monitors.c:808
-msgid "Resource monitors"
-msgstr "Monitoraggio risorse"
-
-#: ../src/plugins/monitors/monitors.c:810
+#: ../plugins/monitors/monitors.c:784
 msgid "Display monitors (CPU, RAM)"
 msgstr "Mostra il monitoraggio di CPU e RAM"
 
-#: ../src/plugins/wnckpager/wnckpager.c:720
-msgid "WNCKPager"
-msgstr "WNCKPager"
+#: ../plugins/weather/weatherwidget.c:50
+msgid "[N/A]"
+msgstr "[N/D]"
 
-#: ../src/plugins/wnckpager/wnckpager.c:722
-msgid "WNCKpager plugin"
-msgstr "Plugin WNCKpager"
+#: ../plugins/weather/weatherwidget.c:796
+msgid "Enter New Location"
+msgstr "Inserire una nuova località"
+
+#: ../plugins/weather/weatherwidget.c:810
+msgid "_New Location:"
+msgstr "_Nuova località"
+
+#: ../plugins/weather/weatherwidget.c:821
+msgid ""
+"Enter the:\n"
+"- city, or\n"
+"- city and state/country, or\n"
+"- postal code\n"
+"for which to retrieve the weather forecast."
+msgstr ""
+"Inserire:\n"
+"- la città, oppure\n"
+"- la città e la nazione o lo stato, oppure\n"
+"- il codice postale\n"
+"di cui recuperare le previsioni del tempo."
+
+#: ../plugins/weather/weatherwidget.c:858
+#: ../plugins/weather/weatherwidget.c:991
+msgid "You must specify a location."
+msgstr "È necessario specificare una località."
+
+#: ../plugins/weather/weatherwidget.c:905
+#, c-format
+msgid "Location '%s' not found!"
+msgstr "Località «%s» non trovata."
+
+#: ../plugins/weather/weatherwidget.c:1063
+msgid "Preferences"
+msgstr "Preferenze"
+
+#: ../plugins/weather/weatherwidget.c:1069
+msgid "Refresh"
+msgstr "Aggiorna"
+
+#: ../plugins/weather/weatherwidget.c:1075
+msgid "Quit"
+msgstr "Esci"
+
+#: ../plugins/weather/weatherwidget.c:1236
+msgid "Weather Preferences"
+msgstr "Preferenze delle condizioni meteo"
+
+#: ../plugins/weather/weatherwidget.c:1250
+msgid "Current Location"
+msgstr "Località corrente"
+
+#: ../plugins/weather/weatherwidget.c:1254
+#: ../plugins/weather/weatherwidget.c:1529
+msgid "None configured"
+msgstr "Non configurata"
+
+#: ../plugins/weather/weatherwidget.c:1256
+#: ../plugins/weather/weatherwidget.c:1526
+msgid "_Set"
+msgstr "Impo_sta"
+
+#: ../plugins/weather/weatherwidget.c:1277
+msgid "Display"
+msgstr "Visualizzazione"
+
+#: ../plugins/weather/weatherwidget.c:1281
+msgid "Name:"
+msgstr "_Nome:"
+
+#: ../plugins/weather/weatherwidget.c:1285
+msgid "Units:"
+msgstr "Unità:"
+
+#: ../plugins/weather/weatherwidget.c:1289
+msgid "_Metric (°C)"
+msgstr "_Metriche (°C)"
+
+#: ../plugins/weather/weatherwidget.c:1291
+msgid "_English (°F)"
+msgstr "_Inglesi (°F)"
+
+#: ../plugins/weather/weatherwidget.c:1326
+msgid "Forecast"
+msgstr "Previsioni"
+
+#: ../plugins/weather/weatherwidget.c:1330
+msgid "Updates:"
+msgstr "Aggiornamenti:"
+
+#: ../plugins/weather/weatherwidget.c:1334
+msgid "Ma_nual"
+msgstr "Ma_nuali"
+
+#: ../plugins/weather/weatherwidget.c:1338
+msgid "_Automatic, every"
+msgstr "_Automatici, ogni"
+
+#: ../plugins/weather/weatherwidget.c:1359
+msgid "minutes"
+msgstr "minuti"
+
+#: ../plugins/weather/weatherwidget.c:1368
+msgid "Source:"
+msgstr "Fonte:"
+
+#: ../plugins/weather/weatherwidget.c:1482
+msgid "C_hange"
+msgstr "Camb_ia"
+
+#. Both are available
+#: ../plugins/weather/weatherwidget.c:1570
+#, c-format
+msgid "Current Conditions for %s"
+msgstr "Condizioni attuali per %s"
+
+#: ../plugins/weather/weatherwidget.c:1594
+msgid "Location:"
+msgstr "Località:"
+
+#: ../plugins/weather/weatherwidget.c:1617
+msgid "Last updated:"
+msgstr "Ultimo aggiornamento:"
+
+#: ../plugins/weather/weatherwidget.c:1644
+msgid "Feels like:"
+msgstr "Percepita:"
+
+#: ../plugins/weather/weatherwidget.c:1669
+msgid "Humidity:"
+msgstr "Umidità:"
+
+#: ../plugins/weather/weatherwidget.c:1696
+msgid "Pressure:"
+msgstr "Pressione:"
+
+#: ../plugins/weather/weatherwidget.c:1723
+msgid "Visibility:"
+msgstr "Visibilità:"
+
+#: ../plugins/weather/weatherwidget.c:1751
+msgid "Wind:"
+msgstr "Vento:"
+
+#: ../plugins/weather/weatherwidget.c:1774
+msgid "Sunrise:"
+msgstr "Alba:"
+
+#: ../plugins/weather/weatherwidget.c:1797
+msgid "Sunset:"
+msgstr "Tramonto:"
+
+#: ../plugins/weather/weatherwidget.c:1903
+#: ../plugins/weather/weatherwidget.c:2239
+#, c-format
+msgid "Forecast for %s unavailable."
+msgstr "Previsioni non disponibili per %s."
+
+#: ../plugins/weather/weatherwidget.c:1912
+#: ../plugins/weather/weatherwidget.c:2244
+#, c-format
+msgid "Location not set."
+msgstr "Località non impostata."
+
+#: ../plugins/weather/weatherwidget.c:1929
+#, c-format
+msgid "Searching for '%s'..."
+msgstr "Ricerca di «%s»..."
+
+#: ../plugins/weather/weatherwidget.c:2055
+#, c-format
+msgid "Location matches for '%s'"
+msgstr "Località corrispondenti a «%s»"
+
+#: ../plugins/weather/weatherwidget.c:2075
+msgid "City"
+msgstr "Città"
+
+#: ../plugins/weather/weatherwidget.c:2095
+msgid "Country"
+msgstr "Nazione"
+
+#. make it nice and pretty
+#: ../plugins/weather/weatherwidget.c:2226
+msgid "Currently in "
+msgstr "Attualmente"
+
+#: ../plugins/weather/weatherwidget.c:2228
+msgid "Today: "
+msgstr "Oggi: "
+
+#: ../plugins/weather/weatherwidget.c:2229
+msgid "Tomorrow: "
+msgstr "Domani: "
+
+#: ../plugins/weather/weather.c:307
+msgid "Weather Plugin"
+msgstr "Plugin per le previsioni del tempo"
+
+#: ../plugins/weather/weather.c:308
+msgid "Show weather conditions for a location."
+msgstr "Mostra le condizioni meteo per una località."
+
+#, c-format
+#~ msgid " --log <number> -- set log level 0-5. 0 - none 5 - chatty\n"
+#~ msgstr ""
+#~ "  --log NUMERO   -- definisce il livello di log 0-5. 0 - nessuno, 5 - "
+#~ "completo\n"
+
+#, c-format
+#~ msgid "Format codes: man 3 strftime; \\%n for line break"
+#~ msgstr "Codici formato: man 3 strftime; \\%n per ritorno a capo"
+
+#~ msgid "Normal"
+#~ msgstr "Normale"
+
+#~ msgid "Warning1"
+#~ msgstr "Avvertimento1"
+
+#~ msgid "Warning2"
+#~ msgstr "Avvertimento2"
+
+#~ msgid "Warning1 Temperature"
+#~ msgstr "Temperatura avvertimento1"
+
+#~ msgid "Warning2 Temperature"
+#~ msgstr "Temperatura avvertimento2"
+
+#~ msgid "Copyright (C) 2008-2013"
+#~ msgstr "Copyright © 2008-2013"
+
+#~ msgid "Display Image and Tooltip"
+#~ msgstr "Mostra immagine e suggerimento"
+
+#~ msgid ""
+#~ "Error, you need to install an application to configure the sound "
+#~ "(pavucontol, alsamixer ...)"
+#~ msgstr ""
+#~ "Errore: è necessario installare un'applicazione per configurare il suono "
+#~ "(pavucontol, alsamixer, ...)"
+
+#, c-format
+#~ msgid "Failed to launch time configuration tool: %s"
+#~ msgstr "Lancio dello strumento di configurazione della data non riuscito: %s"
+
+#~ msgid "Model"
+#~ msgstr "Modello"
+
+#~ msgid "WNCKPager"
+#~ msgstr "WNCKPager"
 
 #~ msgid "<b>Icon</b>"
 #~ msgstr "<b>Icona</b>"
@@ -1591,9 +2015,6 @@ msgstr "Plugin WNCKpager"
 
 #~ msgid "Show mapped windows"
 #~ msgstr "Mostra finestre arrotolate"
-
-#~ msgid "Action"
-#~ msgstr "Azione"
 
 #~ msgid "Kayboard Layout switcher"
 #~ msgstr "Cambio Layout Tastiera"

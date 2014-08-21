@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 LxDE Developers, see the file AUTHORS for details.
+ * Copyright (c) 2006-2014 LxDE Developers, see the file AUTHORS for details.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,61 +16,100 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MISC_H
-#define MISC_H
+#ifndef __MISC_H__
+#define __MISC_H__ 1
 
 #include <X11/Xatom.h>
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <stdio.h>
+#include <libfm/fm.h>
 
 #include "panel.h"
-#include "plugin.h"
 
-enum _PluginConfType {
-    CONF_TYPE_STR,
-    CONF_TYPE_INT,
-    CONF_TYPE_BOOL,
-    CONF_TYPE_FILE,
-    CONF_TYPE_FILE_ENTRY,
-    CONF_TYPE_DIRECTORY_ENTRY,
-    CONF_TYPE_TRIM
-};
+G_BEGIN_DECLS
 
-enum { LINE_NONE, LINE_BLOCK_START, LINE_BLOCK_END, LINE_VAR };
+extern Atom a_UTF8_STRING;
+extern Atom a_XROOTPMAP_ID;
 
+extern Atom a_WM_STATE;
+extern Atom a_WM_CLASS;
+extern Atom a_WM_DELETE_WINDOW;
+extern Atom a_WM_PROTOCOLS;
+extern Atom a_NET_WORKAREA;
+extern Atom a_NET_CLIENT_LIST;
+extern Atom a_NET_CLIENT_LIST_STACKING;
+extern Atom a_NET_NUMBER_OF_DESKTOPS;
+extern Atom a_NET_CURRENT_DESKTOP;
+extern Atom a_NET_DESKTOP_VIEWPORT;
+extern Atom a_NET_DESKTOP_NAMES;
+extern Atom a_NET_ACTIVE_WINDOW;
+extern Atom a_NET_CLOSE_WINDOW;
+extern Atom a_NET_SHOWING_DESKTOP;
+extern Atom a_NET_SUPPORTED;
+extern Atom a_NET_WM_STATE;
+extern Atom a_NET_WM_STATE_SKIP_TASKBAR;
+extern Atom a_NET_WM_STATE_SKIP_PAGER;
+extern Atom a_NET_WM_STATE_STICKY;
+extern Atom a_NET_WM_STATE_HIDDEN;
+extern Atom a_NET_WM_STATE_SHADED;
+
+#define a_NET_WM_STATE_REMOVE        0    /* remove/unset property */
+#define a_NET_WM_STATE_ADD           1    /* add/set property */
+#define a_NET_WM_STATE_TOGGLE        2    /* toggle property  */
+
+extern Atom a_NET_WM_WINDOW_TYPE;
+extern Atom a_NET_WM_WINDOW_TYPE_DESKTOP;
+extern Atom a_NET_WM_WINDOW_TYPE_DOCK;
+extern Atom a_NET_WM_WINDOW_TYPE_TOOLBAR;
+extern Atom a_NET_WM_WINDOW_TYPE_MENU;
+extern Atom a_NET_WM_WINDOW_TYPE_UTILITY;
+extern Atom a_NET_WM_WINDOW_TYPE_SPLASH;
+extern Atom a_NET_WM_WINDOW_TYPE_DIALOG;
+extern Atom a_NET_WM_WINDOW_TYPE_NORMAL;
+
+extern Atom a_NET_WM_DESKTOP;
+extern Atom a_NET_WM_NAME;
+extern Atom a_NET_WM_VISIBLE_NAME;
+extern Atom a_NET_WM_STRUT;
+extern Atom a_NET_WM_STRUT_PARTIAL;
+extern Atom a_NET_WM_ICON;
+extern Atom a_KDE_NET_WM_SYSTEM_TRAY_WINDOW_FOR;
+
+extern Atom a_NET_SYSTEM_TRAY_OPCODE;
+extern Atom a_NET_SYSTEM_TRAY_MESSAGE_DATA;
+extern Atom a_NET_SYSTEM_TRAY_ORIENTATION;
+extern Atom a_MANAGER;
+
+extern Atom a_LXPANEL_CMD; /* for private client message */
+
+/* Decoded value of WM_STATE property. */
 typedef struct {
-    int num, len, type;
-    gchar str[256];
-    gchar *t[3];
-} line;
+    unsigned int modal : 1;
+    unsigned int sticky : 1;
+    unsigned int maximized_vert : 1;
+    unsigned int maximized_horz : 1;
+    unsigned int shaded : 1;
+    unsigned int skip_taskbar : 1;
+    unsigned int skip_pager : 1;
+    unsigned int hidden : 1;
+    unsigned int fullscreen : 1;
+    unsigned int above : 1;
+    unsigned int below : 1;
+} NetWMState;
 
-
+/* Decoded value of _NET_WM_WINDOW_TYPE property. */
 typedef struct {
-    int num;
-    gchar *str;
-} pair;
-
-extern pair allign_pair[];
-extern pair edge_pair[];
-extern pair width_pair[];
-extern pair height_pair[];
-extern pair bool_pair[];
-extern pair pos_pair[];
-
-int str2num(pair *p, gchar *str, int defval);
-gchar *num2str(pair *p, int num, gchar *defval);
-
-extern int lxpanel_get_line(char **fp, line *s);
-extern int lxpanel_put_line(FILE* fp, const char* format, ...);
-#define lxpanel_put_str(fp, name, val) (G_UNLIKELY( !(val) || !*(val) )) ? 0 : lxpanel_put_line(fp, "%s=%s", name, val)
-#define lxpanel_put_bool(fp, name, val) lxpanel_put_line(fp, "%s=%c", name, (val) ? '1' : '0')
-#define lxpanel_put_int(fp, name, val) lxpanel_put_line(fp, "%s=%d", name, val)
-//extern int lxpanel_put_str( FILE* fp, const char* name, const char* val );
-//extern int lxpanel_put_bool( FILE* fp, const char* name, gboolean val );
-//extern int lxpanel_put_int( FILE* fp, const char* name, int val );
-int get_line_as_is(char **fp, line *s);
+    unsigned int desktop : 1;
+    unsigned int dock : 1;
+    unsigned int toolbar : 1;
+    unsigned int menu : 1;
+    unsigned int utility : 1;
+    unsigned int splash : 1;
+    unsigned int dialog : 1;
+    unsigned int normal : 1;
+} NetWMWindowType;
 
 void Xclimsg(Window win, Atom type, long l0, long l1, long l2, long l3, long l4);
 void Xclimsgwm(Window win, Atom type, Atom arg);
@@ -89,47 +128,25 @@ void get_net_wm_state(Window win, NetWMState *nws);
 void get_net_wm_window_type(Window win, NetWMWindowType *nwwt);
 GPid get_net_wm_pid(Window win);
 
-void calculate_position(Panel *np);
-gchar *expand_tilda(gchar *file);
+/**
+ * panel_handle_x_error
+ * @d: X display
+ * @ev: X error event
+ *
+ * Prints X error message to stderr if logging was enabled.
+ */
+extern int panel_handle_x_error(Display * d, XErrorEvent * ev);
+extern int panel_handle_x_error_swallow_BadWindow_BadDrawable(Display * d, XErrorEvent * ev);
 
-GtkWidget *_gtk_image_new_from_file_scaled(const gchar *file, gint width,
-                                           gint height, gboolean keep_ratio);
+gchar *expand_tilda(const gchar *file);
+
 void get_button_spacing(GtkRequisition *req, GtkContainer *parent, gchar *name);
 guint32 gcolor2rgb24(GdkColor *color);
-GtkWidget * fb_button_new_from_file(
-    gchar * image_file, int width, int height, gulong highlight_color, gboolean keep_ratio);
-GtkWidget * fb_button_new_from_file_with_label(
-    gchar * image_file, int width, int height, gulong highlight_color, gboolean keep_ratio, Panel * panel, gchar * label);
+GtkWidget *lxpanel_button_new_for_icon(LXPanel *panel, const gchar *name, GdkColor *color, const gchar *label);
+GtkWidget *lxpanel_button_new_for_fm_icon(LXPanel *panel, FmIcon *icon, GdkColor *color, const gchar *label);
+void lxpanel_button_set_icon(GtkWidget* btn, const gchar *name, gint size);
+void lxpanel_button_update_icon(GtkWidget* btn, FmIcon *icon, gint size);
 
-char* translate_exec_to_cmd( const char* exec, const char* icon,
-                             const char* title, const char* fpath );
-
-/*
- This function is used to re-create a new box with different
- orientation from the old one, add all children of the old one to
- the new one, and then destroy the old box.
- It's mainly used when we need to change the orientation of the panel or
- any plugin with a layout box. Since GtkHBox cannot be changed to GtkVBox,
- recreating a new box to replace the old one is required.
-*/
-GtkWidget* recreate_box( GtkBox* oldbox, GtkOrientation orientation );
-
-void show_error( GtkWindow* parent_win, const char* msg );
-
-/* Parameters: const char* name, gpointer ret_value, GType type, ....NULL */
-GtkWidget* create_generic_config_dlg( const char* title, GtkWidget* parent,
-                              GSourceFunc apply_func, Plugin * plugin,
-                      const char* name, ... );
-
-
-char* get_config_file( const char* profile, const char* file_name, gboolean is_global );
-
-extern GtkMenu* lxpanel_get_panel_menu( Panel* panel, Plugin* plugin, gboolean use_sub_menu );
-
-extern GdkPixbuf* lxpanel_load_icon( const char* name, int width, int height, gboolean use_fallback );
-
-void fb_button_set_from_file(GtkWidget* btn, const char* img_file, gint width, gint height, gboolean keep_ratio);
-
-gboolean lxpanel_launch_app(const char* exec, GList* files, gboolean in_terminal);
+G_END_DECLS
 
 #endif

@@ -1,6 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = src data po man
+ACLOCAL_AMFLAGS= -I m4
+
+SUBDIRS = plugins src data po man
 
 EXTRA_DIST = \
         autogen.sh \
@@ -11,12 +13,6 @@ EXTRA_DIST = \
 
 pkgconfigdir   = $(libdir)/pkgconfig
 pkgconfig_DATA = lxpanel.pc
-
-##desktopdir = $(datadir)/applications
-##desktop_DATA = pcmanfm.desktop
-
-## icondir = $(datadir)/pixmaps
-## icon_DATA = data/pcmanfm.png
 
 install-data-local:
 	@$(NORMAL_INSTALL)
@@ -38,4 +34,3 @@ dist-hook:
 	    fi \
 	  done \
 	fi
-

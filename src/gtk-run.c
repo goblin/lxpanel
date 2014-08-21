@@ -24,12 +24,17 @@
 #include <unistd.h>
 
 #include "misc.h"
+#ifndef DISABLE_MENU
 #include <menu-cache.h>
+#endif
+#include <libfm/fm-gtk.h>
 
 static GtkWidget* win = NULL; /* the run dialog */
+#ifndef DISABLE_MENU
 static MenuCache* menu_cache = NULL;
 static GSList* app_list = NULL; /* all known apps in menu cache */
 static gpointer reload_notify_id = NULL;
+#endif
 
 typedef struct _ThreadData
 {
@@ -40,6 +45,7 @@ typedef struct _ThreadData
 
 static ThreadData* thread_data = NULL; /* thread data used to load availble programs in PATH */
 
+#ifndef DISABLE_MENU
 static MenuCacheApp* match_app_by_exec(const char* exec)
 {
     GSList* l;
@@ -139,6 +145,7 @@ static MenuCacheApp* match_app_by_exec(const char* exec)
     g_free(exec_path);
     return ret;
 }
+#endif
 
 static void setup_auto_complete_with_data(ThreadData* data)
 {
@@ -147,10 +154,8 @@ static void setup_auto_complete_with_data(ThreadData* data)
     GtkEntryCompletion* comp = gtk_entry_completion_new();
     gtk_entry_completion_set_minimum_key_length( comp, 2 );
     gtk_entry_completion_set_inline_completion( comp, TRUE );
-#if GTK_CHECK_VERSION( 2, 8, 0 )
     gtk_entry_completion_set_popup_set_width( comp, TRUE );
     gtk_entry_completion_set_popup_single_match( comp, FALSE );
-#endif
     store = gtk_list_store_new( 1, G_TYPE_STRING );
 
     for( l = data->files; l; l = l->next )
@@ -171,7 +176,7 @@ static void setup_auto_complete_with_data(ThreadData* data)
     g_object_unref( comp );
 }
 
-void thread_data_free(ThreadData* data)
+static void thread_data_free(ThreadData* data)
 {
     g_slist_foreach(data->files, (GFunc)g_free, NULL);
     g_slist_free(data->files);
@@ -240,6 +245,7 @@ static void setup_auto_complete( GtkEntry* entry )
     }
 }
 
+#ifndef DISABLE_MENU
 static void reload_apps(MenuCache* cache, gpointer user_data)
 {
     g_debug("reload apps!");
@@ -250,17 +256,15 @@ static void reload_apps(MenuCache* cache, gpointer user_data)
     }
     app_list = (GSList*)menu_cache_list_all_apps(cache);
 }
+#endif
 
 static void on_response( GtkDialog* dlg, gint response, gpointer user_data )
 {
     GtkEntry* entry = (GtkEntry*)user_data;
     if( G_LIKELY(response == GTK_RESPONSE_OK) )
     {
-        GError* err = NULL;
-        if( !g_spawn_command_line_async( gtk_entry_get_text(entry), &err ) )
+        if (!fm_launch_command_simple(GTK_WINDOW(dlg), NULL, 0, gtk_entry_get_text(entry), NULL))
         {
-            show_error( (GtkWindow*)dlg, err->message );
-            g_error_free( err );
             g_signal_stop_emission_by_name( dlg, "response" );
             return;
         }
@@ -273,6 +277,7 @@ static void on_response( GtkDialog* dlg, gint response, gpointer user_data )
     gtk_widget_destroy( (GtkWidget*)dlg );
     win = NULL;
 
+#ifndef DISABLE_MENU
     /* free app list */
     g_slist_foreach(app_list, (GFunc)menu_cache_item_unref, NULL);
     g_slist_free(app_list);
@@ -283,8 +288,10 @@ static void on_response( GtkDialog* dlg, gint response, gpointer user_data )
     reload_notify_id = NULL;
     menu_cache_unref(menu_cache);
     menu_cache = NULL;
+#endif
 }
 
+#ifndef DISABLE_MENU
 static void on_entry_changed( GtkEntry* entry, GtkImage* img )
 {
     const char* str = gtk_entry_get_text(entry);
@@ -295,9 +302,14 @@ static void on_entry_changed( GtkEntry* entry, GtkImage* img )
     if( app )
     {
         int w, h;
+        const char *name = menu_cache_item_get_icon(MENU_CACHE_ITEM(app));
+        FmIcon * fm_icon;
         GdkPixbuf* pix;
+
         gtk_icon_size_lookup(GTK_ICON_SIZE_DIALOG, &w, &h);
-        pix = lxpanel_load_icon(menu_cache_item_get_icon(MENU_CACHE_ITEM(app)), w, h, TRUE);
+        fm_icon = fm_icon_from_name(name ? name : "application-x-executable");
+        pix = fm_pixbuf_from_icon_with_fallback(fm_icon, h, "application-x-executable");
+        g_object_unref(fm_icon);
         gtk_image_set_from_pixbuf(img, pix);
         g_object_unref(pix);
     }
@@ -306,99 +318,105 @@ static void on_entry_changed( GtkEntry* entry, GtkImage* img )
         gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
     }
 }
+#endif
 
 static void activate_window(GtkWindow* toplevel_window)
 {
-	/* Calling gtk_window_present() cannot support
-	 * source indication. Use our own implementation.
-	 * Without this, the window activated might be
-	 * put in background by WM to avoid stealing
-	 * of focus.
-	 * See EWMH spec, source indication part:
-	 * http://standards.freedesktop.org/wm-spec/wm-spec-latest.html#sourceindication
-	 */
-	GtkWidget* widget = GTK_WIDGET(toplevel_window);
-	GdkScreen* screen = gtk_widget_get_screen(widget);
-	if (gdk_x11_screen_supports_net_wm_hint (screen,
+    /* Calling gtk_window_present() cannot support
+     * source indication. Use our own implementation.
+     * Without this, the window activated might be
+     * put in background by WM to avoid stealing
+     * of focus.
+     * See EWMH spec, source indication part:
+     * http://standards.freedesktop.org/wm-spec/wm-spec-latest.html#sourceindication
+     */
+    GtkWidget* widget = GTK_WIDGET(toplevel_window);
+    GdkScreen* screen = gtk_widget_get_screen(widget);
+    if (gdk_x11_screen_supports_net_wm_hint (screen,
 					   gdk_atom_intern_static_string ("_NET_ACTIVE_WINDOW")))
     {
-		GdkWindow* window = widget->window;
-		GdkDisplay* display = gtk_widget_get_display(widget);
-		GdkWindow* root = gdk_screen_get_root_window(screen);
+        GdkWindow* window = gtk_widget_get_window(widget);
+        GdkDisplay* display = gtk_widget_get_display(widget);
+        GdkWindow* root = gdk_screen_get_root_window(screen);
 
-		/* show the window first */
-		gtk_widget_show(widget);
+        /* show the window first */
+        gtk_widget_show(widget);
 
-		/* then, activate it */
-		XClientMessageEvent xclient;
-		memset(&xclient, 0, sizeof (xclient));
-		xclient.type = ClientMessage;
-		xclient.window = GDK_WINDOW_XID(window);
-		xclient.message_type = gdk_x11_get_xatom_by_name_for_display(display,
-									"_NET_ACTIVE_WINDOW");
-		xclient.format = 32;
-		xclient.data.l[0] = 2; /* source indication: 2 represents direct user actions. */
-		xclient.data.l[1] = gtk_get_current_event_time();
-		xclient.data.l[2] = None; /* currently active window */
-		xclient.data.l[3] = 0;
-		xclient.data.l[4] = 0;
+        /* then, activate it */
+        XClientMessageEvent xclient;
+        memset(&xclient, 0, sizeof (xclient));
+        xclient.type = ClientMessage;
+        xclient.window = GDK_WINDOW_XID(window);
+        xclient.message_type = gdk_x11_get_xatom_by_name_for_display(display,
+								    "_NET_ACTIVE_WINDOW");
+        xclient.format = 32;
+        xclient.data.l[0] = 2; /* source indication: 2 represents direct user actions. */
+        xclient.data.l[1] = gtk_get_current_event_time();
+        xclient.data.l[2] = None; /* currently active window */
+        xclient.data.l[3] = 0;
+        xclient.data.l[4] = 0;
 
-		XSendEvent(GDK_DISPLAY_XDISPLAY(display), GDK_WINDOW_XID(root), False,
-				  SubstructureRedirectMask|SubstructureNotifyMask,
-				  (XEvent *)&xclient);
+        XSendEvent(GDK_DISPLAY_XDISPLAY(display), GDK_WINDOW_XID(root), False,
+                  SubstructureRedirectMask|SubstructureNotifyMask,
+                  (XEvent *)&xclient);
     } /* if _NET_ACTIVE_WINDOW command is not supported */
-	else
-		gtk_window_present(toplevel_window);
+    else
+        gtk_window_present(toplevel_window);
 }
 
 void gtk_run()
 {
-    GtkWidget *entry, *hbox, *img;
+    GtkWidget *entry, *hbox, *img, *dlg_vbox;
 
     if(!win)
     {
-		win = gtk_dialog_new_with_buttons( _("Run"),
-										   NULL,
-										   GTK_DIALOG_NO_SEPARATOR,
-										   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-										   GTK_STOCK_OK, GTK_RESPONSE_OK,
-										   NULL );
-		gtk_dialog_set_alternative_button_order((GtkDialog*)win, 
-								GTK_RESPONSE_OK, GTK_RESPONSE_CANCEL, -1);
-		gtk_dialog_set_default_response( (GtkDialog*)win, GTK_RESPONSE_OK );
-		entry = gtk_entry_new();
+        win = gtk_dialog_new_with_buttons( _("Run"),
+                                           NULL,
+                                           GTK_DIALOG_NO_SEPARATOR,
+                                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                           GTK_STOCK_OK, GTK_RESPONSE_OK,
+                                           NULL );
+        gtk_dialog_set_alternative_button_order((GtkDialog*)win,
+                                GTK_RESPONSE_OK, GTK_RESPONSE_CANCEL, -1);
+        gtk_dialog_set_default_response( (GtkDialog*)win, GTK_RESPONSE_OK );
+        entry = gtk_entry_new();
 
-		gtk_entry_set_activates_default( (GtkEntry*)entry, TRUE );
-		gtk_box_pack_start( (GtkBox*)((GtkDialog*)win)->vbox,
-							 gtk_label_new(_("Enter the command you want to execute:")),
-							 FALSE, FALSE, 8 );
-		hbox = gtk_hbox_new( FALSE, 2 );
-		img = gtk_image_new_from_stock( GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG );
-		gtk_box_pack_start( (GtkBox*)hbox, img,
-							 FALSE, FALSE, 4 );
-		gtk_box_pack_start( (GtkBox*)hbox, entry, TRUE, TRUE, 4 );
-		gtk_box_pack_start( (GtkBox*)((GtkDialog*)win)->vbox,
-							 hbox, FALSE, FALSE, 8 );
-		g_signal_connect( win, "response", G_CALLBACK(on_response), entry );
-		gtk_window_set_position( (GtkWindow*)win, GTK_WIN_POS_CENTER );
-		gtk_window_set_default_size( (GtkWindow*)win, 360, -1 );
-		gtk_widget_show_all( win );
+        gtk_entry_set_activates_default( (GtkEntry*)entry, TRUE );
+        dlg_vbox = gtk_dialog_get_content_area((GtkDialog*)win);
+        gtk_box_pack_start( (GtkBox*)dlg_vbox,
+                             gtk_label_new(_("Enter the command you want to execute:")),
+                             FALSE, FALSE, 8 );
+        hbox = gtk_hbox_new( FALSE, 2 );
+        img = gtk_image_new_from_stock( GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG );
+        gtk_box_pack_start( (GtkBox*)hbox, img,
+                             FALSE, FALSE, 4 );
+        gtk_box_pack_start( (GtkBox*)hbox, entry, TRUE, TRUE, 4 );
+        gtk_box_pack_start( (GtkBox*)dlg_vbox,
+                             hbox, FALSE, FALSE, 8 );
+        g_signal_connect( win, "response", G_CALLBACK(on_response), entry );
+        gtk_window_set_position( (GtkWindow*)win, GTK_WIN_POS_CENTER );
+        gtk_window_set_default_size( (GtkWindow*)win, 360, -1 );
+        gtk_widget_show_all( win );
 
-		setup_auto_complete( (GtkEntry*)entry );
-		gtk_widget_show(win);
+        setup_auto_complete( (GtkEntry*)entry );
+        gtk_widget_show(win);
 
-		g_signal_connect(entry ,"changed", G_CALLBACK(on_entry_changed), img);
+#ifndef DISABLE_MENU
+        g_signal_connect(entry ,"changed", G_CALLBACK(on_entry_changed), img);
 
-		/* get all apps */
-		menu_cache = menu_cache_lookup(g_getenv("XDG_MENU_PREFIX") ? "applications.menu" : "lxde-applications.menu" );
-		if( menu_cache )
-		{
-			menu_cache_reload(menu_cache);
-			app_list = (GSList*)menu_cache_list_all_apps(menu_cache);
-			reload_notify_id = menu_cache_add_reload_notify(menu_cache, (GFunc)reload_apps, NULL);
-		}
-	}
+        /* get all apps */
+        menu_cache = menu_cache_lookup(g_getenv("XDG_MENU_PREFIX") ? "applications.menu" : "lxde-applications.menu" );
+        if( menu_cache )
+        {
+            menu_cache_reload(menu_cache);
+            app_list = (GSList*)menu_cache_list_all_apps(menu_cache);
+            reload_notify_id = menu_cache_add_reload_notify(menu_cache, reload_apps, NULL);
+        }
+#endif
+    }
 
-	activate_window(GTK_WINDOW(win));
+    activate_window(GTK_WINDOW(win));
 }
 
+
+/* vim: set sw=4 et sts=4 ts=4 : */

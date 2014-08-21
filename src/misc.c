@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 LxDE Developers, see the file AUTHORS for details.
+ * Copyright (c) 2006-2014 LxDE Developers, see the file AUTHORS for details.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,27 +27,27 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <libfm/fm-gtk.h>
 
 #include "misc.h"
-#include "panel.h"
+#include "private.h"
 
 #include "dbg.h"
 
 /* data used by themed images buttons */
 typedef struct {
-    char* fname;
+    FmIcon *icon;
     guint theme_changed_handler;
     GdkPixbuf* pixbuf;
     GdkPixbuf* hilight;
     gulong hicolor;
-    int dw, dh; /* desired size */
-    gboolean keep_ratio;
+    gint size; /* desired size */
 } ImgData;
 
 static GQuark img_data_id = 0;
 
 static void on_theme_changed(GtkIconTheme* theme, GtkWidget* img);
-static void _gtk_image_set_from_file_scaled( GtkWidget* img, const gchar *file, gint width, gint height, gboolean keep_ratio);
+static void _gtk_image_set_from_file_scaled(GtkWidget *img, ImgData *data);
 
 /* X11 data types */
 Atom a_UTF8_STRING;
@@ -195,16 +195,9 @@ pair bool_pair[] = {
     { 1, "1" },
     { 0, NULL },
 };
-pair pos_pair[] = {
-    { POS_NONE, "none" },
-    { POS_START, "start" },
-    { POS_END,  "end" },
-    { 0, NULL},
-};
-
 
 int
-str2num(pair *p, gchar *str, int defval)
+str2num(pair *p, const gchar *str, int defval)
 {
     ENTER;
     for (;p && p->str; p++) {
@@ -214,8 +207,8 @@ str2num(pair *p, gchar *str, int defval)
     RET(defval);
 }
 
-gchar *
-num2str(pair *p, int num, gchar *defval)
+const gchar *
+num2str(pair *p, int num, const gchar *defval)
 {
     ENTER;
     for (;p && p->str; p++) {
@@ -308,47 +301,11 @@ lxpanel_get_line(char**fp, line *s)
             *tmp = 0;
             s->type = LINE_BLOCK_START;
         } else {
-            ERR( "parser: unknown token: '%c'\n", *tmp2);
+            g_warning( "parser: unknown token: '%c'", *tmp2);
         }
         break;
     }
     return s->type;
-}
-
-int
-get_line_as_is(char** fp, line *s)
-{
-    gchar *tmp, *tmp2;
-
-    ENTER;
-    if (!fp) {
-        s->type = LINE_NONE;
-        RET(s->type);
-    }
-    s->type = LINE_NONE;
-    while (buf_gets(s->str, s->len, fp)) {
-        g_strstrip(s->str);
-        if (s->str[0] == '#' || s->str[0] == 0)
-        continue;
-        DBG( ">> %s\n", s->str);
-        if (!g_ascii_strcasecmp(s->str, "}")) {
-            s->type = LINE_BLOCK_END;
-            DBG( "        : line_block_end\n");
-            break;
-        }
-        for (tmp = s->str; isalnum(*tmp); tmp++);
-        for (tmp2 = tmp; isspace(*tmp2); tmp2++);
-        if (*tmp2 == '=') {
-            s->type = LINE_VAR;
-        } else if  (*tmp2 == '{') {
-            s->type = LINE_BLOCK_START;
-        } else {
-            DBG( "        : ? <%c>\n", *tmp2);
-        }
-        break;
-    }
-    RET(s->type);
-
 }
 
 void resolve_atoms()
@@ -407,8 +364,8 @@ void resolve_atoms()
     Atom atoms[ N_ATOMS ];
 
     ENTER;
-   
-    if( !  XInternAtoms( GDK_DISPLAY(), (char**)atom_names,
+
+    if( !  XInternAtoms( GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), (char**)atom_names,
             N_ATOMS, False, atoms ) )
     {
         g_warning( "Error: unable to return Atoms" );
@@ -481,7 +438,7 @@ Xclimsg(Window win, Atom type, long l0, long l1, long l2, long l3, long l4)
     xev.data.l[2] = l2;
     xev.data.l[3] = l3;
     xev.data.l[4] = l4;
-    XSendEvent(GDK_DISPLAY(), GDK_ROOT_WINDOW(), False,
+    XSendEvent(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), GDK_ROOT_WINDOW(), False,
           (SubstructureNotifyMask | SubstructureRedirectMask),
           (XEvent *) &xev);
 }
@@ -497,7 +454,7 @@ Xclimsgwm(Window win, Atom type, Atom arg)
     xev.format = 32;
     xev.data.l[0] = arg;
     xev.data.l[1] = GDK_CURRENT_TIME;
-    XSendEvent(GDK_DISPLAY(), win, False, 0L, (XEvent *) &xev);
+    XSendEvent(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), win, False, 0L, (XEvent *) &xev);
 }
 
 
@@ -514,7 +471,7 @@ get_utf8_property(Window win, Atom atom)
 
     type = None;
     retval = NULL;
-    result = XGetWindowProperty (GDK_DISPLAY(), win, atom, 0, G_MAXLONG, False,
+    result = XGetWindowProperty (GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), win, atom, 0, G_MAXLONG, False,
           a_UTF8_STRING, &type, &format, &nitems,
           &bytes_after, &tmp);
     if (result != Success || type == None)
@@ -533,15 +490,15 @@ char **
 get_utf8_property_list(Window win, Atom atom, int *count)
 {
     Atom type;
-    int format, i;
-    gulong nitems;
+    int format;
+    gulong nitems, i;
     gulong bytes_after;
     gchar *s, **retval = NULL;
     int result;
     guchar *tmp = NULL;
 
     *count = 0;
-    result = XGetWindowProperty(GDK_DISPLAY(), win, atom, 0, G_MAXLONG, False,
+    result = XGetWindowProperty(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), win, atom, 0, G_MAXLONG, False,
           a_UTF8_STRING, &type, &format, &nitems,
           &bytes_after, &tmp);
     if (result != Success || type != a_UTF8_STRING || tmp == NULL)
@@ -555,7 +512,7 @@ get_utf8_property_list(Window win, Atom atom, int *count)
                 (*count)++;
         }
         retval = g_new0 (char*, *count + 2);
-        for (i = 0, s = val; i < *count; i++, s = s +  strlen (s) + 1) {
+        for (i = 0, s = val; (int)i < *count; i++, s = s +  strlen (s) + 1) {
             retval[i] = g_strdup(s);
         }
         if (val[nitems-1]) {
@@ -585,7 +542,7 @@ get_xaproperty (Window win, Atom prop, Atom type, int *nitems)
 
     ENTER;
     prop_data = NULL;
-    if (XGetWindowProperty (GDK_DISPLAY(), win, prop, 0, 0x7fffffff, False,
+    if (XGetWindowProperty (GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), win, prop, 0, 0x7fffffff, False,
               type, &type_ret, &format_ret, &items_ret,
               &after_ret, &prop_data) != Success)
     {
@@ -609,7 +566,8 @@ text_property_to_utf8 (const XTextProperty *prop)
 
   ENTER;
   list = NULL;
-  count = gdk_text_property_to_utf8_list (gdk_x11_xatom_to_atom (prop->encoding),
+  count = gdk_text_property_to_utf8_list_for_display (gdk_display_get_default(),
+                                          gdk_x11_xatom_to_atom (prop->encoding),
                                           prop->format,
                                           prop->value,
                                           prop->nitems,
@@ -634,7 +592,7 @@ get_textproperty(Window win, Atom atom)
     char *retval;
 
     ENTER;
-    if (XGetTextProperty(GDK_DISPLAY(), win, &text_prop, atom)) {
+    if (XGetTextProperty(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), win, &text_prop, atom)) {
         DBG("format=%d enc=%d nitems=%d value=%s   \n",
               text_prop.format,
               text_prop.encoding,
@@ -814,6 +772,22 @@ get_wm_state (Window win)
     RET(ret);
 }
 
+int panel_handle_x_error(Display * d, XErrorEvent * ev)
+{
+    char buf[256];
+
+    XGetErrorText(d, ev->error_code, buf, 256);
+    g_warning("lxpanel : X error: %s", buf);
+    return 0;    /* Ignored */
+}
+
+int panel_handle_x_error_swallow_BadWindow_BadDrawable(Display * d, XErrorEvent * ev)
+{
+    if ((ev->error_code != BadWindow) && (ev->error_code != BadDrawable))
+        panel_handle_x_error(d, ev);
+    return 0;    /* Ignored */
+}
+
 static void
 calculate_width(int scrw, int wtype, int allign, int margin,
       int *panw, int *x)
@@ -832,7 +806,7 @@ calculate_width(int scrw, int wtype, int allign, int margin,
     }
     if (allign != ALLIGN_CENTER) {
         if (margin > scrw) {
-            ERR( "margin is bigger then edge size %d > %d. Ignoring margin\n",
+            g_warning( "margin is bigger then edge size %d > %d. Ignoring margin",
                   margin, scrw);
             margin = 0;
         }
@@ -851,47 +825,55 @@ calculate_width(int scrw, int wtype, int allign, int margin,
 }
 
 
-void
-calculate_position(Panel *np)
+void _calculate_position(LXPanel *panel)
 {
-    int sswidth, ssheight, minx, miny;
+    Panel *np = panel->priv;
+    GdkScreen *screen;
+    GdkRectangle marea;
 
     ENTER;
     /* FIXME: Why this doesn't work? */
+    /* if you are still going to use this, be sure to update it to take into
+       account multiple monitors */
     if (0)  {
 //        if (np->curdesk < np->wa_len/4) {
-        minx = np->workarea[np->curdesk*4 + 0];
-        miny = np->workarea[np->curdesk*4 + 1];
-        sswidth  = np->workarea[np->curdesk*4 + 2];
-        ssheight = np->workarea[np->curdesk*4 + 3];
+        marea.x = np->workarea[np->curdesk*4 + 0];
+        marea.y = np->workarea[np->curdesk*4 + 1];
+        marea.width  = np->workarea[np->curdesk*4 + 2];
+        marea.height = np->workarea[np->curdesk*4 + 3];
     } else {
-        minx = miny = 0;
-        sswidth  = gdk_screen_get_width( gtk_widget_get_screen(np->topgwin) );
-        ssheight = gdk_screen_get_height( gtk_widget_get_screen(np->topgwin) );
+        screen = gtk_widget_get_screen(GTK_WIDGET(panel));
+        g_assert(np->monitor >= 0 && np->monitor < gdk_screen_get_n_monitors(screen));
+        gdk_screen_get_monitor_geometry(screen,np->monitor,&marea);
     }
 
     if (np->edge == EDGE_TOP || np->edge == EDGE_BOTTOM) {
         np->aw = np->width;
-        np->ax = minx;
-        calculate_width(sswidth, np->widthtype, np->allign, np->margin,
+        np->ax = marea.x;
+        calculate_width(marea.width, np->widthtype, np->allign, np->margin,
               &np->aw, &np->ax);
         np->ah = ((( ! np->autohide) || (np->visible)) ? np->height : np->height_when_hidden);
-        np->ay = miny + ((np->edge == EDGE_TOP) ? 0 : (ssheight - np->ah));
+        np->ay = marea.y + ((np->edge == EDGE_TOP) ? 0 : (marea.height - np->ah));
 
     } else {
         np->ah = np->width;
-        np->ay = miny;
-        calculate_width(ssheight, np->widthtype, np->allign, np->margin,
+        np->ay = marea.y;
+        calculate_width(marea.height, np->widthtype, np->allign, np->margin,
               &np->ah, &np->ay);
         np->aw = ((( ! np->autohide) || (np->visible)) ? np->height : np->height_when_hidden);
-        np->ax = minx + ((np->edge == EDGE_LEFT) ? 0 : (sswidth - np->aw));
+        np->ax = marea.x + ((np->edge == EDGE_LEFT) ? 0 : (marea.width - np->aw));
     }
     //g_debug("%s - x=%d y=%d w=%d h=%d\n", __FUNCTION__, np->ax, np->ay, np->aw, np->ah);
     RET();
 }
 
+void calculate_position(Panel *np)
+{
+    _calculate_position(np->topgwin);
+}
+
 gchar *
-expand_tilda(gchar *file)
+expand_tilda(const gchar *file)
 {
     ENTER;
     RET((file[0] == '~') ?
@@ -915,7 +897,7 @@ expand_tilda(gchar *file)
 /* DestroyNotify handler for image data in _gtk_image_new_from_file_scaled. */
 static void img_data_free(ImgData * data)
 {
-    g_free(data->fname);
+    g_object_unref(data->icon);
     if (data->theme_changed_handler != 0)
         g_signal_handler_disconnect(gtk_icon_theme_get_default(), data->theme_changed_handler);
     if (data->pixbuf != NULL)
@@ -929,10 +911,11 @@ static void img_data_free(ImgData * data)
 static void on_theme_changed(GtkIconTheme * theme, GtkWidget * img)
 {
     ImgData * data = (ImgData *) g_object_get_qdata(G_OBJECT(img), img_data_id);
-    _gtk_image_set_from_file_scaled(img, data->fname, data->dw, data->dh, data->keep_ratio);
+    _gtk_image_set_from_file_scaled(img, data);
 }
 
-void fb_button_set_from_file(GtkWidget * btn, const char * img_file, gint width, gint height, gboolean keep_ratio)
+/* consumes reference on icon */
+static void _lxpanel_button_set_icon(GtkWidget* btn, FmIcon* icon, gint size)
 {
     /* Locate the image within the button. */
     GtkWidget * child = gtk_bin_get_child(GTK_BIN(btn));
@@ -949,22 +932,39 @@ void fb_button_set_from_file(GtkWidget * btn, const char * img_file, gint width,
     if (img != NULL)
     {
         ImgData * data = (ImgData *) g_object_get_qdata(G_OBJECT(img), img_data_id);
-        g_free(data->fname);
-        data->fname = g_strdup(img_file);
-        data->dw = width;
-        data->dh = height;
-        data->keep_ratio = keep_ratio;
-        _gtk_image_set_from_file_scaled(img, data->fname, data->dw, data->dh, data->keep_ratio);
+
+        if (icon != data->icon || size != data->size) /* something was changed */
+        {
+            g_object_unref(data->icon);
+            data->icon = icon;
+            data->size = size;
+            _gtk_image_set_from_file_scaled(img, data);
+        }
+        else
+            g_object_unref(icon);
     }
+    else
+        g_object_unref(icon);
 }
 
-static void _gtk_image_set_from_file_scaled(GtkWidget * img, const gchar * file, gint width, gint height, gboolean keep_ratio)
+void lxpanel_button_set_icon(GtkWidget* btn, const gchar *name, gint size)
 {
-    ImgData * data = (ImgData *) g_object_get_qdata(G_OBJECT(img), img_data_id);
-    data->dw = width;
-    data->dh = height;
-    data->keep_ratio = keep_ratio;
+    _lxpanel_button_set_icon(btn, fm_icon_from_name(name), size);
+}
 
+void lxpanel_button_update_icon(GtkWidget* btn, FmIcon *icon, gint size)
+{
+    _lxpanel_button_set_icon(btn, g_object_ref(icon), size);
+}
+
+/* parameters width and keep_ratio are unused, kept for backward compatibility */
+void fb_button_set_from_file(GtkWidget * btn, const char * img_file, gint width, gint height, gboolean keep_ratio)
+{
+    lxpanel_button_set_icon(btn, img_file, height);
+}
+
+static void _gtk_image_set_from_file_scaled(GtkWidget * img, ImgData * data)
+{
     if (data->pixbuf != NULL)
     {
         g_object_unref(data->pixbuf);
@@ -978,81 +978,64 @@ static void _gtk_image_set_from_file_scaled(GtkWidget * img, const gchar * file,
         data->hilight = NULL;
     }
 
-    /* if they are the same string, eliminate unnecessary copy. */
-    gboolean themed = FALSE;
-    if (file != NULL)
+    if (G_LIKELY(G_IS_THEMED_ICON(data->icon)))
+        data->pixbuf = fm_pixbuf_from_icon_with_fallback(data->icon, data->size,
+                                                         "application-x-executable");
+    else
     {
-        if (data->fname != file)
-        {
-            g_free(data->fname);
-            data->fname = g_strdup(file);
-        }
-
-        if (g_file_test(file, G_FILE_TEST_EXISTS))
-        {
-            GdkPixbuf * pb_scaled = gdk_pixbuf_new_from_file_at_scale(file, width, height, keep_ratio, NULL);
-            if (pb_scaled != NULL)
-                data->pixbuf = pb_scaled;
-        }
-        else
-        {
-            data->pixbuf = lxpanel_load_icon(file, width, height, keep_ratio);
-            themed = TRUE;
-        }
+        char *file = g_icon_to_string(fm_icon_get_gicon(data->icon));
+        data->pixbuf = gdk_pixbuf_new_from_file_at_scale(file, -1, data->size, TRUE, NULL);
+        g_free(file);
     }
 
     if (data->pixbuf != NULL)
     {
         /* Set the pixbuf into the image widget. */
         gtk_image_set_from_pixbuf((GtkImage *)img, data->pixbuf);
-        if (themed)
-        {
-            /* This image is loaded from icon theme.  Update the image if the icon theme is changed. */
-            if (data->theme_changed_handler == 0)
-                data->theme_changed_handler = g_signal_connect(gtk_icon_theme_get_default(), "changed", G_CALLBACK(on_theme_changed), img);
-        }
-        else
-        {
-            /* This is not loaded from icon theme.  Disconnect the signal handler. */
-            if (data->theme_changed_handler != 0)
-            {
-                g_signal_handler_disconnect(gtk_icon_theme_get_default(), data->theme_changed_handler);
-                data->theme_changed_handler = 0;
-            }
-        }
     }
     else
     {
         /* No pixbuf available.  Set the "missing image" icon. */
         gtk_image_set_from_stock(GTK_IMAGE(img), GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_BUTTON);
     }
-    return;
 }
 
-GtkWidget * _gtk_image_new_from_file_scaled(const gchar * file, gint width, gint height, gboolean keep_ratio)
+/* consumes reference on icon */
+static GtkWidget *_gtk_image_new_for_icon(FmIcon *icon, gint size)
 {
     GtkWidget * img = gtk_image_new();
     ImgData * data = g_new0(ImgData, 1);
+
+    data->icon = icon;
+    data->size = size;
     if (img_data_id == 0)
         img_data_id = g_quark_from_static_string("ImgData");
     g_object_set_qdata_full(G_OBJECT(img), img_data_id, data, (GDestroyNotify) img_data_free);
-    _gtk_image_set_from_file_scaled(img, file, width, height, keep_ratio);
+    _gtk_image_set_from_file_scaled(img, data);
+    if (G_IS_THEMED_ICON(data->icon))
+    {
+        /* This image is loaded from icon theme.  Update the image if the icon theme is changed. */
+        data->theme_changed_handler = g_signal_connect(gtk_icon_theme_get_default(), "changed", G_CALLBACK(on_theme_changed), img);
+    }
     return img;
 }
 
+/* parameters width and keep_ratio are unused, kept for backward compatibility */
+GtkWidget * _gtk_image_new_from_file_scaled(const gchar * file, gint width, gint height, gboolean keep_ratio)
+{
+    return _gtk_image_new_for_icon(fm_icon_from_name(file), height);
+}
 
 void
 get_button_spacing(GtkRequisition *req, GtkContainer *parent, gchar *name)
 {
     GtkWidget *b;
-    //gint focus_width;
-    //gint focus_pad;
 
     ENTER;
     b = gtk_button_new();
     gtk_widget_set_name(GTK_WIDGET(b), name);
-    GTK_WIDGET_UNSET_FLAGS (b, GTK_CAN_FOCUS);
-    GTK_WIDGET_UNSET_FLAGS (b, GTK_CAN_DEFAULT);
+    gtk_widget_set_can_focus(b, FALSE);
+    gtk_widget_set_can_default(b, FALSE);
     gtk_container_set_border_width (GTK_CONTAINER (b), 0);
 
     if (parent)
@@ -1142,22 +1125,18 @@ static gboolean fb_button_leave(GtkImage * widget, GdkEventCrossing * event, gpo
 }
 
 
-GtkWidget * fb_button_new_from_file(
-    gchar * image_file, int width, int height, gulong highlight_color, gboolean keep_ratio)
-{
-    return fb_button_new_from_file_with_label(image_file, width, height, highlight_color, keep_ratio, NULL, NULL);
-}
-
-GtkWidget * fb_button_new_from_file_with_label(
-    gchar * image_file, int width, int height, gulong highlight_color, gboolean keep_ratio, Panel * panel, gchar * label)
+/* consumes reference on icon */
+static GtkWidget *_lxpanel_button_new_for_icon(LXPanel *panel, FmIcon *icon,
+                                               gint size, gulong highlight_color,
+                                               const gchar *label)
 {
     GtkWidget * event_box = gtk_event_box_new();
     gtk_container_set_border_width(GTK_CONTAINER(event_box), 0);
-    GTK_WIDGET_UNSET_FLAGS(event_box, GTK_CAN_FOCUS);
+    gtk_widget_set_can_focus(event_box, FALSE);
 
-    GtkWidget * image = _gtk_image_new_from_file_scaled(image_file, width, height, keep_ratio);
+    GtkWidget * image = _gtk_image_new_for_icon(icon, size);
     gtk_misc_set_padding(GTK_MISC(image), 0, 0);
-    gtk_misc_set_alignment(GTK_MISC(image), 0, 0);
+    gtk_misc_set_alignment(GTK_MISC(image), 0.5, 0.5);
     if (highlight_color != 0)
     {
         ImgData * data = (ImgData *) g_object_get_qdata(G_OBJECT(image), img_data_id);
@@ -1174,13 +1153,13 @@ GtkWidget * fb_button_new_from_file_with_label(
     {
         GtkWidget * inner = gtk_hbox_new(FALSE, 0);
         gtk_container_set_border_width(GTK_CONTAINER(inner), 0);
-        GTK_WIDGET_UNSET_FLAGS (inner, GTK_CAN_FOCUS);
+        gtk_widget_set_can_focus(inner, FALSE);
         gtk_container_add(GTK_CONTAINER(event_box), inner);
 
         gtk_box_pack_start(GTK_BOX(inner), image, FALSE, FALSE, 0);
 
         GtkWidget * lbl = gtk_label_new("");
-        panel_draw_label_text(panel, lbl, label, FALSE, TRUE);
+        lxpanel_draw_label_text(panel, lbl, label, FALSE, 1, TRUE);
         gtk_misc_set_padding(GTK_MISC(lbl), 2, 0);
         gtk_box_pack_end(GTK_BOX(inner), lbl, FALSE, FALSE, 0);
     }
@@ -1189,10 +1168,40 @@ GtkWidget * fb_button_new_from_file_with_label(
     return event_box;
 }
 
+GtkWidget *lxpanel_button_new_for_icon(LXPanel *panel, const gchar *name, GdkColor *color, const gchar *label)
+{
+    gulong highlight_color = color ? gcolor2rgb24(color) : PANEL_ICON_HIGHLIGHT;
+    return _lxpanel_button_new_for_icon(panel, fm_icon_from_name(name),
+                                        panel->priv->icon_size, highlight_color, label);
+}
+
+GtkWidget *lxpanel_button_new_for_fm_icon(LXPanel *panel, FmIcon *icon, GdkColor *color, const gchar *label)
+{
+    gulong highlight_color = color ? gcolor2rgb24(color) : PANEL_ICON_HIGHLIGHT;
+    return _lxpanel_button_new_for_icon(panel, g_object_ref(icon),
+                                        panel->priv->icon_size, highlight_color, label);
+}
+
+/* parameters width and keep_ratio are unused, kept for backward compatibility */
+GtkWidget * fb_button_new_from_file(
+    const gchar * image_file, int width, int height, gulong highlight_color, gboolean keep_ratio)
+{
+    return fb_button_new_from_file_with_label(image_file, width, height, highlight_color, keep_ratio, NULL, NULL);
+}
+
+/* parameters width and keep_ratio are unused, kept for backward compatibility */
+GtkWidget * fb_button_new_from_file_with_label(
+    const gchar * image_file, int width, int height, gulong highlight_color, gboolean keep_ratio, Panel * panel, const gchar * label)
+{
+    return _lxpanel_button_new_for_icon(panel->topgwin, fm_icon_from_name(image_file), height, highlight_color, label);
+}
+
 char* translate_exec_to_cmd( const char* exec, const char* icon,
                              const char* title, const char* fpath )
 {
     GString* cmd = g_string_sized_new( 256 );
+    if (!exec)
+	    return NULL;
     for( ; *exec; ++exec )
     {
         if( G_UNLIKELY(*exec == '%') )
@@ -1203,7 +1212,10 @@ char* translate_exec_to_cmd( const char* exec, const char* icon,
             switch( *exec )
             {
                 case 'c':
-                    g_string_append( cmd, title );
+                    if( title )
+                    {
+                        g_string_append( cmd, title );
+                    }
                     break;
                 case 'i':
                     if( icon )
@@ -1213,12 +1225,13 @@ char* translate_exec_to_cmd( const char* exec, const char* icon,
                     }
                     break;
                 case 'k':
-                {
-                    char* uri = g_filename_to_uri( fpath, NULL, NULL );
-                    g_string_append( cmd, uri );
-                    g_free( uri );
+                    if( fpath )
+                    {
+                        char* uri = g_filename_to_uri( fpath, NULL, NULL );
+                        g_string_append( cmd, uri );
+                        g_free( uri );
+                    }
                     break;
-                }
                 case '%':
                     g_string_append_c( cmd, '%' );
                     break;
@@ -1238,163 +1251,30 @@ char* translate_exec_to_cmd( const char* exec, const char* icon,
  any plugin with a layout box. Since GtkHBox cannot be changed to GtkVBox,
  recreating a new box to replace the old one is required.
 */
+/* for compatibility with old plugins */
 GtkWidget* recreate_box( GtkBox* oldbox, GtkOrientation orientation )
 {
-    GtkBox* newbox;
-    GList *child, *children;
-    GtkWidget* (*my_box_new) (gboolean homogeneous, gint spacing);
-
-    if( GTK_IS_HBOX(oldbox) ) {
-        if( orientation == GTK_ORIENTATION_HORIZONTAL )
-            return GTK_WIDGET(oldbox);
-    }
-    else {
-        if( orientation == GTK_ORIENTATION_VERTICAL )
-            return GTK_WIDGET(oldbox);
-    }
-    my_box_new = (orientation == GTK_ORIENTATION_HORIZONTAL ? gtk_hbox_new : gtk_vbox_new);
-
-    newbox = GTK_BOX(my_box_new( gtk_box_get_homogeneous(oldbox),
-                                 gtk_box_get_spacing(oldbox) ));
-    gtk_container_set_border_width (GTK_CONTAINER (newbox),
-                                    gtk_container_get_border_width(GTK_CONTAINER(oldbox)) );
-    children = gtk_container_get_children( GTK_CONTAINER (oldbox) );
-    for( child = children; child; child = child->next ) {
-        gboolean expand, fill;
-        guint padding;
-        GtkWidget* w = GTK_WIDGET(child->data);
-        gtk_box_query_child_packing( oldbox, w,
-                                     &expand, &fill, &padding, NULL );
-        /* g_debug( "repack %s, expand=%d, fill=%d", gtk_widget_get_name(w), expand, fill ); */
-        g_object_ref( w );
-        gtk_container_remove( GTK_CONTAINER (oldbox), w );
-        gtk_box_pack_start( newbox, w, expand, fill, padding );
-        g_object_unref( w );
-    }
-    g_list_free( children );
-    gtk_widget_show_all( GTK_WIDGET(newbox) );
-    gtk_widget_destroy( GTK_WIDGET(oldbox) );
-    return GTK_WIDGET(newbox);
+    gtk_orientable_set_orientation(GTK_ORIENTABLE(oldbox), orientation);
+    return GTK_WIDGET(oldbox);
 }
 
+/* for compatibility with old plugins */
 void show_error( GtkWindow* parent_win, const char* msg )
 {
-    GtkWidget* dlg = gtk_message_dialog_new( parent_win,
-                                             GTK_DIALOG_MODAL,
-                                             GTK_MESSAGE_ERROR,
-                                             GTK_BUTTONS_OK, "%s", msg );
-    gtk_dialog_run( (GtkDialog*)dlg );
-    gtk_widget_destroy( dlg );
+    fm_show_error(parent_win, NULL, msg);
 }
 
-/* Try to load an icon from a named file via the freedesktop.org data directories path.
- * http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html */
-static GdkPixbuf * load_icon_file(const char * file_name, int height, int width)
-{
-    GdkPixbuf * icon = NULL;
-    const gchar ** dirs = (const gchar **) g_get_system_data_dirs();
-    const gchar ** dir;
-    for (dir = dirs; ((*dir != NULL) && (icon == NULL)); dir++)
-    {
-        char * file_path = g_build_filename(*dir, "pixmaps", file_name, NULL);
-        icon = gdk_pixbuf_new_from_file_at_scale(file_path, height, width, TRUE, NULL);
-        g_free(file_path);
-    }
-    return icon;
-}
-
-/* Try to load an icon from the current theme. */
-static GdkPixbuf * load_icon_from_theme(GtkIconTheme * theme, const char * icon_name, int width, int height)
-{
-    GdkPixbuf * icon = NULL;
-
-    /* Look up the icon in the current theme. */
-    GtkIconInfo * icon_info = gtk_icon_theme_lookup_icon(theme, icon_name, height, GTK_ICON_LOOKUP_USE_BUILTIN);
-    if (icon_info != NULL)
-    {
-        /* If that succeeded, get the filename of the icon.
-         * If that succeeds, load the icon from the specified file.
-         * Otherwise, try to get the builtin icon. */
-        const char * file = gtk_icon_info_get_filename(icon_info);
-        if (file != NULL)
-            icon = gdk_pixbuf_new_from_file(file, NULL);
-        else
-        {
-            icon = gtk_icon_info_get_builtin_pixbuf(icon_info);
-            g_object_ref(icon);
-        }
-        gtk_icon_info_free(icon_info);
-
-        /* If the icon is not sized properly, take a trip through the scaler.
-         * The lookup above takes the desired size, so we get the closest result possible. */
-        if (icon != NULL)
-        {
-            if ((height != gdk_pixbuf_get_height(icon)) || (width != gdk_pixbuf_get_width(icon)))
-            {
-                /* Handle case of unspecified width; gdk_pixbuf_scale_simple does not. */
-                if (width < 0)
-                {
-                    int pixbuf_width = gdk_pixbuf_get_width(icon);
-                    int pixbuf_height = gdk_pixbuf_get_height(icon);
-                    width = height * pixbuf_width / pixbuf_height;
-                }
-                GdkPixbuf * scaled = gdk_pixbuf_scale_simple(icon, width, height, GDK_INTERP_BILINEAR);
-                g_object_unref(icon);
-                icon = scaled;
-            }
-        }
-    }
-    return icon;
-}
-
+/* old plugins compatibility mode, use fm_pixbuf_from_icon_with_fallback() instead */
 GdkPixbuf * lxpanel_load_icon(const char * name, int width, int height, gboolean use_fallback)
 {
+    FmIcon * fm_icon;
     GdkPixbuf * icon = NULL;
 
-    if (name != NULL)
-    {
-        if (g_path_is_absolute(name))
-        {
-            /* Absolute path. */
-            icon = gdk_pixbuf_new_from_file_at_scale(name, width, height, TRUE, NULL);
-        }
-        else
-        {
-            /* Relative path. */
-            GtkIconTheme * theme = gtk_icon_theme_get_default();
-            char * suffix = strrchr(name, '.');
-            if ((suffix != NULL)
-            && ((g_ascii_strcasecmp(&suffix[1], "png") == 0)
-              || (g_ascii_strcasecmp(&suffix[1], "svg") == 0)
-              || (g_ascii_strcasecmp(&suffix[1], "xpm") == 0)))
-            {
-                /* The file extension indicates it could be in the system pixmap directories. */
-                icon = load_icon_file(name, width, height);
-                if (icon == NULL)
-                {
-                    /* Not found.
-                     * Let's remove the suffix, and see if this name can match an icon in the current icon theme. */
-                    char * icon_name = g_strndup(name, suffix - name);
-                    icon = load_icon_from_theme(theme, icon_name, width, height);
-                    g_free(icon_name);
-                }
-            }
-            else
-            {
-                 /* No file extension.  It could be an icon name in the icon theme. */
-                 icon = load_icon_from_theme(theme, name, width, height);
-            }
-        }
-    }
-
-    /* Fall back to generic icons. */
-    if ((icon == NULL) && (use_fallback))
-    {
-        GtkIconTheme * theme = gtk_icon_theme_get_default();
-        icon = load_icon_from_theme(theme, "application-x-executable", width, height);
-        if (icon == NULL)
-            icon = load_icon_from_theme(theme, "gnome-mime-application-x-executable", width, height);
-    }
+    fm_icon = fm_icon_from_name(name ? name : "application-x-executable");
+    /* well, we don't use parameter width and not really use cache here */
+    icon = fm_pixbuf_from_icon_with_fallback(fm_icon, height,
+                            use_fallback ? "application-x-executable" : NULL);
+    g_object_unref(fm_icon);
     return icon;
 }
 
@@ -1545,7 +1425,32 @@ _finish:
     return g_string_free( cmd, FALSE );
 }
 
-gboolean lxpanel_launch_app(const char* exec, GList* files, gboolean in_terminal)
+gboolean spawn_command_async(GtkWindow *parent_window, gchar const* workdir,
+        gchar const* cmd)
+{
+    GError* err = NULL;
+    gchar** argv = NULL;
+
+    g_info("lxpanel: spawning \"%s\"...", cmd);
+
+    g_shell_parse_argv(cmd, NULL, &argv, &err);
+    if (!err)
+        g_spawn_async(workdir, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, &err);
+
+    if (err)
+    {
+        g_warning("%s\n", err->message);
+        fm_show_error(parent_window, NULL, err->message);
+        g_error_free(err);
+    }
+
+    g_strfreev(argv);
+
+    return !err;
+}
+
+/* FIXME: this should be replaced with fm_launch_file_simple() */
+gboolean lxpanel_launch_app(const char* exec, GList* files, gboolean in_terminal, char const* in_workdir)
 {
     GError *error = NULL;
     char* cmd;
@@ -1556,7 +1461,7 @@ gboolean lxpanel_launch_app(const char* exec, GList* files, gboolean in_terminal
     {
 	char * escaped_cmd = g_shell_quote(cmd);
         char* term_cmd;
-        const char* term = lxpanel_get_terminal();
+        const char* term = fm_config->terminal ? fm_config->terminal : "lxterminal";
         if( strstr(term, "%s") )
             term_cmd = g_strdup_printf(term, escaped_cmd);
         else
@@ -1566,12 +1471,12 @@ gboolean lxpanel_launch_app(const char* exec, GList* files, gboolean in_terminal
             g_free(cmd);
         cmd = term_cmd;
     }
-    LOG(LOG_INFO, "lxpanel: spawning \"%s\"...\n", cmd);
-    if (! g_spawn_command_line_async(cmd, &error) ) {
-        ERR("can't spawn %s\nError is %s\n", cmd, error->message);
-        g_error_free (error);
-    }
+
+    spawn_command_async(NULL, in_workdir, cmd);
+
     g_free(cmd);
 
     return (error == NULL);
 }
+
+/* vim: set sw=4 et sts=4 : */
