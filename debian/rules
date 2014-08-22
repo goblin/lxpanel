@@ -18,9 +18,6 @@ else
 	dh_auto_configure -- --enable-man --with-plugins=all,-netstat --disable-silent-rules
 endif
 
-override_dh_builddeb:
-	dh_builddeb -- -Zxz -z9
-
 override_dh_strip:
 	dh_strip --dbg-package=lxpanel-dbg
 
