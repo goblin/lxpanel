@@ -18,7 +18,7 @@ Vcs-Git: git://git.lxde.org/git/debian/lxpanel.git
 Package: lxpanel
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}, lxmenu-data,
- lxpanel-data (= ${source:Version})
+ lxpanel-data (= ${source:Version}), libfm-modules
 Recommends: xkb-data
 Suggests: lxsession | menu, iceweasel | www-browser
 Description: LXDE panel
