@@ -1,3 +1,32 @@
+lxpanel (0.7.0-1) unstable; urgency=low
+
+  * Adding --disable-silent-rules to fix buildlog checker warning.
+  * Bump Standards-Version to 3.9.5.
+  * Removing Daniel Baumann from Uploaders by his request (Closes: #704344).
+  * Updating watch file to support XZ tarball format and non-numeric versions.
+  * Remove '03-run-in-background.patch' as fixed in upstream.
+  * Adding myself to Uploaders.
+  * Removing TODO from debian/lxpanel.docs.
+  * Enabling multithreaded compilation.
+  * Merging upstream version 0.7.0 (Closes: #493243, #510888, #567617, #699414,
+    #709777, #757130)
+  * Adding libfm-gtk-dev >= 1.2.0 into build dependencies.
+  * Removing 02-desktop-number.patch, it's included into upstream.
+  * Removing unwanted (deprecated) build dependencies.
+  * Adding libxml2-dev into build dependencies.
+  * Adding xkb-data as recommended for lxpanel.
+  * Enabling hardening on the package.
+  * Fixing configure parameters on non-linux architectures.
+  * Enabling build with autoreconf.
+  * Updating debian/copyright file.
+  * Adding package lxpanel-data with arch-independent files.
+  * Fixing minus signs in debian/manpages/lxpanel.hints.5 file.
+  * Disabling run ldconfig on plugins by overriding dh_makeshlibs.
+  * Removing obsolete target override_dh_builddeb from debian/rules file.
+  * Adding libfm-modules into Depends for lxpanel.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Sat, 23 Aug 2014 03:38:31 +0300
+
 lxpanel (0.5.12-3) unstable; urgency=low
 
   * Revert fix_gtk_main.diff. (Closes:#720109)
