@@ -14,6 +14,8 @@
 
 @SET_MAKE@
 
+
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -62,7 +64,6 @@ am__make_dryrun = (target_option=n; $(am__make_running_with_option))
 am__make_keepgoing = (target_option=k; $(am__make_running_with_option))
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-pkglibdir = $(libdir)/@PACKAGE@
 pkglibexecdir = $(libexecdir)/@PACKAGE@
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 install_sh_DATA = $(install_sh) -c -m 644
@@ -80,20 +81,15 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = plugins
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp
+	$(top_srcdir)/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
-	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intltool.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/acinclude.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/intltool.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
@@ -120,6 +116,140 @@ am__objects_2 = libbuiltin_plugins_a-dclock.$(OBJEXT) \
 	libbuiltin_plugins_a-wincmd.$(OBJEXT) $(am__objects_1)
 am_libbuiltin_plugins_a_OBJECTS = $(am__objects_2)
 libbuiltin_plugins_a_OBJECTS = $(am_libbuiltin_plugins_a_OBJECTS)
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+am__installdirs = "$(DESTDIR)$(pkglibdir)" "$(DESTDIR)$(flagsdir)" \
+	"$(DESTDIR)$(xkeyboardconfigdir)"
+LTLIBRARIES = $(pkglib_LTLIBRARIES)
+batt_la_LIBADD =
+am__dirstamp = $(am__leading_dot)dirstamp
+am_batt_la_OBJECTS = batt/batt_la-batt.lo batt/batt_la-batt_sys.lo
+batt_la_OBJECTS = $(am_batt_la_OBJECTS)
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
+batt_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(batt_la_CFLAGS) \
+	$(CFLAGS) $(batt_la_LDFLAGS) $(LDFLAGS) -o $@
+cpu_la_LIBADD =
+am_cpu_la_OBJECTS = cpu/cpu.lo
+cpu_la_OBJECTS = $(am_cpu_la_OBJECTS)
+cpu_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(cpu_la_LDFLAGS) $(LDFLAGS) -o $@
+cpufreq_la_LIBADD =
+am_cpufreq_la_OBJECTS = cpufreq/cpufreq_la-cpufreq.lo
+cpufreq_la_OBJECTS = $(am_cpufreq_la_OBJECTS)
+cpufreq_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(cpufreq_la_CFLAGS) \
+	$(CFLAGS) $(cpufreq_la_LDFLAGS) $(LDFLAGS) -o $@
+deskno_la_LIBADD =
+am_deskno_la_OBJECTS = deskno/deskno.lo
+deskno_la_OBJECTS = $(am_deskno_la_OBJECTS)
+deskno_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(deskno_la_LDFLAGS) $(LDFLAGS) -o $@
+indicator_la_LIBADD =
+am_indicator_la_OBJECTS = indicator/indicator_la-indicator.lo
+indicator_la_OBJECTS = $(am_indicator_la_OBJECTS)
+indicator_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(indicator_la_CFLAGS) \
+	$(CFLAGS) $(indicator_la_LDFLAGS) $(LDFLAGS) -o $@
+kbled_la_LIBADD =
+am_kbled_la_OBJECTS = kbled/kbled_la-kbled.lo
+kbled_la_OBJECTS = $(am_kbled_la_OBJECTS)
+kbled_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(kbled_la_CFLAGS) \
+	$(CFLAGS) $(kbled_la_LDFLAGS) $(LDFLAGS) -o $@
+monitors_la_LIBADD =
+am_monitors_la_OBJECTS = monitors/monitors.lo
+monitors_la_OBJECTS = $(am_monitors_la_OBJECTS)
+monitors_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(monitors_la_LDFLAGS) $(LDFLAGS) -o $@
+netstat_la_LIBADD =
+am_netstat_la_OBJECTS = netstat/netstat_la-netstat.lo \
+	netstat/netstat_la-devproc.lo netstat/netstat_la-statusicon.lo \
+	netstat/netstat_la-wireless.lo \
+	netstat/netstat_la-lxnm_client.lo \
+	netstat/netstat_la-passwd_gui.lo
+netstat_la_OBJECTS = $(am_netstat_la_OBJECTS)
+netstat_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(netstat_la_CFLAGS) \
+	$(CFLAGS) $(netstat_la_LDFLAGS) $(LDFLAGS) -o $@
+netstatus_la_LIBADD =
+am_netstatus_la_OBJECTS = netstatus/netstatus_la-netstatus.lo \
+	netstatus/netstatus_la-netstatus-dialog.lo \
+	netstatus/netstatus_la-netstatus-enums.lo \
+	netstatus/netstatus_la-netstatus-icon.lo \
+	netstatus/netstatus_la-netstatus-iface.lo \
+	netstatus/netstatus_la-netstatus-sysdeps.lo \
+	netstatus/netstatus_la-netstatus-util.lo
+netstatus_la_OBJECTS = $(am_netstatus_la_OBJECTS)
+netstatus_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(netstatus_la_CFLAGS) \
+	$(CFLAGS) $(netstatus_la_LDFLAGS) $(LDFLAGS) -o $@
+thermal_la_LIBADD =
+am_thermal_la_OBJECTS = thermal/thermal.lo
+thermal_la_OBJECTS = $(am_thermal_la_OBJECTS)
+thermal_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(thermal_la_LDFLAGS) $(LDFLAGS) -o $@
+volume_la_LIBADD =
+am_volume_la_OBJECTS = volume/volume_la-volume-impl.lo \
+	volume/volume_la-volume.lo
+volume_la_OBJECTS = $(am_volume_la_OBJECTS)
+volume_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(volume_la_CFLAGS) \
+	$(CFLAGS) $(volume_la_LDFLAGS) $(LDFLAGS) -o $@
+volumealsa_la_LIBADD =
+am_volumealsa_la_OBJECTS = volumealsa/volumealsa_la-volumealsa.lo
+volumealsa_la_OBJECTS = $(am_volumealsa_la_OBJECTS)
+volumealsa_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(volumealsa_la_CFLAGS) \
+	$(CFLAGS) $(volumealsa_la_LDFLAGS) $(LDFLAGS) -o $@
+weather_la_LIBADD =
+am_weather_la_OBJECTS = weather/weather_la-logutil.lo \
+	weather/weather_la-httputil.lo weather/weather_la-yahooutil.lo \
+	weather/weather_la-location.lo weather/weather_la-forecast.lo \
+	weather/weather_la-weatherwidget.lo \
+	weather/weather_la-weather.lo
+weather_la_OBJECTS = $(am_weather_la_OBJECTS)
+weather_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(weather_la_CFLAGS) \
+	$(CFLAGS) $(weather_la_LDFLAGS) $(LDFLAGS) -o $@
+xkb_la_LIBADD =
+am_xkb_la_OBJECTS = xkb/xkb_la-xkb-plugin.lo xkb/xkb_la-xkb.lo
+xkb_la_OBJECTS = $(am_xkb_la_OBJECTS)
+xkb_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(xkb_la_CFLAGS) $(CFLAGS) \
+	$(xkb_la_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -136,10 +266,6 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -158,29 +284,27 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libbuiltin_plugins_a_SOURCES)
-DIST_SOURCES = $(am__libbuiltin_plugins_a_SOURCES_DIST)
-RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
-	ctags-recursive dvi-recursive html-recursive info-recursive \
-	install-data-recursive install-dvi-recursive \
-	install-exec-recursive install-html-recursive \
-	install-info-recursive install-pdf-recursive \
-	install-ps-recursive install-recursive installcheck-recursive \
-	installdirs-recursive pdf-recursive ps-recursive \
-	tags-recursive uninstall-recursive
+SOURCES = $(libbuiltin_plugins_a_SOURCES) $(batt_la_SOURCES) \
+	$(cpu_la_SOURCES) $(cpufreq_la_SOURCES) $(deskno_la_SOURCES) \
+	$(indicator_la_SOURCES) $(kbled_la_SOURCES) \
+	$(monitors_la_SOURCES) $(netstat_la_SOURCES) \
+	$(netstatus_la_SOURCES) $(thermal_la_SOURCES) \
+	$(volume_la_SOURCES) $(volumealsa_la_SOURCES) \
+	$(weather_la_SOURCES) $(xkb_la_SOURCES)
+DIST_SOURCES = $(am__libbuiltin_plugins_a_SOURCES_DIST) \
+	$(batt_la_SOURCES) $(cpu_la_SOURCES) $(cpufreq_la_SOURCES) \
+	$(deskno_la_SOURCES) $(indicator_la_SOURCES) \
+	$(kbled_la_SOURCES) $(monitors_la_SOURCES) \
+	$(netstat_la_SOURCES) $(netstatus_la_SOURCES) \
+	$(thermal_la_SOURCES) $(volume_la_SOURCES) \
+	$(volumealsa_la_SOURCES) $(weather_la_SOURCES) \
+	$(xkb_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
-  distclean-recursive maintainer-clean-recursive
-am__recursive_targets = \
-  $(RECURSIVE_TARGETS) \
-  $(RECURSIVE_CLEAN_TARGETS) \
-  $(am__extra_recursive_targets)
-AM_RECURSIVE_TARGETS = $(am__recursive_targets:-recursive=) TAGS CTAGS \
-	distdir
+DATA = $(flags_DATA) $(xkeyboardconfig_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -201,31 +325,7 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-am__relativize = \
-  dir0=`pwd`; \
-  sed_first='s,^\([^/]*\)/.*$$,\1,'; \
-  sed_rest='s,^[^/]*/*,,'; \
-  sed_last='s,^.*/\([^/]*\)$$,\1,'; \
-  sed_butlast='s,/*[^/]*$$,,'; \
-  while test -n "$$dir1"; do \
-    first=`echo "$$dir1" | sed -e "$$sed_first"`; \
-    if test "$$first" != "."; then \
-      if test "$$first" = ".."; then \
-        dir2=`echo "$$dir0" | sed -e "$$sed_last"`/"$$dir2"; \
-        dir0=`echo "$$dir0" | sed -e "$$sed_butlast"`; \
-      else \
-        first2=`echo "$$dir2" | sed -e "$$sed_first"`; \
-        if test "$$first2" = "$$first"; then \
-          dir2=`echo "$$dir2" | sed -e "$$sed_rest"`; \
-        else \
-          dir2="../$$dir2"; \
-        fi; \
-        dir0="$$dir0"/"$$first"; \
-      fi; \
-    fi; \
-    dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
-  done; \
-  reldir="$$dir2"
+pkglibdir = $(libdir)/lxpanel/plugins
 ACLOCAL = @ACLOCAL@
 ADDITIONAL_FLAGS = @ADDITIONAL_FLAGS@
 ALL_LINGUAS = @ALL_LINGUAS@
@@ -282,8 +382,6 @@ INTLTOOL__v_MERGE_ = @INTLTOOL__v_MERGE_@
 INTLTOOL__v_MERGE_0 = @INTLTOOL__v_MERGE_0@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LIBICONV = @LIBICONV@
-LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -291,8 +389,6 @@ LIBXML2_CFLAGS = @LIBXML2_CFLAGS@
 LIBXML2_LIBS = @LIBXML2_LIBS@
 LIPO = @LIPO@
 LN_S = @LN_S@
-LTLIBICONV = @LTLIBICONV@
-LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 LXPANEL_MODULE = @LXPANEL_MODULE@
 MAKEINFO = @MAKEINFO@
@@ -339,9 +435,6 @@ X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
 XGETTEXT = @XGETTEXT@
 XMKMF = @XMKMF@
-XMLCATALOG = @XMLCATALOG@
-XML_CATALOG_FILE = @XML_CATALOG_FILE@
-XSLTPROC = @XSLTPROC@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -396,20 +489,20 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-DIST_SUBDIRS = $(ALL_PLUGINS_LIST)
-@BUILD_PLUGIN_LOADER_TRUE@DYNAMIC_PLUGINS = \
-@BUILD_PLUGIN_LOADER_TRUE@	$(PLUGINS_LIST)
-
-SUBDIRS = $(DYNAMIC_PLUGINS)
-noinst_LIBRARIES = libbuiltin_plugins.a
-libbuiltin_plugins_a_CFLAGS = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/src \
-	-DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\" \
-	-DPACKAGE_UI_DIR=\""$(datadir)/lxpanel/ui"\" \
-	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 	$(PACKAGE_CFLAGS) \
 	$(G_CAST_CHECKS)
+
+AM_LDFLAGS = \
+	$(PACKAGE_LIBS)
+
+noinst_LIBRARIES = libbuiltin_plugins.a
+libbuiltin_plugins_a_CFLAGS = \
+	-DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\" \
+	-DPACKAGE_UI_DIR=\""$(datadir)/lxpanel/ui"\" \
+	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
 
 @ENABLE_MENU_CACHE_TRUE@MENU_SOURCES = \
 @ENABLE_MENU_CACHE_TRUE@	menu.c
@@ -429,10 +522,309 @@ libbuiltin_plugins_a_SOURCES = \
 	$(PLUGINS_SOURCES)
 
 libbuiltin_plugins_a_LIBADD = 
+@BUILD_PLUGIN_LOADER_TRUE@DYNAMIC_PLUGINS = \
+@BUILD_PLUGIN_LOADER_TRUE@	$(PLUGINS_LIST)
+
+pkglib_LTLIBRARIES = $(DYNAMIC_PLUGINS)
+EXTRA_LTLIBRARIES = \
+	batt.la \
+	cpu.la \
+	cpufreq.la \
+	deskno.la \
+	indicator.la \
+	kbled.la \
+	monitors.la \
+	netstat.la \
+	netstatus.la \
+	thermal.la \
+	volume.la \
+	volumealsa.la \
+	weather.la \
+	xkb.la
+
+
+# batt
+batt_la_SOURCES = \
+	batt/batt.c \
+	batt/batt_sys.c
+
+batt_la_CFLAGS = -I$(srcdir)/batt
+batt_la_LDFLAGS = -module @LXPANEL_MODULE@
+
+# cpu
+cpu_la_SOURCES = cpu/cpu.c
+cpu_la_LDFLAGS = -module @LXPANEL_MODULE@
+
+# cpufreq
+cpufreq_la_SOURCES = cpufreq/cpufreq.c
+cpufreq_la_CFLAGS = -DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\"
+cpufreq_la_LDFLAGS = -module @LXPANEL_MODULE@
+
+# deskno
+deskno_la_SOURCES = deskno/deskno.c
+deskno_la_LDFLAGS = -module @LXPANEL_MODULE@
+
+# indicator
+indicator_la_SOURCES = indicator/indicator.c
+indicator_la_CFLAGS = \
+	-DINDICATOR_DIR=\""$(INDICATORDIR)"\" \
+	-DINDICATOR_ICONS_DIR=\""$(INDICATORICONSDIR)"\" \
+	$(APPLET_CFLAGS)
+
+indicator_la_LDFLAGS = -module @LXPANEL_MODULE@ $(APPLET_LIBS)
+
+# kbled
+kbled_la_SOURCES = kbled/kbled.c
+kbled_la_CFLAGS = -DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\"
+kbled_la_LDFLAGS = -module @LXPANEL_MODULE@
+
+# monitors
+monitors_la_SOURCES = monitors/monitors.c
+monitors_la_LDFLAGS = -module @LXPANEL_MODULE@
+
+# netstat
+netstat_la_SOURCES = \
+	netstat/netstat.c \
+	netstat/devproc.c \
+	netstat/statusicon.c \
+	netstat/wireless.c \
+	netstat/lxnm_client.c \
+	netstat/passwd_gui.c
+
+netstat_la_CFLAGS = \
+	-I$(srcdir)/netstat \
+	-DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\"
+
+netstat_la_LDFLAGS = -module @LXPANEL_MODULE@ -liw
+
+# netstatus
+netstatus_la_SOURCES = \
+	netstatus/netstatus.c \
+	netstatus/netstatus-dialog.c \
+	netstatus/netstatus-enums.c \
+	netstatus/netstatus-icon.c \
+	netstatus/netstatus-iface.c \
+	netstatus/netstatus-sysdeps.c \
+	netstatus/netstatus-util.c
+
+netstatus_la_CFLAGS = \
+	-I$(srcdir)/netstatus \
+	-DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\" \
+	-DPACKAGE_UI_DIR=\""$(datadir)/lxpanel/ui"\"
+
+netstatus_la_LDFLAGS = -module @LXPANEL_MODULE@
+
+# thermal
+thermal_la_SOURCES = thermal/thermal.c
+thermal_la_LDFLAGS = -module @LXPANEL_MODULE@
+
+# volume (OSS)
+volume_la_SOURCES = \
+	volume/volume-impl.c \
+	volume/volume.c
+
+volume_la_CFLAGS = -I$(srcdir)/volume
+volume_la_LDFLAGS = -module @LXPANEL_MODULE@
+
+# volumealsa
+volumealsa_la_SOURCES = volumealsa/volumealsa.c
+volumealsa_la_CFLAGS = -DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\"
+volumealsa_la_LDFLAGS = -module @LXPANEL_MODULE@ -lasound
+
+# weather
+weather_la_SOURCES = \
+	weather/logutil.c          \
+	weather/httputil.c         \
+	weather/yahooutil.c        \
+	weather/location.c         \
+	weather/forecast.c         \
+	weather/weatherwidget.c    \
+	weather/weather.c
+
+weather_la_CFLAGS = \
+	-I$(srcdir)/weather \
+	$(LIBXML2_CFLAGS)
+
+weather_la_LDFLAGS = -module @LXPANEL_MODULE@ $(LIBXML2_LIBS)
+
+# xkb
+xkb_la_CFLAGS = \
+	-I$(srcdir)/xkb \
+	-DFLAGSDIR=\"$(datadir)/lxpanel/images/xkb-flags\" \
+	-DFLAGSCUSTDIR=\"$(datadir)/lxpanel/images/xkb-flags-cust\" \
+	-DXKBCONFDIR=\"$(datadir)/lxpanel/xkeyboardconfig\"
+
+xkb_la_SOURCES = \
+	xkb/xkb-plugin.c \
+	xkb/xkb.c
+
+xkb_la_LDFLAGS = -module @LXPANEL_MODULE@
+xkeyboardconfigdir = $(datadir)/lxpanel/xkeyboardconfig
+xkeyboardconfig_DATA = \
+	xkb/xkeyboardconfig/models.cfg \
+	xkb/xkeyboardconfig/layouts.cfg \
+	xkb/xkeyboardconfig/toggle.cfg
+
+flagsdir = $(datadir)/lxpanel/images/xkb-flags
+flags_DATA = \
+	xkb/flags/ad.png \
+	xkb/flags/ae.png \
+	xkb/flags/af.png \
+	xkb/flags/al.png \
+	xkb/flags/am.png \
+	xkb/flags/ar.png \
+	xkb/flags/ara.png \
+	xkb/flags/at.png \
+	xkb/flags/az.png \
+	xkb/flags/ba.png \
+	xkb/flags/bd.png \
+	xkb/flags/be.png \
+	xkb/flags/ben.png \
+	xkb/flags/bg.png \
+	xkb/flags/bh.png \
+	xkb/flags/br.png \
+	xkb/flags/brai.png \
+	xkb/flags/bt.png \
+	xkb/flags/bw.png \
+	xkb/flags/by.png \
+	xkb/flags/ca.png \
+	xkb/flags/cd.png \
+	xkb/flags/ch.png \
+	xkb/flags/cm.png \
+	xkb/flags/cn.png \
+	xkb/flags/cu.png \
+	xkb/flags/cz.png \
+	xkb/flags/de.png \
+	xkb/flags/dev.png \
+	xkb/flags/dj.png \
+	xkb/flags/dk.png \
+	xkb/flags/dvorak.png \
+	xkb/flags/dz.png \
+	xkb/flags/ee.png \
+	xkb/flags/eg.png \
+	xkb/flags/epo.png \
+	xkb/flags/es.png \
+	xkb/flags/et.png \
+	xkb/flags/eu.png \
+	xkb/flags/fi.png \
+	xkb/flags/fo.png \
+	xkb/flags/fr.png \
+	xkb/flags/gb.png \
+	xkb/flags/ge.png \
+	xkb/flags/gh.png \
+	xkb/flags/gn.png \
+	xkb/flags/gr.png \
+	xkb/flags/hr.png \
+	xkb/flags/hu.png \
+	xkb/flags/ie.png \
+	xkb/flags/il.png \
+	xkb/flags/in.png \
+	xkb/flags/iq.png \
+	xkb/flags/ir.png \
+	xkb/flags/is.png \
+	xkb/flags/it.png \
+	xkb/flags/jo.png \
+	xkb/flags/jp.png \
+	xkb/flags/ke.png \
+	xkb/flags/kg.png \
+	xkb/flags/kh.png \
+	xkb/flags/km.png \
+	xkb/flags/kp.png \
+	xkb/flags/kr.png \
+	xkb/flags/kw.png \
+	xkb/flags/kz.png \
+	xkb/flags/la.png \
+	xkb/flags/latam.png \
+	xkb/flags/lb.png \
+	xkb/flags/lk.png \
+	xkb/flags/lt.png \
+	xkb/flags/lv.png \
+	xkb/flags/ly.png \
+	xkb/flags/ma.png \
+	xkb/flags/mao.png \
+	xkb/flags/me.png \
+	xkb/flags/mk.png \
+	xkb/flags/ml.png \
+	xkb/flags/mm.png \
+	xkb/flags/mn.png \
+	xkb/flags/mt.png \
+	xkb/flags/mv.png \
+	xkb/flags/mx.png \
+	xkb/flags/nec_vndr-jp.png \
+	xkb/flags/ng.png \
+	xkb/flags/nl.png \
+	xkb/flags/no.png \
+	xkb/flags/np.png \
+	xkb/flags/om.png \
+	xkb/flags/ph.png \
+	xkb/flags/pk.png \
+	xkb/flags/pl.png \
+	xkb/flags/ps.png \
+	xkb/flags/pt.png \
+	xkb/flags/qa.png \
+	xkb/flags/qc.png \
+	xkb/flags/ro.png \
+	xkb/flags/rs.png \
+	xkb/flags/ru.png \
+	xkb/flags/sa.png \
+	xkb/flags/sd.png \
+	xkb/flags/se.png \
+	xkb/flags/si.png \
+	xkb/flags/sk.png \
+	xkb/flags/sn.png \
+	xkb/flags/so.png \
+	xkb/flags/sr.png \
+	xkb/flags/sy.png \
+	xkb/flags/th.png \
+	xkb/flags/tj.png \
+	xkb/flags/tm.png \
+	xkb/flags/tn.png \
+	xkb/flags/tr.png \
+	xkb/flags/tw.png \
+	xkb/flags/tz.png \
+	xkb/flags/ua.png \
+	xkb/flags/uk.png \
+	xkb/flags/us.png \
+	xkb/flags/un.png \
+	xkb/flags/uy.png \
+	xkb/flags/uz.png \
+	xkb/flags/vn.png \
+	xkb/flags/ye.png \
+	xkb/flags/yu.png \
+	xkb/flags/za.png
+
 EXTRA_DIST = \
+	batt/batt_sys.h \
+	netstat/netstat.h \
+	netstat/nsconfig.h \
+	netstat/devproc.h \
+	netstat/statusicon.h \
+	netstat/wireless.h \
+	netstat/lxnm_client.h \
+	netstat/passwd_gui.h \
+	netstatus/COPYING \
+	netstatus/netstatus-dialog.h \
+	netstatus/netstatus-enums.h \
+	netstatus/netstatus-fallback-pixbuf.h \
+	netstatus/netstatus-icon.h \
+	netstatus/netstatus-iface.h \
+	netstatus/netstatus-sysdeps.h \
+	netstatus/netstatus-util.h \
+	volume/volume_xpm.h \
+	volume/volume-impl.h \
+	weather/logutil.h \
+	weather/httputil.h \
+	weather/yahooutil.h \
+	weather/location.h \
+	weather/forecast.h \
+	weather/weatherwidget.h \
+	xkb/xkb.h \
+	$(flags_DATA) \
+	$(xkeyboardconfig_DATA) \
 	icon.xpm
 
-all: all-recursive
+@BUILD_PLUGIN_LOADER_TRUE@DYNAMIC_PLUGINS_INSTALLED = $(DYNAMIC_PLUGINS:.la=.so)
+all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
@@ -475,8 +867,263 @@ libbuiltin_plugins.a: $(libbuiltin_plugins_a_OBJECTS) $(libbuiltin_plugins_a_DEP
 	$(AM_V_AR)$(libbuiltin_plugins_a_AR) libbuiltin_plugins.a $(libbuiltin_plugins_a_OBJECTS) $(libbuiltin_plugins_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libbuiltin_plugins.a
 
+install-pkglibLTLIBRARIES: $(pkglib_LTLIBRARIES)
+	@$(NORMAL_INSTALL)
+	@list='$(pkglib_LTLIBRARIES)'; test -n "$(pkglibdir)" || list=; \
+	list2=; for p in $$list; do \
+	  if test -f $$p; then \
+	    list2="$$list2 $$p"; \
+	  else :; fi; \
+	done; \
+	test -z "$$list2" || { \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(pkglibdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(pkglibdir)" || exit 1; \
+	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(pkglibdir)'"; \
+	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(pkglibdir)"; \
+	}
+
+uninstall-pkglibLTLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	@list='$(pkglib_LTLIBRARIES)'; test -n "$(pkglibdir)" || list=; \
+	for p in $$list; do \
+	  $(am__strip_dir) \
+	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f '$(DESTDIR)$(pkglibdir)/$$f'"; \
+	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f "$(DESTDIR)$(pkglibdir)/$$f"; \
+	done
+
+clean-pkglibLTLIBRARIES:
+	-test -z "$(pkglib_LTLIBRARIES)" || rm -f $(pkglib_LTLIBRARIES)
+	@list='$(pkglib_LTLIBRARIES)'; \
+	locs=`for p in $$list; do echo $$p; done | \
+	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
+	      sort -u`; \
+	test -z "$$locs" || { \
+	  echo rm -f $${locs}; \
+	  rm -f $${locs}; \
+	}
+batt/$(am__dirstamp):
+	@$(MKDIR_P) batt
+	@: > batt/$(am__dirstamp)
+batt/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) batt/$(DEPDIR)
+	@: > batt/$(DEPDIR)/$(am__dirstamp)
+batt/batt_la-batt.lo: batt/$(am__dirstamp) \
+	batt/$(DEPDIR)/$(am__dirstamp)
+batt/batt_la-batt_sys.lo: batt/$(am__dirstamp) \
+	batt/$(DEPDIR)/$(am__dirstamp)
+
+batt.la: $(batt_la_OBJECTS) $(batt_la_DEPENDENCIES) $(EXTRA_batt_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(batt_la_LINK)  $(batt_la_OBJECTS) $(batt_la_LIBADD) $(LIBS)
+cpu/$(am__dirstamp):
+	@$(MKDIR_P) cpu
+	@: > cpu/$(am__dirstamp)
+cpu/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) cpu/$(DEPDIR)
+	@: > cpu/$(DEPDIR)/$(am__dirstamp)
+cpu/cpu.lo: cpu/$(am__dirstamp) cpu/$(DEPDIR)/$(am__dirstamp)
+
+cpu.la: $(cpu_la_OBJECTS) $(cpu_la_DEPENDENCIES) $(EXTRA_cpu_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(cpu_la_LINK)  $(cpu_la_OBJECTS) $(cpu_la_LIBADD) $(LIBS)
+cpufreq/$(am__dirstamp):
+	@$(MKDIR_P) cpufreq
+	@: > cpufreq/$(am__dirstamp)
+cpufreq/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) cpufreq/$(DEPDIR)
+	@: > cpufreq/$(DEPDIR)/$(am__dirstamp)
+cpufreq/cpufreq_la-cpufreq.lo: cpufreq/$(am__dirstamp) \
+	cpufreq/$(DEPDIR)/$(am__dirstamp)
+
+cpufreq.la: $(cpufreq_la_OBJECTS) $(cpufreq_la_DEPENDENCIES) $(EXTRA_cpufreq_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(cpufreq_la_LINK)  $(cpufreq_la_OBJECTS) $(cpufreq_la_LIBADD) $(LIBS)
+deskno/$(am__dirstamp):
+	@$(MKDIR_P) deskno
+	@: > deskno/$(am__dirstamp)
+deskno/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) deskno/$(DEPDIR)
+	@: > deskno/$(DEPDIR)/$(am__dirstamp)
+deskno/deskno.lo: deskno/$(am__dirstamp) \
+	deskno/$(DEPDIR)/$(am__dirstamp)
+
+deskno.la: $(deskno_la_OBJECTS) $(deskno_la_DEPENDENCIES) $(EXTRA_deskno_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(deskno_la_LINK)  $(deskno_la_OBJECTS) $(deskno_la_LIBADD) $(LIBS)
+indicator/$(am__dirstamp):
+	@$(MKDIR_P) indicator
+	@: > indicator/$(am__dirstamp)
+indicator/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) indicator/$(DEPDIR)
+	@: > indicator/$(DEPDIR)/$(am__dirstamp)
+indicator/indicator_la-indicator.lo: indicator/$(am__dirstamp) \
+	indicator/$(DEPDIR)/$(am__dirstamp)
+
+indicator.la: $(indicator_la_OBJECTS) $(indicator_la_DEPENDENCIES) $(EXTRA_indicator_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(indicator_la_LINK)  $(indicator_la_OBJECTS) $(indicator_la_LIBADD) $(LIBS)
+kbled/$(am__dirstamp):
+	@$(MKDIR_P) kbled
+	@: > kbled/$(am__dirstamp)
+kbled/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) kbled/$(DEPDIR)
+	@: > kbled/$(DEPDIR)/$(am__dirstamp)
+kbled/kbled_la-kbled.lo: kbled/$(am__dirstamp) \
+	kbled/$(DEPDIR)/$(am__dirstamp)
+
+kbled.la: $(kbled_la_OBJECTS) $(kbled_la_DEPENDENCIES) $(EXTRA_kbled_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(kbled_la_LINK)  $(kbled_la_OBJECTS) $(kbled_la_LIBADD) $(LIBS)
+monitors/$(am__dirstamp):
+	@$(MKDIR_P) monitors
+	@: > monitors/$(am__dirstamp)
+monitors/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) monitors/$(DEPDIR)
+	@: > monitors/$(DEPDIR)/$(am__dirstamp)
+monitors/monitors.lo: monitors/$(am__dirstamp) \
+	monitors/$(DEPDIR)/$(am__dirstamp)
+
+monitors.la: $(monitors_la_OBJECTS) $(monitors_la_DEPENDENCIES) $(EXTRA_monitors_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(monitors_la_LINK)  $(monitors_la_OBJECTS) $(monitors_la_LIBADD) $(LIBS)
+netstat/$(am__dirstamp):
+	@$(MKDIR_P) netstat
+	@: > netstat/$(am__dirstamp)
+netstat/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) netstat/$(DEPDIR)
+	@: > netstat/$(DEPDIR)/$(am__dirstamp)
+netstat/netstat_la-netstat.lo: netstat/$(am__dirstamp) \
+	netstat/$(DEPDIR)/$(am__dirstamp)
+netstat/netstat_la-devproc.lo: netstat/$(am__dirstamp) \
+	netstat/$(DEPDIR)/$(am__dirstamp)
+netstat/netstat_la-statusicon.lo: netstat/$(am__dirstamp) \
+	netstat/$(DEPDIR)/$(am__dirstamp)
+netstat/netstat_la-wireless.lo: netstat/$(am__dirstamp) \
+	netstat/$(DEPDIR)/$(am__dirstamp)
+netstat/netstat_la-lxnm_client.lo: netstat/$(am__dirstamp) \
+	netstat/$(DEPDIR)/$(am__dirstamp)
+netstat/netstat_la-passwd_gui.lo: netstat/$(am__dirstamp) \
+	netstat/$(DEPDIR)/$(am__dirstamp)
+
+netstat.la: $(netstat_la_OBJECTS) $(netstat_la_DEPENDENCIES) $(EXTRA_netstat_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(netstat_la_LINK)  $(netstat_la_OBJECTS) $(netstat_la_LIBADD) $(LIBS)
+netstatus/$(am__dirstamp):
+	@$(MKDIR_P) netstatus
+	@: > netstatus/$(am__dirstamp)
+netstatus/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) netstatus/$(DEPDIR)
+	@: > netstatus/$(DEPDIR)/$(am__dirstamp)
+netstatus/netstatus_la-netstatus.lo: netstatus/$(am__dirstamp) \
+	netstatus/$(DEPDIR)/$(am__dirstamp)
+netstatus/netstatus_la-netstatus-dialog.lo: netstatus/$(am__dirstamp) \
+	netstatus/$(DEPDIR)/$(am__dirstamp)
+netstatus/netstatus_la-netstatus-enums.lo: netstatus/$(am__dirstamp) \
+	netstatus/$(DEPDIR)/$(am__dirstamp)
+netstatus/netstatus_la-netstatus-icon.lo: netstatus/$(am__dirstamp) \
+	netstatus/$(DEPDIR)/$(am__dirstamp)
+netstatus/netstatus_la-netstatus-iface.lo: netstatus/$(am__dirstamp) \
+	netstatus/$(DEPDIR)/$(am__dirstamp)
+netstatus/netstatus_la-netstatus-sysdeps.lo:  \
+	netstatus/$(am__dirstamp) netstatus/$(DEPDIR)/$(am__dirstamp)
+netstatus/netstatus_la-netstatus-util.lo: netstatus/$(am__dirstamp) \
+	netstatus/$(DEPDIR)/$(am__dirstamp)
+
+netstatus.la: $(netstatus_la_OBJECTS) $(netstatus_la_DEPENDENCIES) $(EXTRA_netstatus_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(netstatus_la_LINK)  $(netstatus_la_OBJECTS) $(netstatus_la_LIBADD) $(LIBS)
+thermal/$(am__dirstamp):
+	@$(MKDIR_P) thermal
+	@: > thermal/$(am__dirstamp)
+thermal/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) thermal/$(DEPDIR)
+	@: > thermal/$(DEPDIR)/$(am__dirstamp)
+thermal/thermal.lo: thermal/$(am__dirstamp) \
+	thermal/$(DEPDIR)/$(am__dirstamp)
+
+thermal.la: $(thermal_la_OBJECTS) $(thermal_la_DEPENDENCIES) $(EXTRA_thermal_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(thermal_la_LINK)  $(thermal_la_OBJECTS) $(thermal_la_LIBADD) $(LIBS)
+volume/$(am__dirstamp):
+	@$(MKDIR_P) volume
+	@: > volume/$(am__dirstamp)
+volume/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) volume/$(DEPDIR)
+	@: > volume/$(DEPDIR)/$(am__dirstamp)
+volume/volume_la-volume-impl.lo: volume/$(am__dirstamp) \
+	volume/$(DEPDIR)/$(am__dirstamp)
+volume/volume_la-volume.lo: volume/$(am__dirstamp) \
+	volume/$(DEPDIR)/$(am__dirstamp)
+
+volume.la: $(volume_la_OBJECTS) $(volume_la_DEPENDENCIES) $(EXTRA_volume_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(volume_la_LINK)  $(volume_la_OBJECTS) $(volume_la_LIBADD) $(LIBS)
+volumealsa/$(am__dirstamp):
+	@$(MKDIR_P) volumealsa
+	@: > volumealsa/$(am__dirstamp)
+volumealsa/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) volumealsa/$(DEPDIR)
+	@: > volumealsa/$(DEPDIR)/$(am__dirstamp)
+volumealsa/volumealsa_la-volumealsa.lo: volumealsa/$(am__dirstamp) \
+	volumealsa/$(DEPDIR)/$(am__dirstamp)
+
+volumealsa.la: $(volumealsa_la_OBJECTS) $(volumealsa_la_DEPENDENCIES) $(EXTRA_volumealsa_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(volumealsa_la_LINK)  $(volumealsa_la_OBJECTS) $(volumealsa_la_LIBADD) $(LIBS)
+weather/$(am__dirstamp):
+	@$(MKDIR_P) weather
+	@: > weather/$(am__dirstamp)
+weather/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) weather/$(DEPDIR)
+	@: > weather/$(DEPDIR)/$(am__dirstamp)
+weather/weather_la-logutil.lo: weather/$(am__dirstamp) \
+	weather/$(DEPDIR)/$(am__dirstamp)
+weather/weather_la-httputil.lo: weather/$(am__dirstamp) \
+	weather/$(DEPDIR)/$(am__dirstamp)
+weather/weather_la-yahooutil.lo: weather/$(am__dirstamp) \
+	weather/$(DEPDIR)/$(am__dirstamp)
+weather/weather_la-location.lo: weather/$(am__dirstamp) \
+	weather/$(DEPDIR)/$(am__dirstamp)
+weather/weather_la-forecast.lo: weather/$(am__dirstamp) \
+	weather/$(DEPDIR)/$(am__dirstamp)
+weather/weather_la-weatherwidget.lo: weather/$(am__dirstamp) \
+	weather/$(DEPDIR)/$(am__dirstamp)
+weather/weather_la-weather.lo: weather/$(am__dirstamp) \
+	weather/$(DEPDIR)/$(am__dirstamp)
+
+weather.la: $(weather_la_OBJECTS) $(weather_la_DEPENDENCIES) $(EXTRA_weather_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(weather_la_LINK)  $(weather_la_OBJECTS) $(weather_la_LIBADD) $(LIBS)
+xkb/$(am__dirstamp):
+	@$(MKDIR_P) xkb
+	@: > xkb/$(am__dirstamp)
+xkb/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) xkb/$(DEPDIR)
+	@: > xkb/$(DEPDIR)/$(am__dirstamp)
+xkb/xkb_la-xkb-plugin.lo: xkb/$(am__dirstamp) \
+	xkb/$(DEPDIR)/$(am__dirstamp)
+xkb/xkb_la-xkb.lo: xkb/$(am__dirstamp) xkb/$(DEPDIR)/$(am__dirstamp)
+
+xkb.la: $(xkb_la_OBJECTS) $(xkb_la_DEPENDENCIES) $(EXTRA_xkb_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(xkb_la_LINK)  $(xkb_la_OBJECTS) $(xkb_la_LIBADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f batt/*.$(OBJEXT)
+	-rm -f batt/*.lo
+	-rm -f cpu/*.$(OBJEXT)
+	-rm -f cpu/*.lo
+	-rm -f cpufreq/*.$(OBJEXT)
+	-rm -f cpufreq/*.lo
+	-rm -f deskno/*.$(OBJEXT)
+	-rm -f deskno/*.lo
+	-rm -f indicator/*.$(OBJEXT)
+	-rm -f indicator/*.lo
+	-rm -f kbled/*.$(OBJEXT)
+	-rm -f kbled/*.lo
+	-rm -f monitors/*.$(OBJEXT)
+	-rm -f monitors/*.lo
+	-rm -f netstat/*.$(OBJEXT)
+	-rm -f netstat/*.lo
+	-rm -f netstatus/*.$(OBJEXT)
+	-rm -f netstatus/*.lo
+	-rm -f thermal/*.$(OBJEXT)
+	-rm -f thermal/*.lo
+	-rm -f volume/*.$(OBJEXT)
+	-rm -f volume/*.lo
+	-rm -f volumealsa/*.$(OBJEXT)
+	-rm -f volumealsa/*.lo
+	-rm -f weather/*.$(OBJEXT)
+	-rm -f weather/*.lo
+	-rm -f xkb/*.$(OBJEXT)
+	-rm -f xkb/*.lo
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -490,24 +1137,61 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-space.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-tray.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-wincmd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@batt/$(DEPDIR)/batt_la-batt.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@batt/$(DEPDIR)/batt_la-batt_sys.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@cpu/$(DEPDIR)/cpu.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@cpufreq/$(DEPDIR)/cpufreq_la-cpufreq.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@deskno/$(DEPDIR)/deskno.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@indicator/$(DEPDIR)/indicator_la-indicator.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@kbled/$(DEPDIR)/kbled_la-kbled.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@monitors/$(DEPDIR)/monitors.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstat/$(DEPDIR)/netstat_la-devproc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstat/$(DEPDIR)/netstat_la-lxnm_client.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstat/$(DEPDIR)/netstat_la-netstat.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstat/$(DEPDIR)/netstat_la-passwd_gui.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstat/$(DEPDIR)/netstat_la-statusicon.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstat/$(DEPDIR)/netstat_la-wireless.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstatus/$(DEPDIR)/netstatus_la-netstatus-dialog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstatus/$(DEPDIR)/netstatus_la-netstatus-enums.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstatus/$(DEPDIR)/netstatus_la-netstatus-icon.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstatus/$(DEPDIR)/netstatus_la-netstatus-iface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstatus/$(DEPDIR)/netstatus_la-netstatus-sysdeps.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstatus/$(DEPDIR)/netstatus_la-netstatus-util.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@netstatus/$(DEPDIR)/netstatus_la-netstatus.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@thermal/$(DEPDIR)/thermal.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@volume/$(DEPDIR)/volume_la-volume-impl.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@volume/$(DEPDIR)/volume_la-volume.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@volumealsa/$(DEPDIR)/volumealsa_la-volumealsa.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-forecast.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-httputil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-location.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-logutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-weather.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-weatherwidget.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-yahooutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@xkb/$(DEPDIR)/xkb_la-xkb-plugin.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@xkb/$(DEPDIR)/xkb_la-xkb.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
@@ -638,67 +1322,286 @@ libbuiltin_plugins_a-menu.obj: menu.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-menu.obj `if test -f 'menu.c'; then $(CYGPATH_W) 'menu.c'; else $(CYGPATH_W) '$(srcdir)/menu.c'; fi`
 
+batt/batt_la-batt.lo: batt/batt.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(batt_la_CFLAGS) $(CFLAGS) -MT batt/batt_la-batt.lo -MD -MP -MF batt/$(DEPDIR)/batt_la-batt.Tpo -c -o batt/batt_la-batt.lo `test -f 'batt/batt.c' || echo '$(srcdir)/'`batt/batt.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) batt/$(DEPDIR)/batt_la-batt.Tpo batt/$(DEPDIR)/batt_la-batt.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='batt/batt.c' object='batt/batt_la-batt.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(batt_la_CFLAGS) $(CFLAGS) -c -o batt/batt_la-batt.lo `test -f 'batt/batt.c' || echo '$(srcdir)/'`batt/batt.c
+
+batt/batt_la-batt_sys.lo: batt/batt_sys.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(batt_la_CFLAGS) $(CFLAGS) -MT batt/batt_la-batt_sys.lo -MD -MP -MF batt/$(DEPDIR)/batt_la-batt_sys.Tpo -c -o batt/batt_la-batt_sys.lo `test -f 'batt/batt_sys.c' || echo '$(srcdir)/'`batt/batt_sys.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) batt/$(DEPDIR)/batt_la-batt_sys.Tpo batt/$(DEPDIR)/batt_la-batt_sys.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='batt/batt_sys.c' object='batt/batt_la-batt_sys.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(batt_la_CFLAGS) $(CFLAGS) -c -o batt/batt_la-batt_sys.lo `test -f 'batt/batt_sys.c' || echo '$(srcdir)/'`batt/batt_sys.c
+
+cpufreq/cpufreq_la-cpufreq.lo: cpufreq/cpufreq.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cpufreq_la_CFLAGS) $(CFLAGS) -MT cpufreq/cpufreq_la-cpufreq.lo -MD -MP -MF cpufreq/$(DEPDIR)/cpufreq_la-cpufreq.Tpo -c -o cpufreq/cpufreq_la-cpufreq.lo `test -f 'cpufreq/cpufreq.c' || echo '$(srcdir)/'`cpufreq/cpufreq.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) cpufreq/$(DEPDIR)/cpufreq_la-cpufreq.Tpo cpufreq/$(DEPDIR)/cpufreq_la-cpufreq.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cpufreq/cpufreq.c' object='cpufreq/cpufreq_la-cpufreq.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cpufreq_la_CFLAGS) $(CFLAGS) -c -o cpufreq/cpufreq_la-cpufreq.lo `test -f 'cpufreq/cpufreq.c' || echo '$(srcdir)/'`cpufreq/cpufreq.c
+
+indicator/indicator_la-indicator.lo: indicator/indicator.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(indicator_la_CFLAGS) $(CFLAGS) -MT indicator/indicator_la-indicator.lo -MD -MP -MF indicator/$(DEPDIR)/indicator_la-indicator.Tpo -c -o indicator/indicator_la-indicator.lo `test -f 'indicator/indicator.c' || echo '$(srcdir)/'`indicator/indicator.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) indicator/$(DEPDIR)/indicator_la-indicator.Tpo indicator/$(DEPDIR)/indicator_la-indicator.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='indicator/indicator.c' object='indicator/indicator_la-indicator.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(indicator_la_CFLAGS) $(CFLAGS) -c -o indicator/indicator_la-indicator.lo `test -f 'indicator/indicator.c' || echo '$(srcdir)/'`indicator/indicator.c
+
+kbled/kbled_la-kbled.lo: kbled/kbled.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(kbled_la_CFLAGS) $(CFLAGS) -MT kbled/kbled_la-kbled.lo -MD -MP -MF kbled/$(DEPDIR)/kbled_la-kbled.Tpo -c -o kbled/kbled_la-kbled.lo `test -f 'kbled/kbled.c' || echo '$(srcdir)/'`kbled/kbled.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) kbled/$(DEPDIR)/kbled_la-kbled.Tpo kbled/$(DEPDIR)/kbled_la-kbled.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='kbled/kbled.c' object='kbled/kbled_la-kbled.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(kbled_la_CFLAGS) $(CFLAGS) -c -o kbled/kbled_la-kbled.lo `test -f 'kbled/kbled.c' || echo '$(srcdir)/'`kbled/kbled.c
+
+netstat/netstat_la-netstat.lo: netstat/netstat.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -MT netstat/netstat_la-netstat.lo -MD -MP -MF netstat/$(DEPDIR)/netstat_la-netstat.Tpo -c -o netstat/netstat_la-netstat.lo `test -f 'netstat/netstat.c' || echo '$(srcdir)/'`netstat/netstat.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstat/$(DEPDIR)/netstat_la-netstat.Tpo netstat/$(DEPDIR)/netstat_la-netstat.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstat/netstat.c' object='netstat/netstat_la-netstat.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -c -o netstat/netstat_la-netstat.lo `test -f 'netstat/netstat.c' || echo '$(srcdir)/'`netstat/netstat.c
+
+netstat/netstat_la-devproc.lo: netstat/devproc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -MT netstat/netstat_la-devproc.lo -MD -MP -MF netstat/$(DEPDIR)/netstat_la-devproc.Tpo -c -o netstat/netstat_la-devproc.lo `test -f 'netstat/devproc.c' || echo '$(srcdir)/'`netstat/devproc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstat/$(DEPDIR)/netstat_la-devproc.Tpo netstat/$(DEPDIR)/netstat_la-devproc.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstat/devproc.c' object='netstat/netstat_la-devproc.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -c -o netstat/netstat_la-devproc.lo `test -f 'netstat/devproc.c' || echo '$(srcdir)/'`netstat/devproc.c
+
+netstat/netstat_la-statusicon.lo: netstat/statusicon.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -MT netstat/netstat_la-statusicon.lo -MD -MP -MF netstat/$(DEPDIR)/netstat_la-statusicon.Tpo -c -o netstat/netstat_la-statusicon.lo `test -f 'netstat/statusicon.c' || echo '$(srcdir)/'`netstat/statusicon.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstat/$(DEPDIR)/netstat_la-statusicon.Tpo netstat/$(DEPDIR)/netstat_la-statusicon.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstat/statusicon.c' object='netstat/netstat_la-statusicon.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -c -o netstat/netstat_la-statusicon.lo `test -f 'netstat/statusicon.c' || echo '$(srcdir)/'`netstat/statusicon.c
+
+netstat/netstat_la-wireless.lo: netstat/wireless.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -MT netstat/netstat_la-wireless.lo -MD -MP -MF netstat/$(DEPDIR)/netstat_la-wireless.Tpo -c -o netstat/netstat_la-wireless.lo `test -f 'netstat/wireless.c' || echo '$(srcdir)/'`netstat/wireless.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstat/$(DEPDIR)/netstat_la-wireless.Tpo netstat/$(DEPDIR)/netstat_la-wireless.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstat/wireless.c' object='netstat/netstat_la-wireless.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -c -o netstat/netstat_la-wireless.lo `test -f 'netstat/wireless.c' || echo '$(srcdir)/'`netstat/wireless.c
+
+netstat/netstat_la-lxnm_client.lo: netstat/lxnm_client.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -MT netstat/netstat_la-lxnm_client.lo -MD -MP -MF netstat/$(DEPDIR)/netstat_la-lxnm_client.Tpo -c -o netstat/netstat_la-lxnm_client.lo `test -f 'netstat/lxnm_client.c' || echo '$(srcdir)/'`netstat/lxnm_client.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstat/$(DEPDIR)/netstat_la-lxnm_client.Tpo netstat/$(DEPDIR)/netstat_la-lxnm_client.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstat/lxnm_client.c' object='netstat/netstat_la-lxnm_client.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -c -o netstat/netstat_la-lxnm_client.lo `test -f 'netstat/lxnm_client.c' || echo '$(srcdir)/'`netstat/lxnm_client.c
+
+netstat/netstat_la-passwd_gui.lo: netstat/passwd_gui.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -MT netstat/netstat_la-passwd_gui.lo -MD -MP -MF netstat/$(DEPDIR)/netstat_la-passwd_gui.Tpo -c -o netstat/netstat_la-passwd_gui.lo `test -f 'netstat/passwd_gui.c' || echo '$(srcdir)/'`netstat/passwd_gui.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstat/$(DEPDIR)/netstat_la-passwd_gui.Tpo netstat/$(DEPDIR)/netstat_la-passwd_gui.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstat/passwd_gui.c' object='netstat/netstat_la-passwd_gui.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -c -o netstat/netstat_la-passwd_gui.lo `test -f 'netstat/passwd_gui.c' || echo '$(srcdir)/'`netstat/passwd_gui.c
+
+netstatus/netstatus_la-netstatus.lo: netstatus/netstatus.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -MT netstatus/netstatus_la-netstatus.lo -MD -MP -MF netstatus/$(DEPDIR)/netstatus_la-netstatus.Tpo -c -o netstatus/netstatus_la-netstatus.lo `test -f 'netstatus/netstatus.c' || echo '$(srcdir)/'`netstatus/netstatus.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstatus/$(DEPDIR)/netstatus_la-netstatus.Tpo netstatus/$(DEPDIR)/netstatus_la-netstatus.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstatus/netstatus.c' object='netstatus/netstatus_la-netstatus.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -c -o netstatus/netstatus_la-netstatus.lo `test -f 'netstatus/netstatus.c' || echo '$(srcdir)/'`netstatus/netstatus.c
+
+netstatus/netstatus_la-netstatus-dialog.lo: netstatus/netstatus-dialog.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -MT netstatus/netstatus_la-netstatus-dialog.lo -MD -MP -MF netstatus/$(DEPDIR)/netstatus_la-netstatus-dialog.Tpo -c -o netstatus/netstatus_la-netstatus-dialog.lo `test -f 'netstatus/netstatus-dialog.c' || echo '$(srcdir)/'`netstatus/netstatus-dialog.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstatus/$(DEPDIR)/netstatus_la-netstatus-dialog.Tpo netstatus/$(DEPDIR)/netstatus_la-netstatus-dialog.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstatus/netstatus-dialog.c' object='netstatus/netstatus_la-netstatus-dialog.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -c -o netstatus/netstatus_la-netstatus-dialog.lo `test -f 'netstatus/netstatus-dialog.c' || echo '$(srcdir)/'`netstatus/netstatus-dialog.c
+
+netstatus/netstatus_la-netstatus-enums.lo: netstatus/netstatus-enums.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -MT netstatus/netstatus_la-netstatus-enums.lo -MD -MP -MF netstatus/$(DEPDIR)/netstatus_la-netstatus-enums.Tpo -c -o netstatus/netstatus_la-netstatus-enums.lo `test -f 'netstatus/netstatus-enums.c' || echo '$(srcdir)/'`netstatus/netstatus-enums.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstatus/$(DEPDIR)/netstatus_la-netstatus-enums.Tpo netstatus/$(DEPDIR)/netstatus_la-netstatus-enums.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstatus/netstatus-enums.c' object='netstatus/netstatus_la-netstatus-enums.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -c -o netstatus/netstatus_la-netstatus-enums.lo `test -f 'netstatus/netstatus-enums.c' || echo '$(srcdir)/'`netstatus/netstatus-enums.c
+
+netstatus/netstatus_la-netstatus-icon.lo: netstatus/netstatus-icon.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -MT netstatus/netstatus_la-netstatus-icon.lo -MD -MP -MF netstatus/$(DEPDIR)/netstatus_la-netstatus-icon.Tpo -c -o netstatus/netstatus_la-netstatus-icon.lo `test -f 'netstatus/netstatus-icon.c' || echo '$(srcdir)/'`netstatus/netstatus-icon.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstatus/$(DEPDIR)/netstatus_la-netstatus-icon.Tpo netstatus/$(DEPDIR)/netstatus_la-netstatus-icon.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstatus/netstatus-icon.c' object='netstatus/netstatus_la-netstatus-icon.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -c -o netstatus/netstatus_la-netstatus-icon.lo `test -f 'netstatus/netstatus-icon.c' || echo '$(srcdir)/'`netstatus/netstatus-icon.c
+
+netstatus/netstatus_la-netstatus-iface.lo: netstatus/netstatus-iface.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -MT netstatus/netstatus_la-netstatus-iface.lo -MD -MP -MF netstatus/$(DEPDIR)/netstatus_la-netstatus-iface.Tpo -c -o netstatus/netstatus_la-netstatus-iface.lo `test -f 'netstatus/netstatus-iface.c' || echo '$(srcdir)/'`netstatus/netstatus-iface.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstatus/$(DEPDIR)/netstatus_la-netstatus-iface.Tpo netstatus/$(DEPDIR)/netstatus_la-netstatus-iface.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstatus/netstatus-iface.c' object='netstatus/netstatus_la-netstatus-iface.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -c -o netstatus/netstatus_la-netstatus-iface.lo `test -f 'netstatus/netstatus-iface.c' || echo '$(srcdir)/'`netstatus/netstatus-iface.c
+
+netstatus/netstatus_la-netstatus-sysdeps.lo: netstatus/netstatus-sysdeps.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -MT netstatus/netstatus_la-netstatus-sysdeps.lo -MD -MP -MF netstatus/$(DEPDIR)/netstatus_la-netstatus-sysdeps.Tpo -c -o netstatus/netstatus_la-netstatus-sysdeps.lo `test -f 'netstatus/netstatus-sysdeps.c' || echo '$(srcdir)/'`netstatus/netstatus-sysdeps.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstatus/$(DEPDIR)/netstatus_la-netstatus-sysdeps.Tpo netstatus/$(DEPDIR)/netstatus_la-netstatus-sysdeps.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstatus/netstatus-sysdeps.c' object='netstatus/netstatus_la-netstatus-sysdeps.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -c -o netstatus/netstatus_la-netstatus-sysdeps.lo `test -f 'netstatus/netstatus-sysdeps.c' || echo '$(srcdir)/'`netstatus/netstatus-sysdeps.c
+
+netstatus/netstatus_la-netstatus-util.lo: netstatus/netstatus-util.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -MT netstatus/netstatus_la-netstatus-util.lo -MD -MP -MF netstatus/$(DEPDIR)/netstatus_la-netstatus-util.Tpo -c -o netstatus/netstatus_la-netstatus-util.lo `test -f 'netstatus/netstatus-util.c' || echo '$(srcdir)/'`netstatus/netstatus-util.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) netstatus/$(DEPDIR)/netstatus_la-netstatus-util.Tpo netstatus/$(DEPDIR)/netstatus_la-netstatus-util.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netstatus/netstatus-util.c' object='netstatus/netstatus_la-netstatus-util.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -c -o netstatus/netstatus_la-netstatus-util.lo `test -f 'netstatus/netstatus-util.c' || echo '$(srcdir)/'`netstatus/netstatus-util.c
+
+volume/volume_la-volume-impl.lo: volume/volume-impl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volume_la_CFLAGS) $(CFLAGS) -MT volume/volume_la-volume-impl.lo -MD -MP -MF volume/$(DEPDIR)/volume_la-volume-impl.Tpo -c -o volume/volume_la-volume-impl.lo `test -f 'volume/volume-impl.c' || echo '$(srcdir)/'`volume/volume-impl.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) volume/$(DEPDIR)/volume_la-volume-impl.Tpo volume/$(DEPDIR)/volume_la-volume-impl.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='volume/volume-impl.c' object='volume/volume_la-volume-impl.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volume_la_CFLAGS) $(CFLAGS) -c -o volume/volume_la-volume-impl.lo `test -f 'volume/volume-impl.c' || echo '$(srcdir)/'`volume/volume-impl.c
+
+volume/volume_la-volume.lo: volume/volume.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volume_la_CFLAGS) $(CFLAGS) -MT volume/volume_la-volume.lo -MD -MP -MF volume/$(DEPDIR)/volume_la-volume.Tpo -c -o volume/volume_la-volume.lo `test -f 'volume/volume.c' || echo '$(srcdir)/'`volume/volume.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) volume/$(DEPDIR)/volume_la-volume.Tpo volume/$(DEPDIR)/volume_la-volume.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='volume/volume.c' object='volume/volume_la-volume.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volume_la_CFLAGS) $(CFLAGS) -c -o volume/volume_la-volume.lo `test -f 'volume/volume.c' || echo '$(srcdir)/'`volume/volume.c
+
+volumealsa/volumealsa_la-volumealsa.lo: volumealsa/volumealsa.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volumealsa_la_CFLAGS) $(CFLAGS) -MT volumealsa/volumealsa_la-volumealsa.lo -MD -MP -MF volumealsa/$(DEPDIR)/volumealsa_la-volumealsa.Tpo -c -o volumealsa/volumealsa_la-volumealsa.lo `test -f 'volumealsa/volumealsa.c' || echo '$(srcdir)/'`volumealsa/volumealsa.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) volumealsa/$(DEPDIR)/volumealsa_la-volumealsa.Tpo volumealsa/$(DEPDIR)/volumealsa_la-volumealsa.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='volumealsa/volumealsa.c' object='volumealsa/volumealsa_la-volumealsa.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volumealsa_la_CFLAGS) $(CFLAGS) -c -o volumealsa/volumealsa_la-volumealsa.lo `test -f 'volumealsa/volumealsa.c' || echo '$(srcdir)/'`volumealsa/volumealsa.c
+
+weather/weather_la-logutil.lo: weather/logutil.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -MT weather/weather_la-logutil.lo -MD -MP -MF weather/$(DEPDIR)/weather_la-logutil.Tpo -c -o weather/weather_la-logutil.lo `test -f 'weather/logutil.c' || echo '$(srcdir)/'`weather/logutil.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) weather/$(DEPDIR)/weather_la-logutil.Tpo weather/$(DEPDIR)/weather_la-logutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='weather/logutil.c' object='weather/weather_la-logutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -c -o weather/weather_la-logutil.lo `test -f 'weather/logutil.c' || echo '$(srcdir)/'`weather/logutil.c
+
+weather/weather_la-httputil.lo: weather/httputil.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -MT weather/weather_la-httputil.lo -MD -MP -MF weather/$(DEPDIR)/weather_la-httputil.Tpo -c -o weather/weather_la-httputil.lo `test -f 'weather/httputil.c' || echo '$(srcdir)/'`weather/httputil.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) weather/$(DEPDIR)/weather_la-httputil.Tpo weather/$(DEPDIR)/weather_la-httputil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='weather/httputil.c' object='weather/weather_la-httputil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -c -o weather/weather_la-httputil.lo `test -f 'weather/httputil.c' || echo '$(srcdir)/'`weather/httputil.c
+
+weather/weather_la-yahooutil.lo: weather/yahooutil.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -MT weather/weather_la-yahooutil.lo -MD -MP -MF weather/$(DEPDIR)/weather_la-yahooutil.Tpo -c -o weather/weather_la-yahooutil.lo `test -f 'weather/yahooutil.c' || echo '$(srcdir)/'`weather/yahooutil.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) weather/$(DEPDIR)/weather_la-yahooutil.Tpo weather/$(DEPDIR)/weather_la-yahooutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='weather/yahooutil.c' object='weather/weather_la-yahooutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -c -o weather/weather_la-yahooutil.lo `test -f 'weather/yahooutil.c' || echo '$(srcdir)/'`weather/yahooutil.c
+
+weather/weather_la-location.lo: weather/location.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -MT weather/weather_la-location.lo -MD -MP -MF weather/$(DEPDIR)/weather_la-location.Tpo -c -o weather/weather_la-location.lo `test -f 'weather/location.c' || echo '$(srcdir)/'`weather/location.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) weather/$(DEPDIR)/weather_la-location.Tpo weather/$(DEPDIR)/weather_la-location.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='weather/location.c' object='weather/weather_la-location.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -c -o weather/weather_la-location.lo `test -f 'weather/location.c' || echo '$(srcdir)/'`weather/location.c
+
+weather/weather_la-forecast.lo: weather/forecast.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -MT weather/weather_la-forecast.lo -MD -MP -MF weather/$(DEPDIR)/weather_la-forecast.Tpo -c -o weather/weather_la-forecast.lo `test -f 'weather/forecast.c' || echo '$(srcdir)/'`weather/forecast.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) weather/$(DEPDIR)/weather_la-forecast.Tpo weather/$(DEPDIR)/weather_la-forecast.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='weather/forecast.c' object='weather/weather_la-forecast.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -c -o weather/weather_la-forecast.lo `test -f 'weather/forecast.c' || echo '$(srcdir)/'`weather/forecast.c
+
+weather/weather_la-weatherwidget.lo: weather/weatherwidget.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -MT weather/weather_la-weatherwidget.lo -MD -MP -MF weather/$(DEPDIR)/weather_la-weatherwidget.Tpo -c -o weather/weather_la-weatherwidget.lo `test -f 'weather/weatherwidget.c' || echo '$(srcdir)/'`weather/weatherwidget.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) weather/$(DEPDIR)/weather_la-weatherwidget.Tpo weather/$(DEPDIR)/weather_la-weatherwidget.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='weather/weatherwidget.c' object='weather/weather_la-weatherwidget.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -c -o weather/weather_la-weatherwidget.lo `test -f 'weather/weatherwidget.c' || echo '$(srcdir)/'`weather/weatherwidget.c
+
+weather/weather_la-weather.lo: weather/weather.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -MT weather/weather_la-weather.lo -MD -MP -MF weather/$(DEPDIR)/weather_la-weather.Tpo -c -o weather/weather_la-weather.lo `test -f 'weather/weather.c' || echo '$(srcdir)/'`weather/weather.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) weather/$(DEPDIR)/weather_la-weather.Tpo weather/$(DEPDIR)/weather_la-weather.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='weather/weather.c' object='weather/weather_la-weather.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -c -o weather/weather_la-weather.lo `test -f 'weather/weather.c' || echo '$(srcdir)/'`weather/weather.c
+
+xkb/xkb_la-xkb-plugin.lo: xkb/xkb-plugin.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xkb_la_CFLAGS) $(CFLAGS) -MT xkb/xkb_la-xkb-plugin.lo -MD -MP -MF xkb/$(DEPDIR)/xkb_la-xkb-plugin.Tpo -c -o xkb/xkb_la-xkb-plugin.lo `test -f 'xkb/xkb-plugin.c' || echo '$(srcdir)/'`xkb/xkb-plugin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xkb/$(DEPDIR)/xkb_la-xkb-plugin.Tpo xkb/$(DEPDIR)/xkb_la-xkb-plugin.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xkb/xkb-plugin.c' object='xkb/xkb_la-xkb-plugin.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xkb_la_CFLAGS) $(CFLAGS) -c -o xkb/xkb_la-xkb-plugin.lo `test -f 'xkb/xkb-plugin.c' || echo '$(srcdir)/'`xkb/xkb-plugin.c
+
+xkb/xkb_la-xkb.lo: xkb/xkb.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xkb_la_CFLAGS) $(CFLAGS) -MT xkb/xkb_la-xkb.lo -MD -MP -MF xkb/$(DEPDIR)/xkb_la-xkb.Tpo -c -o xkb/xkb_la-xkb.lo `test -f 'xkb/xkb.c' || echo '$(srcdir)/'`xkb/xkb.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) xkb/$(DEPDIR)/xkb_la-xkb.Tpo xkb/$(DEPDIR)/xkb_la-xkb.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xkb/xkb.c' object='xkb/xkb_la-xkb.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(xkb_la_CFLAGS) $(CFLAGS) -c -o xkb/xkb_la-xkb.lo `test -f 'xkb/xkb.c' || echo '$(srcdir)/'`xkb/xkb.c
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
-
-# This directory's subdirectories are mostly independent; you can cd
-# into them and run 'make' without going through this Makefile.
-# To change the values of 'make' variables: instead of editing Makefiles,
-# (1) if the variable is set in 'config.status', edit 'config.status'
-#     (which will cause the Makefiles to be regenerated when you run 'make');
-# (2) otherwise, pass the desired values on the 'make' command line.
-$(am__recursive_targets):
-	@fail=; \
-	if $(am__make_keepgoing); then \
-	  failcom='fail=yes'; \
-	else \
-	  failcom='exit 1'; \
+	-rm -rf batt/.libs batt/_libs
+	-rm -rf cpu/.libs cpu/_libs
+	-rm -rf cpufreq/.libs cpufreq/_libs
+	-rm -rf deskno/.libs deskno/_libs
+	-rm -rf indicator/.libs indicator/_libs
+	-rm -rf kbled/.libs kbled/_libs
+	-rm -rf monitors/.libs monitors/_libs
+	-rm -rf netstat/.libs netstat/_libs
+	-rm -rf netstatus/.libs netstatus/_libs
+	-rm -rf thermal/.libs thermal/_libs
+	-rm -rf volume/.libs volume/_libs
+	-rm -rf volumealsa/.libs volumealsa/_libs
+	-rm -rf weather/.libs weather/_libs
+	-rm -rf xkb/.libs xkb/_libs
+install-flagsDATA: $(flags_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(flags_DATA)'; test -n "$(flagsdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(flagsdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(flagsdir)" || exit 1; \
 	fi; \
-	dot_seen=no; \
-	target=`echo $@ | sed s/-recursive//`; \
-	case "$@" in \
-	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
-	  *) list='$(SUBDIRS)' ;; \
-	esac; \
-	for subdir in $$list; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    dot_seen=yes; \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	  || eval $$failcom; \
-	done; \
-	if test "$$dot_seen" = "no"; then \
-	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
-	fi; test -z "$$fail"
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(flagsdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(flagsdir)" || exit $$?; \
+	done
+
+uninstall-flagsDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(flags_DATA)'; test -n "$(flagsdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(flagsdir)'; $(am__uninstall_files_from_dir)
+install-xkeyboardconfigDATA: $(xkeyboardconfig_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(xkeyboardconfig_DATA)'; test -n "$(xkeyboardconfigdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(xkeyboardconfigdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(xkeyboardconfigdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(xkeyboardconfigdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(xkeyboardconfigdir)" || exit $$?; \
+	done
+
+uninstall-xkeyboardconfigDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(xkeyboardconfig_DATA)'; test -n "$(xkeyboardconfigdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(xkeyboardconfigdir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
-tags: tags-recursive
+tags: tags-am
 TAGS: tags
 
 tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	set x; \
 	here=`pwd`; \
-	if ($(ETAGS) --etags-include --version) >/dev/null 2>&1; then \
-	  include_option=--etags-include; \
-	  empty_fix=.; \
-	else \
-	  include_option=--include; \
-	  empty_fix=; \
-	fi; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    test ! -f $$subdir/TAGS || \
-	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
-	  fi; \
-	done; \
 	$(am__define_uniq_tagged_files); \
 	shift; \
 	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
@@ -711,7 +1614,7 @@ tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	      $$unique; \
 	  fi; \
 	fi
-ctags: ctags-recursive
+ctags: ctags-am
 
 CTAGS: ctags
 ctags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
@@ -724,7 +1627,7 @@ GTAGS:
 	here=`$(am__cd) $(top_builddir) && pwd` \
 	  && $(am__cd) $(top_srcdir) \
 	  && gtags -i $(GTAGS_ARGS) "$$here"
-cscopelist: cscopelist-recursive
+cscopelist: cscopelist-am
 
 cscopelist-am: $(am__tagged_files)
 	list='$(am__tagged_files)'; \
@@ -773,45 +1676,22 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    $(am__make_dryrun) \
-	      || test -d "$(distdir)/$$subdir" \
-	      || $(MKDIR_P) "$(distdir)/$$subdir" \
-	      || exit 1; \
-	    dir1=$$subdir; dir2="$(distdir)/$$subdir"; \
-	    $(am__relativize); \
-	    new_distdir=$$reldir; \
-	    dir1=$$subdir; dir2="$(top_distdir)"; \
-	    $(am__relativize); \
-	    new_top_distdir=$$reldir; \
-	    echo " (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir="$$new_top_distdir" distdir="$$new_distdir" \\"; \
-	    echo "     am__remove_distdir=: am__skip_length_check=: am__skip_mode_fix=: distdir)"; \
-	    ($(am__cd) $$subdir && \
-	      $(MAKE) $(AM_MAKEFLAGS) \
-	        top_distdir="$$new_top_distdir" \
-	        distdir="$$new_distdir" \
-		am__remove_distdir=: \
-		am__skip_length_check=: \
-		am__skip_mode_fix=: \
-	        distdir) \
-	      || exit 1; \
-	  fi; \
-	done
 check-am: all-am
-check: check-recursive
-all-am: Makefile $(LIBRARIES)
-installdirs: installdirs-recursive
-installdirs-am:
-install: install-recursive
-install-exec: install-exec-recursive
-install-data: install-data-recursive
-uninstall: uninstall-recursive
+check: check-am
+all-am: Makefile $(LIBRARIES) $(LTLIBRARIES) $(DATA)
+installdirs:
+	for dir in "$(DESTDIR)$(pkglibdir)" "$(DESTDIR)$(flagsdir)" "$(DESTDIR)$(xkeyboardconfigdir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
+install: install-am
+install-exec: install-exec-am
+install-data: install-data-am
+uninstall: uninstall-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
-installcheck: installcheck-recursive
+installcheck: installcheck-am
 install-strip:
 	if test -z '$(STRIP)'; then \
 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
@@ -829,105 +1709,140 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f batt/$(DEPDIR)/$(am__dirstamp)
+	-rm -f batt/$(am__dirstamp)
+	-rm -f cpu/$(DEPDIR)/$(am__dirstamp)
+	-rm -f cpu/$(am__dirstamp)
+	-rm -f cpufreq/$(DEPDIR)/$(am__dirstamp)
+	-rm -f cpufreq/$(am__dirstamp)
+	-rm -f deskno/$(DEPDIR)/$(am__dirstamp)
+	-rm -f deskno/$(am__dirstamp)
+	-rm -f indicator/$(DEPDIR)/$(am__dirstamp)
+	-rm -f indicator/$(am__dirstamp)
+	-rm -f kbled/$(DEPDIR)/$(am__dirstamp)
+	-rm -f kbled/$(am__dirstamp)
+	-rm -f monitors/$(DEPDIR)/$(am__dirstamp)
+	-rm -f monitors/$(am__dirstamp)
+	-rm -f netstat/$(DEPDIR)/$(am__dirstamp)
+	-rm -f netstat/$(am__dirstamp)
+	-rm -f netstatus/$(DEPDIR)/$(am__dirstamp)
+	-rm -f netstatus/$(am__dirstamp)
+	-rm -f thermal/$(DEPDIR)/$(am__dirstamp)
+	-rm -f thermal/$(am__dirstamp)
+	-rm -f volume/$(DEPDIR)/$(am__dirstamp)
+	-rm -f volume/$(am__dirstamp)
+	-rm -f volumealsa/$(DEPDIR)/$(am__dirstamp)
+	-rm -f volumealsa/$(am__dirstamp)
+	-rm -f weather/$(DEPDIR)/$(am__dirstamp)
+	-rm -f weather/$(am__dirstamp)
+	-rm -f xkb/$(DEPDIR)/$(am__dirstamp)
+	-rm -f xkb/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-recursive
+@BUILD_PLUGIN_LOADER_FALSE@uninstall-hook:
+clean: clean-am
 
 clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
-	mostlyclean-am
+	clean-pkglibLTLIBRARIES mostlyclean-am
 
-distclean: distclean-recursive
-	-rm -rf ./$(DEPDIR)
+distclean: distclean-am
+	-rm -rf ./$(DEPDIR) batt/$(DEPDIR) cpu/$(DEPDIR) cpufreq/$(DEPDIR) deskno/$(DEPDIR) indicator/$(DEPDIR) kbled/$(DEPDIR) monitors/$(DEPDIR) netstat/$(DEPDIR) netstatus/$(DEPDIR) thermal/$(DEPDIR) volume/$(DEPDIR) volumealsa/$(DEPDIR) weather/$(DEPDIR) xkb/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
 
-dvi: dvi-recursive
+dvi: dvi-am
 
 dvi-am:
 
-html: html-recursive
+html: html-am
 
 html-am:
 
-info: info-recursive
+info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-flagsDATA install-xkeyboardconfigDATA
 
-install-dvi: install-dvi-recursive
+install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am:
+install-exec-am: install-pkglibLTLIBRARIES
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
-install-html: install-html-recursive
+install-html: install-html-am
 
 install-html-am:
 
-install-info: install-info-recursive
+install-info: install-info-am
 
 install-info-am:
 
 install-man:
 
-install-pdf: install-pdf-recursive
+install-pdf: install-pdf-am
 
 install-pdf-am:
 
-install-ps: install-ps-recursive
+install-ps: install-ps-am
 
 install-ps-am:
 
 installcheck-am:
 
-maintainer-clean: maintainer-clean-recursive
-	-rm -rf ./$(DEPDIR)
+maintainer-clean: maintainer-clean-am
+	-rm -rf ./$(DEPDIR) batt/$(DEPDIR) cpu/$(DEPDIR) cpufreq/$(DEPDIR) deskno/$(DEPDIR) indicator/$(DEPDIR) kbled/$(DEPDIR) monitors/$(DEPDIR) netstat/$(DEPDIR) netstatus/$(DEPDIR) thermal/$(DEPDIR) volume/$(DEPDIR) volumealsa/$(DEPDIR) weather/$(DEPDIR) xkb/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
-mostlyclean: mostlyclean-recursive
+mostlyclean: mostlyclean-am
 
 mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libtool
 
-pdf: pdf-recursive
+pdf: pdf-am
 
 pdf-am:
 
-ps: ps-recursive
+ps: ps-am
 
 ps-am:
 
-uninstall-am:
+uninstall-am: uninstall-flagsDATA uninstall-pkglibLTLIBRARIES \
+	uninstall-xkeyboardconfigDATA
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+.MAKE: install-am install-exec-am install-strip uninstall-am
 
-.MAKE: $(am__recursive_targets) install-am install-exec-am \
-	install-strip
-
-.PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am check \
-	check-am clean clean-generic clean-libtool \
-	clean-noinstLIBRARIES cscopelist-am ctags ctags-am distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-exec-hook \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
+.PHONY: CTAGS GTAGS TAGS all all-am check check-am clean clean-generic \
+	clean-libtool clean-noinstLIBRARIES clean-pkglibLTLIBRARIES \
+	cscopelist-am ctags ctags-am distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-exec-hook \
+	install-flagsDATA install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-pkglibLTLIBRARIES install-ps install-ps-am \
+	install-strip install-xkeyboardconfigDATA installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am
+	tags tags-am uninstall uninstall-am uninstall-flagsDATA \
+	uninstall-hook uninstall-pkglibLTLIBRARIES \
+	uninstall-xkeyboardconfigDATA
 
 
 install-exec-hook:
 	rm -f $(DESTDIR)$(libdir)/lxpanel/plugins/*.la
 	rm -f $(DESTDIR)$(libdir)/lxpanel/plugins/*.a
 	rm -f $(DESTDIR)$(libdir)/lxpanel/plugins/*.
+@BUILD_PLUGIN_LOADER_TRUE@uninstall-hook:
+@BUILD_PLUGIN_LOADER_TRUE@	cd $(DESTDIR)$(libdir)/lxpanel/plugins && rm -f $(DYNAMIC_PLUGINS_INSTALLED) || true
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

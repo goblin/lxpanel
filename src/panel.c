@@ -233,7 +233,7 @@ static gboolean lxpanel_button_press(GtkWidget *widget, GdkEventButton *event)
         gtk_menu_popup(popup, NULL, NULL, NULL, NULL, event->button, event->time);
         return TRUE;
     }
-    return GTK_WIDGET_CLASS(lxpanel_parent_class)->button_press_event(widget, event);
+    return FALSE;
 }
 
 static void lxpanel_class_init(PanelToplevelClass *klass)
@@ -284,6 +284,7 @@ static void lxpanel_init(PanelToplevel *self)
     p->icon_size = PANEL_ICON_SIZE;
     p->icon_theme = gtk_icon_theme_get_default();
     p->config = config_new();
+    p->defstyle = gtk_widget_get_default_style();
     gtk_window_set_type_hint(GTK_WINDOW(self), GDK_WINDOW_TYPE_HINT_DOCK);
 }
 
@@ -379,7 +380,7 @@ void _panel_set_wm_strut(LXPanel *panel)
         strut_size = p->height_when_hidden;
 
     /* Set up strut value in property format. */
-    gulong desired_strut[12];
+    guint32 desired_strut[12];
     memset(desired_strut, 0, sizeof(desired_strut));
     if (p->setstrut)
     {
@@ -692,8 +693,8 @@ mouse_watch(LXPanel *panel)
 
     cx = p->cx;
     cy = p->cy;
-    cw = p->aw;
-    ch = p->ah;
+    cw = p->cw;
+    ch = p->ch;
 
     /* reduce area which will raise panel so it does not interfere with apps */
     if (p->ah_state == AH_STATE_HIDDEN) {
@@ -1339,12 +1340,8 @@ void panel_draw_label_text(Panel * p, GtkWidget * label, const char * text,
         font_desc = p->fontsize;
     else
     {
-        if (p->icon_size < 20)
-            font_desc = 9;
-        else if (p->icon_size >= 20 && p->icon_size < 36)
-            font_desc = 10;
-        else
-            font_desc = 12;
+        GtkStyle *style = gtk_widget_get_style(label);
+        font_desc = pango_font_description_get_size(style->font_desc) / PANGO_SCALE;
     }
     font_desc *= custom_size_factor;
 
@@ -1710,6 +1707,7 @@ static void _start_panels_from_dir(const char *panel_dir)
 static gboolean start_all_panels( )
 {
     char *panel_dir;
+    const gchar * const * dir;
 
     /* try user panels */
     panel_dir = _user_config_file_name("panels", NULL);
@@ -1717,12 +1715,17 @@ static gboolean start_all_panels( )
     g_free(panel_dir);
     if (all_panels != NULL)
         return TRUE;
-    /* else try XDG fallback */
-    panel_dir = _system_config_file_name("panels");
-    _start_panels_from_dir(panel_dir);
-    g_free(panel_dir);
-    if (all_panels != NULL)
-        return TRUE;
+    /* else try XDG fallbacks */
+    dir = g_get_system_config_dirs();
+    if (dir) while (dir[0])
+    {
+        panel_dir = _system_config_file_name(dir[0], "panels");
+        _start_panels_from_dir(panel_dir);
+        g_free(panel_dir);
+        if (all_panels != NULL)
+            return TRUE;
+        dir++;
+    }
     /* last try at old fallback for compatibility reasons */
     panel_dir = _old_system_config_file_name("panels");
     _start_panels_from_dir(panel_dir);
@@ -1754,11 +1757,6 @@ int main(int argc, char *argv[], char *env[])
     g_thread_init(NULL);
 /*    gdk_threads_init();
     gdk_threads_enter(); */
-
-    /* Add a gtkrc file to be parsed too. */
-    file = _user_config_file_name("gtkrc", NULL);
-    gtk_rc_add_default_file(file);
-    g_free(file);
 
     gtk_init(&argc, &argv);
 
@@ -1809,6 +1807,11 @@ int main(int argc, char *argv[], char *env[])
             exit(1);
         }
     }
+
+    /* Add a gtkrc file to be parsed too. */
+    file = _user_config_file_name("gtkrc", NULL);
+    gtk_rc_parse(file);
+    g_free(file);
 
     /* Check for duplicated lxpanel instances */
     if (!check_main_lock() && !config) {

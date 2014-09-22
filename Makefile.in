@@ -81,27 +81,22 @@ host_triplet = @host@
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in mkinstalldirs $(srcdir)/lxpanel.pc.in \
+	$(srcdir)/config.h.in $(srcdir)/lxpanel.pc.in \
 	$(top_srcdir)/data/default/panels/panel.in \
 	$(top_srcdir)/data/two_panels/panels/top.in \
-	$(top_srcdir)/data/two_panels/panels/bottom.in ABOUT-NLS \
-	AUTHORS COPYING ChangeLog README ar-lib compile config.guess \
-	config.rpath config.sub depcomp install-sh missing ltmain.sh
+	$(top_srcdir)/data/two_panels/panels/bottom.in AUTHORS COPYING \
+	ChangeLog README ar-lib compile config.guess config.sub \
+	depcomp install-sh missing ltmain.sh
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
-	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intltool.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/acinclude.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/intltool.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = lxpanel.pc data/default/panels/panel \
 	data/two_panels/panels/top data/two_panels/panels/bottom
@@ -290,8 +285,6 @@ INTLTOOL__v_MERGE_ = @INTLTOOL__v_MERGE_@
 INTLTOOL__v_MERGE_0 = @INTLTOOL__v_MERGE_0@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LIBICONV = @LIBICONV@
-LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -299,8 +292,6 @@ LIBXML2_CFLAGS = @LIBXML2_CFLAGS@
 LIBXML2_LIBS = @LIBXML2_LIBS@
 LIPO = @LIPO@
 LN_S = @LN_S@
-LTLIBICONV = @LTLIBICONV@
-LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 LXPANEL_MODULE = @LXPANEL_MODULE@
 MAKEINFO = @MAKEINFO@
@@ -347,9 +338,6 @@ X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
 XGETTEXT = @XGETTEXT@
 XMKMF = @XMKMF@
-XMLCATALOG = @XMLCATALOG@
-XML_CATALOG_FILE = @XML_CATALOG_FILE@
-XSLTPROC = @XSLTPROC@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -408,9 +396,6 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = plugins src data po man
 EXTRA_DIST = \
         autogen.sh \
-        intltool-extract.in \
-        intltool-merge.in \
-        intltool-update.in \
         lxpanel.pc.in
 
 pkgconfigdir = $(libdir)/pkgconfig

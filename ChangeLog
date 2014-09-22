@@ -1,3 +1,34 @@
+* Fixed search for the gtkrc file.
+* Fixed search path for configuration - it should be not compilation time
+    path but paths using $XDG_CONFIG_DIRS.
+* Fixed incorrect flag for 'launchbar' plugin which marks him expandable.
+* Fixed dragging of task buttons.
+* Corrected using $XDG_MENU_PREFIX to work the same way as libfm does.
+* Fixed using font description, font in gtkrc file was ignored.
+* Improved search for hw sensors in /sys/class/hwmon/ hierarchy.
+* Improved check for critical temperatures in 'termal' plugin, now each
+    individual hardware setting (if available) is also taken into
+    consideration.
+* Fixed parsing alias name in 'weather' plugin settings.
+* Got rid of all individual plugins/*/Makefile - those rules more easily
+    can be contained in the plugins/Makefile.am. Adding a simple plugin
+    basically would mean to add three lines into that file instead of
+    writing whole Makefile.am.
+* Fixed invalid system config path search ("lxpanel" part was missing).
+* Fixed incorrect requirements in the lxpanel.pc file.
+* Fixed memory leak in the 'volumealsa' plugin.
+* Now 'volumealsa' checks for 'MixerCommand' setting in the configuration
+    before guessing it.
+* Fixed color saving in the configuration.
+* Fixed incomplete resources deallocation in 'volumealsa' plugin.
+* Fixed make uninstall (it left plugins installed).
+* Fixed monitor number set from GUI.
+* Fixed hang on netstatus icon in auto-hidden panel.
+* Fixed icon grid compilation with GTK+ < 2.20.
+* Fixed compilation without menu-cache.
+* Now man pages are included in the GIT and tarball, not just xml files.
+* Fixed incorrect printf arguments in 'netstatus' plugin.
+
 0.7.0
 -------------------------------------------------------------------------
 * New plugin 'launchtaskbar' with combined functionality from 'launchbar'

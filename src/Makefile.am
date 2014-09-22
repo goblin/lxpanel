@@ -6,7 +6,6 @@ lxpanel_CFLAGS = \
 	-I$(top_srcdir) \
 	-DPACKAGE_LIB_DIR=\""$(libdir)"\" \
 	-DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\" \
-	-DPACKAGE_SYSCONF_DIR=\""$(sysconfdir)/xdg/lxpanel"\" \
 	-DPACKAGE_UI_DIR=\""$(datadir)/lxpanel/ui"\" \
 	-DPACKAGE_BIN_DIR=\""$(bindir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
@@ -16,7 +15,7 @@ lxpanel_CFLAGS = \
 BUILTIN_PLUGINS = $(top_builddir)/plugins/libbuiltin_plugins.a
 
 if ENABLE_MENU_CACHE
-MENU_SOURCES = menu-policy.h menu-policy.c
+MENU_SOURCES = menu-policy.c
 endif
 
 lxpanel_SOURCES = \
@@ -60,6 +59,7 @@ EXTRA_DIST = \
 	bg.h \
 	dbg.h \
 	ev.h \
+	menu-policy.h \
 	icon-grid-old.h \
 	private.h
 
