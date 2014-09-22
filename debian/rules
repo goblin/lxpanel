@@ -12,10 +12,10 @@ override_dh_autoreconf:
 
 override_dh_auto_configure:
 ifeq ($(DEB_HOST_ARCH_OS),linux)
-	dh_auto_configure -- --enable-man --with-plugins=all --disable-silent-rules
+	dh_auto_configure -- --with-plugins=all --disable-silent-rules
 else
 	# omit netstat plugin on non-linux, requires wireless-tools
-	dh_auto_configure -- --enable-man --with-plugins=all,-netstat --disable-silent-rules
+	dh_auto_configure -- --with-plugins=all,-netstat --disable-silent-rules
 endif
 
 override_dh_strip:
