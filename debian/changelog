@@ -1,3 +1,12 @@
+lxpanel (0.7.1-1) unstable; urgency=low
+
+  * Merging upstream version 0.7.1:
+    - Fixed crash after left-click on empty space (Closes: #759554).
+    - Fixed invalid config search path (Closes: #760971).
+  * Removing --enable-man from options, new upstream source doesn't require it.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Mon, 22 Sep 2014 16:18:34 +0300
+
 lxpanel (0.7.0-1) unstable; urgency=low
 
   * Adding --disable-silent-rules to fix buildlog checker warning.
