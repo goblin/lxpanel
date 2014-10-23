@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2006-2014 LxDE Developers, see the file AUTHORS for details.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,7 @@ static void panel_start_gui(LXPanel *p);
 static void ah_start(LXPanel *p);
 static void ah_stop(LXPanel *p);
 static void on_root_bg_changed(FbBg *bg, LXPanel* p);
-
+static void _panel_update_background(LXPanel * p);
 
 G_DEFINE_TYPE(PanelToplevel, lxpanel, GTK_TYPE_WINDOW);
 
@@ -73,7 +73,7 @@ static void lxpanel_finalize(GObject *object)
         lxpanel_config_save( self );
     config_destroy(p->config);
 
-    g_free(p->workarea);
+    XFree(p->workarea);
     g_free( p->background_file );
     g_slist_free( p->system_menus );
 
@@ -117,11 +117,22 @@ static void lxpanel_destroy(GtkObject *object)
         p->initialized = FALSE;
     }
 
+    if (p->background_update_queued)
+    {
+        g_source_remove(p->background_update_queued);
+        p->background_update_queued = 0;
+    }
+
     GTK_OBJECT_CLASS(lxpanel_parent_class)->destroy(object);
 }
 
-static gboolean delay_update_background( GtkWidget* p )
+static gboolean idle_update_background(gpointer p)
 {
+    LXPanel *panel = LXPANEL(p);
+
+    if (g_source_is_destroyed(g_main_current_source()))
+        return FALSE;
+
     /* Panel could be destroyed while background update scheduled */
 #if GTK_CHECK_VERSION(2, 20, 0)
     if (gtk_widget_get_realized(p))
@@ -130,18 +141,27 @@ static gboolean delay_update_background( GtkWidget* p )
 #endif
     {
         gdk_display_sync( gtk_widget_get_display(p) );
-        _panel_update_background( LXPANEL(p) );
+        _panel_update_background(panel);
     }
+    panel->priv->background_update_queued = 0;
 
     return FALSE;
+}
+
+void _panel_queue_update_background(LXPanel *panel)
+{
+    if (panel->priv->background_update_queued)
+        return;
+    panel->priv->background_update_queued = g_idle_add_full(G_PRIORITY_HIGH,
+                                                            idle_update_background,
+                                                            panel, NULL);
 }
 
 static void lxpanel_realize(GtkWidget *widget)
 {
     GTK_WIDGET_CLASS(lxpanel_parent_class)->realize(widget);
 
-    g_idle_add_full( G_PRIORITY_LOW,
-            (GSourceFunc)delay_update_background, widget, NULL );
+    _panel_queue_update_background(LXPANEL(widget));
 }
 
 static void lxpanel_style_set(GtkWidget *widget, GtkStyle* prev)
@@ -149,13 +169,7 @@ static void lxpanel_style_set(GtkWidget *widget, GtkStyle* prev)
     GTK_WIDGET_CLASS(lxpanel_parent_class)->style_set(widget, prev);
 
     /* FIXME: This dirty hack is used to fix the background of systray... */
-#if GTK_CHECK_VERSION(2, 20, 0)
-    if (gtk_widget_get_realized(widget))
-#else
-    if( GTK_WIDGET_REALIZED( widget ) )
-#endif
-        g_idle_add_full( G_PRIORITY_LOW,
-                (GSourceFunc)delay_update_background, widget, NULL );
+    _panel_queue_update_background(LXPANEL(widget));
 }
 
 static void lxpanel_size_request(GtkWidget *widget, GtkRequisition *req)
@@ -195,6 +209,17 @@ static void lxpanel_size_allocate(GtkWidget *widget, GtkAllocation *a)
     {
         gtk_window_move(GTK_WINDOW(widget), p->ax, p->ay);
         _panel_set_wm_strut(LXPANEL(widget));
+    }
+    else if (p->background_update_queued)
+    {
+        g_source_remove(p->background_update_queued);
+        p->background_update_queued = 0;
+#if GTK_CHECK_VERSION(2, 20, 0)
+        if (gtk_widget_get_realized(widget))
+#else
+        if (GTK_WIDGET_REALIZED(widget))
+#endif
+            _panel_update_background(LXPANEL(widget));
     }
 }
 
@@ -380,7 +405,7 @@ void _panel_set_wm_strut(LXPanel *panel)
         strut_size = p->height_when_hidden;
 
     /* Set up strut value in property format. */
-    guint32 desired_strut[12];
+    gulong desired_strut[12];
     memset(desired_strut, 0, sizeof(desired_strut));
     if (p->setstrut)
     {
@@ -541,7 +566,7 @@ panel_event_filter(GdkXEvent *xevent, GdkEvent *event, gpointer not_used)
             for( l = all_panels; l; l = l->next )
             {
                 LXPanel* p = (LXPanel*)l->data;
-                g_free( p->priv->workarea );
+                XFree( p->priv->workarea );
                 p->priv->workarea = get_xaproperty (GDK_ROOT_WINDOW(), a_NET_WORKAREA, XA_CARDINAL, &p->priv->wa_len);
                 /* print_wmdata(p); */
             }
@@ -621,7 +646,7 @@ void panel_update_background(Panel * p)
     _panel_update_background(p->topgwin);
 }
 
-void _panel_update_background(LXPanel * p)
+static void _panel_update_background(LXPanel * p)
 {
     GtkWidget *w = GTK_WIDGET(p);
     GList *plugins, *l;
@@ -691,11 +716,13 @@ mouse_watch(LXPanel *panel)
 
     gint cx, cy, cw, ch, gap;
 
-    cx = p->cx;
-    cy = p->cy;
+    cx = p->ax;
+    cy = p->ay;
     cw = p->cw;
     ch = p->ch;
 
+    if (cw == 1) cw = 0;
+    if (ch == 1) ch = 0;
     /* reduce area which will raise panel so it does not interfere with apps */
     if (p->ah_state == AH_STATE_HIDDEN) {
         gap = MAX(p->height_when_hidden, GAP);
@@ -743,10 +770,13 @@ static void ah_state_set(LXPanel *panel, PanelAHState ah_state)
         case AH_STATE_VISIBLE:
             gtk_widget_show(GTK_WIDGET(panel));
             gtk_widget_show(p->box);
+            gtk_widget_queue_resize(GTK_WIDGET(panel));
             gtk_window_stick(GTK_WINDOW(panel));
             p->visible = TRUE;
             break;
         case AH_STATE_WAITING:
+            if (p->hide_timeout)
+                g_source_remove(p->hide_timeout);
             p->hide_timeout = g_timeout_add(2 * PERIOD, ah_state_hide_timeout, panel);
             break;
         case AH_STATE_HIDDEN:
@@ -904,6 +934,7 @@ static void panel_popupmenu_create_panel( GtkMenuItem* item, LXPanel* panel )
     GdkScreen *screen;
     LXPanel *new_panel = panel_allocate();
     Panel *p = new_panel->priv;
+    config_setting_t *global;
 
     /* Allocate the edge. */
     screen = gdk_screen_get_default();
@@ -931,7 +962,9 @@ found_edge:
     p->name = gen_panel_name(p->edge, p->monitor);
 
     /* create new config with first group "Global" */
-    config_group_add_subgroup(config_root_setting(p->config), "Global");
+    global = config_group_add_subgroup(config_root_setting(p->config), "Global");
+    config_group_set_string(global, "edge", num2str(edge_pair, p->edge, "none"));
+    config_group_set_int(global, "monitor", p->monitor);
     panel_configure(new_panel, 0);
     panel_normalize_configuration(p);
     panel_start_gui(new_panel);
@@ -1220,7 +1253,7 @@ panel_start_gui(LXPanel *panel)
 {
     Atom state[3];
     XWMHints wmhints;
-    guint32 val;
+    gulong val;
     Display *xdisplay = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
     Panel *p = panel->priv;
     GtkWidget *w = GTK_WIDGET(panel);
@@ -1279,9 +1312,9 @@ panel_start_gui(LXPanel *panel)
     _panel_establish_autohide(panel);
 
     /* send it to running wm */
-    Xclimsg(p->topxwin, a_NET_WM_DESKTOP, 0xFFFFFFFF, 0, 0, 0, 0);
+    Xclimsg(p->topxwin, a_NET_WM_DESKTOP, G_MAXULONG, 0, 0, 0, 0);
     /* and assign it ourself just for case when wm is not running */
-    val = 0xFFFFFFFF;
+    val = G_MAXULONG;
     XChangeProperty(xdisplay, p->topxwin, a_NET_WM_DESKTOP, XA_CARDINAL, 32,
           PropModeReplace, (unsigned char *) &val, 1);
 
@@ -1452,8 +1485,7 @@ void _panel_set_panel_configuration_changed(LXPanel *panel)
     }
     g_list_free(plugins);
     /* panel geometry changed? update panel background then */
-    g_idle_add_full( G_PRIORITY_LOW,
-                    (GSourceFunc)delay_update_background, panel, NULL );
+    _panel_queue_update_background(panel);
 }
 
 static int
