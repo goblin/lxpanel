@@ -1,3 +1,16 @@
+lxpanel (0.7.2-1) unstable; urgency=low
+
+  * Removing extra colons from Files lines in debian/copyright file.
+  * Merging upstream version 0.7.2:
+    - Fixed panel plugins background updates (Closes: #650821).
+    - Fixed reserved space on 64bit architectures (Closes: #762650).
+  * Bump Standards-Version to 3.9.6.
+  * Adding lintian-overrides file for debian-watch-may-check-gpg-signature.
+  * Adding lintian override for false positive hardening-no-fortify-functions
+    on usr/lib/x86_64-linux-gnu/lxpanel/plugins/monitors.so.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Thu, 23 Oct 2014 23:59:12 +0300
+
 lxpanel (0.7.1-1) unstable; urgency=low
 
   * Merging upstream version 0.7.1:
