@@ -29,7 +29,6 @@
 #include <stdlib.h>
 
 #include "misc.h"
-#include "bg.h"
 
 #include <glib-object.h>
 #include <glib/gi18n.h>
@@ -37,8 +36,12 @@
 
 //#define DEBUG
 #include "dbg.h"
+#include "gtk-compat.h"
 
-static void init_plugin_class_list(void);
+#if GTK_CHECK_VERSION(3, 0, 0)
+#include <gtk/gtkx.h>
+#endif
+
 static void plugin_class_unref(PluginClass * pc);
 
 GQuark lxpanel_plugin_qinit;
@@ -53,11 +56,6 @@ do {\
     extern PluginClass pc;\
     register_plugin_class(&pc, FALSE);\
 } while (0)
-
-/* The same for new plugins type - they will be not unloaded by FmModule */
-#define REGISTER_STATIC_MODULE(pc) do { \
-    extern LXPanelPluginInit lxpanel_static_plugin_##pc; \
-    lxpanel_register_plugin_type(#pc, &lxpanel_static_plugin_##pc); } while (0)
 
 static inline const LXPanelPluginInit *_find_plugin(const char *name)
 {
@@ -103,48 +101,6 @@ static void register_plugin_class(PluginClass * pc, gboolean dynamic)
     init->expand_default = pc->expand_default;
     pc->dynamic = dynamic;
     g_hash_table_insert(_all_types, g_strdup(pc->type), init);
-}
-
-/* Initialize the static plugins. */
-static void init_plugin_class_list(void)
-{
-#ifdef STATIC_SEPARATOR
-    REGISTER_STATIC_MODULE(separator);
-#endif
-
-#ifdef STATIC_LAUNCHTASKBAR
-    REGISTER_STATIC_MODULE(launchtaskbar);
-#endif
-
-#ifdef STATIC_DCLOCK
-    REGISTER_STATIC_MODULE(dclock);
-#endif
-
-#ifdef STATIC_WINCMD
-    REGISTER_STATIC_MODULE(wincmd);
-#endif
-
-#ifdef STATIC_DIRMENU
-    REGISTER_STATIC_MODULE(dirmenu);
-#endif
-
-#ifdef STATIC_PAGER
-    REGISTER_STATIC_MODULE(pager);
-#endif
-
-#ifdef STATIC_TRAY
-    REGISTER_STATIC_MODULE(tray);
-#endif
-
-#ifndef DISABLE_MENU
-#ifdef STATIC_MENU
-    REGISTER_STATIC_MODULE(menu);
-#endif
-#endif
-
-#ifdef STATIC_SPACE
-    REGISTER_STATIC_MODULE(space);
-#endif
 }
 
 /* Load a dynamic plugin. */
@@ -197,9 +153,6 @@ static void plugin_class_unref(PluginClass * pc)
 /* Loads all available old type plugins. Should be removed in future releases. */
 static void plugin_get_available_classes(void)
 {
-    /* Initialize static plugins on first call. */
-    init_plugin_class_list();
-
 #ifndef DISABLE_PLUGINS_LOADING
     GDir * dir = g_dir_open(PACKAGE_LIB_DIR "/lxpanel/plugins", 0, NULL);
     if (dir != NULL)
@@ -230,36 +183,26 @@ void plugin_widget_set_background(GtkWidget * w, LXPanel * panel)
 {
     if (w != NULL)
     {
-        Panel *p = panel->priv;
         if (gtk_widget_get_has_window(w))
         {
-            if ((p->background) || (p->transparent))
+            Panel *p = panel->priv;
+
+            gtk_widget_set_app_paintable(w, ((p->background) || (p->transparent)));
+            if (gtk_widget_get_realized(w))
             {
-#if GTK_CHECK_VERSION(2, 20, 0)
-                if (gtk_widget_get_realized(w))
+                GdkWindow *window = gtk_widget_get_window(w);
+#if GTK_CHECK_VERSION(3, 0, 0)
+                gdk_window_set_background_pattern(window, NULL);
 #else
-                if (GTK_WIDGET_REALIZED(w))
+                gdk_window_set_back_pixmap(window, NULL, TRUE);
 #endif
-                {
-                    _panel_determine_background_pixmap(panel, w);
-                    gdk_window_invalidate_rect(gtk_widget_get_window(w), NULL, TRUE);
-                }
-            }
-            else
-            {
-                /* Set background according to the current GTK style. */
-                gtk_widget_set_app_paintable(w, FALSE);
-#if GTK_CHECK_VERSION(2, 20, 0)
-                if (gtk_widget_get_realized(w))
-#else
-                if (GTK_WIDGET_REALIZED(w))
-#endif
-                {
-                    gdk_window_set_back_pixmap(gtk_widget_get_window(w), NULL, TRUE);
-                    gtk_style_set_background(gtk_widget_get_style(w),
-                                             gtk_widget_get_window(w),
+                if ((p->background) || (p->transparent))
+                    /* Reset background for the child, using background of panel */
+                    gdk_window_invalidate_rect(window, NULL, TRUE);
+                else
+                    /* Set background according to the current GTK style. */
+                    gtk_style_set_background(gtk_widget_get_style(w), window,
                                              GTK_STATE_NORMAL);
-                }
             }
         }
 
@@ -304,6 +247,8 @@ void lxpanel_plugin_popup_set_position_helper(LXPanel * p, GtkWidget * near, Gtk
     gint x, y;
     GtkAllocation allocation;
     GtkAllocation popup_req;
+    GdkScreen *screen = NULL;
+    gint monitor;
 
     /* Get the allocation of the popup menu. */
     gtk_widget_realize(popup);
@@ -339,11 +284,18 @@ void lxpanel_plugin_popup_set_position_helper(LXPanel * p, GtkWidget * near, Gtk
     }
 
     /* Push onscreen. */
-    int screen_width = gdk_screen_width();
-    int screen_height = gdk_screen_height();
-    x = CLAMP(x, 0, screen_width - popup_req.width);
-    y = CLAMP(y, 0, screen_height - popup_req.height);
-    /* FIXME: take monitor area into account not just screen */
+    if (gtk_widget_has_screen(near))
+        screen = gtk_widget_get_screen(near);
+    else
+        screen = gdk_screen_get_default();
+    monitor = gdk_screen_get_monitor_at_point(screen, x, y);
+#if GTK_CHECK_VERSION(3, 4, 0)
+    gdk_screen_get_monitor_workarea(screen, monitor, &allocation);
+#else
+    gdk_screen_get_monitor_geometry(screen, monitor, &allocation);
+#endif
+    x = CLAMP(x, allocation.x, allocation.x + allocation.width - popup_req.width);
+    y = CLAMP(y, allocation.y, allocation.y + allocation.height - popup_req.height);
 
     *px = x;
     *py = y;
@@ -435,7 +387,7 @@ static gboolean fm_module_callback_lxpanel_gtk(const char *name, gpointer init, 
 
 static gboolean old_plugins_loaded = FALSE;
 
-void _prepare_modules(void)
+void lxpanel_prepare_modules(void)
 {
     _all_types = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
     lxpanel_plugin_qdata = g_quark_from_static_string("LXPanel::plugin-data");
@@ -448,7 +400,7 @@ void _prepare_modules(void)
 #endif
 }
 
-void _unload_modules(void)
+void lxpanel_unload_modules(void)
 {
     GHashTableIter iter;
     gpointer key, val;
@@ -536,7 +488,8 @@ static void on_size_allocate(GtkWidget *widget, GdkRectangle *allocation, LXPane
         return; /* not changed */
     *alloc = *allocation;
     /* g_debug("size-allocate on %s", PLUGIN_CLASS(widget)->name); */
-    _panel_queue_update_background(p);
+    plugin_widget_set_background(widget, p);
+//    _panel_queue_update_background(p);
 //    _queue_panel_calculate_size(p);
 }
 
@@ -565,6 +518,7 @@ GtkWidget *lxpanel_add_plugin(LXPanel *p, const char *name, config_setting_t *cf
     if (s)
         padding = config_setting_get_int(s);
     s = config_setting_get_member(cfg, "border");
+    /* FIXME: this is useless setting, it should be 0 or panel becomes weird */
     if (s)
         border = config_setting_get_int(s);
     /* prepare config and create it if need */

@@ -31,36 +31,40 @@
 #include <string.h>
 #include <gdk/gdkx.h>
 #include <libfm/fm-gtk.h>
+#include <cairo-xlib.h>
 
 #define __LXPANEL_INTERNALS__
 
 #include "private.h"
 #include "misc.h"
-#include "bg.h"
 
 #include "lxpanelctl.h"
 #include "dbg.h"
+#include "gtk-compat.h"
 
-static gchar *cfgfile = NULL;
-static gchar version[] = VERSION;
 gchar *cprofile = "default";
-
-static GtkWindowGroup* win_grp; /* window group used to limit the scope of model dialog. */
-
-static int config = 0;
-FbEv *fbev = NULL;
 
 GSList* all_panels = NULL;  /* a single-linked list storing all panels */
 
-gboolean is_restarting = FALSE;
-
 gboolean is_in_lxde = FALSE;
 
-static void panel_start_gui(LXPanel *p);
+static GtkWindowGroup* win_grp = NULL; /* window group used to limit the scope of model dialog. */
+
+static gulong monitors_handler = 0;
+
+static void panel_start_gui(LXPanel *p, config_setting_t *list);
 static void ah_start(LXPanel *p);
 static void ah_stop(LXPanel *p);
-static void on_root_bg_changed(FbBg *bg, LXPanel* p);
-static void _panel_update_background(LXPanel * p);
+static void _panel_update_background(LXPanel * p, gboolean enforce);
+
+enum
+{
+    ICON_SIZE_CHANGED,
+    PANEL_FONT_CHANGED,
+    N_SIGNALS
+};
+
+static guint signals[N_SIGNALS];
 
 G_DEFINE_TYPE(PanelToplevel, lxpanel, GTK_TYPE_WINDOW);
 
@@ -73,7 +77,7 @@ static void lxpanel_finalize(GObject *object)
         lxpanel_config_save( self );
     config_destroy(p->config);
 
-    XFree(p->workarea);
+    //XFree(p->workarea);
     g_free( p->background_file );
     g_slist_free( p->system_menus );
 
@@ -83,12 +87,12 @@ static void lxpanel_finalize(GObject *object)
     G_OBJECT_CLASS(lxpanel_parent_class)->finalize(object);
 }
 
-static void lxpanel_destroy(GtkObject *object)
+static void panel_stop_gui(LXPanel *self)
 {
-    LXPanel *self = LXPANEL(object);
     Panel *p = self->priv;
     Display *xdisplay;
 
+    g_debug("panel_stop_gui on '%s'", p->name);
     if (p->autohide)
         ah_stop(self);
 
@@ -100,12 +104,6 @@ static void lxpanel_destroy(GtkObject *object)
         /* just close the dialog, it will do all required cleanup */
         gtk_dialog_response(GTK_DIALOG(p->plugin_pref_dialog), GTK_RESPONSE_CLOSE);
 
-    if (p->bg != NULL)
-    {
-        g_signal_handlers_disconnect_by_func(G_OBJECT(p->bg), on_root_bg_changed, self);
-        g_object_unref(p->bg);
-        p->bg = NULL;
-    }
 
     if (p->initialized)
     {
@@ -116,14 +114,45 @@ static void lxpanel_destroy(GtkObject *object)
         XSync(xdisplay, True);
         p->initialized = FALSE;
     }
+    if (p->surface != NULL)
+    {
+        cairo_surface_destroy(p->surface);
+        p->surface = NULL;
+    }
 
     if (p->background_update_queued)
     {
         g_source_remove(p->background_update_queued);
         p->background_update_queued = 0;
     }
+    if (p->strut_update_queued)
+    {
+        g_source_remove(p->strut_update_queued);
+        p->strut_update_queued = 0;
+    }
 
+    if (gtk_bin_get_child(GTK_BIN(self)))
+    {
+        gtk_widget_destroy(p->box);
+        p->box = NULL;
+    }
+}
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+static void lxpanel_destroy(GtkWidget *object)
+#else
+static void lxpanel_destroy(GtkObject *object)
+#endif
+{
+    LXPanel *self = LXPANEL(object);
+
+    panel_stop_gui(self);
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GTK_WIDGET_CLASS(lxpanel_parent_class)->destroy(object);
+#else
     GTK_OBJECT_CLASS(lxpanel_parent_class)->destroy(object);
+#endif
 }
 
 static gboolean idle_update_background(gpointer p)
@@ -134,14 +163,10 @@ static gboolean idle_update_background(gpointer p)
         return FALSE;
 
     /* Panel could be destroyed while background update scheduled */
-#if GTK_CHECK_VERSION(2, 20, 0)
     if (gtk_widget_get_realized(p))
-#else
-    if (GTK_WIDGET_REALIZED(p))
-#endif
     {
         gdk_display_sync( gtk_widget_get_display(p) );
-        _panel_update_background(panel);
+        _panel_update_background(panel, FALSE);
     }
     panel->priv->background_update_queued = 0;
 
@@ -155,6 +180,19 @@ void _panel_queue_update_background(LXPanel *panel)
     panel->priv->background_update_queued = g_idle_add_full(G_PRIORITY_HIGH,
                                                             idle_update_background,
                                                             panel, NULL);
+}
+
+static gboolean idle_update_strut(gpointer p)
+{
+    LXPanel *panel = LXPANEL(p);
+
+    if (g_source_is_destroyed(g_main_current_source()))
+        return FALSE;
+
+    _panel_set_wm_strut(panel);
+    panel->priv->strut_update_queued = 0;
+
+    return FALSE;
 }
 
 static void lxpanel_realize(GtkWidget *widget)
@@ -174,7 +212,9 @@ static void lxpanel_style_set(GtkWidget *widget, GtkStyle* prev)
 
 static void lxpanel_size_request(GtkWidget *widget, GtkRequisition *req)
 {
-    Panel *p = LXPANEL(widget)->priv;
+    LXPanel *panel = LXPANEL(widget);
+    Panel *p = panel->priv;
+    GdkRectangle rect;
 
     GTK_WIDGET_CLASS(lxpanel_parent_class)->size_request(widget, req);
 
@@ -183,19 +223,19 @@ static void lxpanel_size_request(GtkWidget *widget, GtkRequisition *req)
          * report 0 size.  Ask the content box instead for its size. */
         gtk_widget_size_request(p->box, req);
 
-    /* FIXME: is this ever required? */
-    if (p->widthtype == WIDTH_REQUEST)
-        p->width = (p->orientation == GTK_ORIENTATION_HORIZONTAL) ? req->width : req->height;
-    if (p->heighttype == HEIGHT_REQUEST)
-        p->height = (p->orientation == GTK_ORIENTATION_HORIZONTAL) ? req->height : req->width;
-    calculate_position(p);
-
-    gtk_widget_set_size_request( widget, p->aw, p->ah );
+    rect.width = req->width;
+    rect.height = req->height;
+    _calculate_position(panel, &rect);
+    req->width = rect.width;
+    req->height = rect.height;
 }
 
 static void lxpanel_size_allocate(GtkWidget *widget, GtkAllocation *a)
 {
-    Panel *p = LXPANEL(widget)->priv;
+    LXPanel *panel = LXPANEL(widget);
+    Panel *p = panel->priv;
+    GdkRectangle rect;
+    gint x, y;
 
     GTK_WIDGET_CLASS(lxpanel_parent_class)->size_allocate(widget, a);
 
@@ -203,40 +243,44 @@ static void lxpanel_size_allocate(GtkWidget *widget, GtkAllocation *a)
         p->width = (p->orientation == GTK_ORIENTATION_HORIZONTAL) ? a->width : a->height;
     if (p->heighttype == HEIGHT_REQUEST)
         p->height = (p->orientation == GTK_ORIENTATION_HORIZONTAL) ? a->height : a->width;
-    calculate_position(p);
 
-    if (a->width != p->aw || a->height != p->ah || a->x != p->ax || a->y != p->ay)
+    if (!gtk_widget_get_realized(widget))
+        return;
+
+    rect = *a;
+    /* get real coords since a contains 0, 0 */
+    gdk_window_get_origin(gtk_widget_get_window(widget), &x, &y);
+    _calculate_position(panel, &rect);
+    p->ax = rect.x;
+    p->ay = rect.y;
+
+    if (a->width != p->aw || a->height != p->ah || x != p->ax || y != p->ay)
     {
+        p->aw = a->width;
+        p->ah = a->height;
+        /* FIXME: should we "correct" requested sizes? */
         gtk_window_move(GTK_WINDOW(widget), p->ax, p->ay);
-        _panel_set_wm_strut(LXPANEL(widget));
+        /* SF bug #708: strut update does not work while in size allocation */
+        if (!panel->priv->strut_update_queued)
+            panel->priv->strut_update_queued = g_idle_add_full(G_PRIORITY_HIGH,
+                                                               idle_update_strut,
+                                                               panel, NULL);
+        _panel_queue_update_background(panel);
     }
-    else if (p->background_update_queued)
-    {
-        g_source_remove(p->background_update_queued);
-        p->background_update_queued = 0;
-#if GTK_CHECK_VERSION(2, 20, 0)
-        if (gtk_widget_get_realized(widget))
-#else
-        if (GTK_WIDGET_REALIZED(widget))
-#endif
-            _panel_update_background(LXPANEL(widget));
-    }
+
+    if (gtk_widget_get_mapped(widget))
+        _panel_establish_autohide(panel);
 }
 
 static gboolean lxpanel_configure_event (GtkWidget *widget, GdkEventConfigure *e)
 {
     Panel *p = LXPANEL(widget)->priv;
 
-    if (e->width == p->cw && e->height == p->ch && e->x == p->cx && e->y == p->cy)
-        goto ok;
     p->cw = e->width;
     p->ch = e->height;
     p->cx = e->x;
     p->cy = e->y;
 
-    if (p->transparent)
-        fb_bg_notify_changed_bg(p->bg);
-ok:
     return GTK_WIDGET_CLASS(lxpanel_parent_class)->configure_event(widget, e);
 }
 
@@ -264,11 +308,17 @@ static gboolean lxpanel_button_press(GtkWidget *widget, GdkEventButton *event)
 static void lxpanel_class_init(PanelToplevelClass *klass)
 {
     GObjectClass *gobject_class = (GObjectClass *)klass;
+#if !GTK_CHECK_VERSION(3, 0, 0)
     GtkObjectClass *gtk_object_class = (GtkObjectClass *)klass;
+#endif
     GtkWidgetClass *widget_class = (GtkWidgetClass *)klass;
 
     gobject_class->finalize = lxpanel_finalize;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    widget_class->destroy = lxpanel_destroy;
+#else
     gtk_object_class->destroy = lxpanel_destroy;
+#endif
     widget_class->realize = lxpanel_realize;
     widget_class->size_request = lxpanel_size_request;
     widget_class->size_allocate = lxpanel_size_allocate;
@@ -276,6 +326,24 @@ static void lxpanel_class_init(PanelToplevelClass *klass)
     widget_class->style_set = lxpanel_style_set;
     widget_class->map_event = lxpanel_map_event;
     widget_class->button_press_event = lxpanel_button_press;
+
+    signals[ICON_SIZE_CHANGED] =
+        g_signal_new("icon-size-changed",
+                     G_TYPE_FROM_CLASS(klass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(PanelToplevelClass, icon_size_changed),
+                     NULL, NULL,
+                     g_cclosure_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0, G_TYPE_NONE);
+
+    signals[PANEL_FONT_CHANGED] =
+        g_signal_new("panel-font-changed",
+                     G_TYPE_FROM_CLASS(klass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(PanelToplevelClass, panel_font_changed),
+                     NULL, NULL,
+                     g_cclosure_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0, G_TYPE_NONE);
 }
 
 static void lxpanel_init(PanelToplevel *self)
@@ -284,7 +352,7 @@ static void lxpanel_init(PanelToplevel *self)
 
     self->priv = p;
     p->topgwin = self;
-    p->allign = ALLIGN_CENTER;
+    p->align = ALIGN_CENTER;
     p->edge = EDGE_NONE;
     p->widthtype = WIDTH_PERCENT;
     p->width = 100;
@@ -310,13 +378,30 @@ static void lxpanel_init(PanelToplevel *self)
     p->icon_theme = gtk_icon_theme_get_default();
     p->config = config_new();
     p->defstyle = gtk_widget_get_default_style();
-    gtk_window_set_type_hint(GTK_WINDOW(self), GDK_WINDOW_TYPE_HINT_DOCK);
 }
 
 /* Allocate and initialize new Panel structure. */
 static LXPanel* panel_allocate(void)
 {
-    return g_object_new(LX_TYPE_PANEL, NULL);
+    return g_object_new(LX_TYPE_PANEL,
+                        "border-width", 0,
+                        "decorated", FALSE,
+                        "name", "PanelToplevel",
+                        "resizable", FALSE,
+                        "title", "panel",
+                        "type-hint", GDK_WINDOW_TYPE_HINT_DOCK,
+                        "window-position", GTK_WIN_POS_NONE,
+                        NULL);
+}
+
+void _panel_emit_icon_size_changed(LXPanel *p)
+{
+    g_signal_emit(p, signals[ICON_SIZE_CHANGED], 0);
+}
+
+void _panel_emit_font_changed(LXPanel *p)
+{
+    g_signal_emit(p, signals[PANEL_FONT_CHANGED], 0);
 }
 
 /* Normalize panel configuration after load from file or reconfiguration. */
@@ -335,9 +420,95 @@ static void panel_normalize_configuration(Panel* p)
             p->height = PANEL_HEIGHT_MAX;
     }
     if (p->monitor < 0)
-        p->monitor = 0;
+        p->monitor = -1;
     if (p->background)
         p->transparent = 0;
+}
+
+gboolean _panel_edge_can_strut(LXPanel *panel, int edge, gint monitor, gulong *size)
+{
+    Panel *p;
+    GdkScreen *screen;
+    GdkRectangle rect;
+    GdkRectangle rect2;
+    gint n, i;
+    gulong s;
+
+    if (!gtk_widget_get_mapped(GTK_WIDGET(panel)))
+        return FALSE;
+
+    p = panel->priv;
+    /* Handle autohide case.  EWMH recommends having the strut be the minimized size. */
+    if (p->autohide)
+        s = p->height_when_hidden;
+    else switch (edge)
+    {
+    case EDGE_LEFT:
+    case EDGE_RIGHT:
+        s = p->aw;
+        break;
+    case EDGE_TOP:
+    case EDGE_BOTTOM:
+        s = p->ah;
+        break;
+    default: /* error! */
+        return FALSE;
+    }
+    if (s == 0)
+        return FALSE; /* nothing to strut here */
+
+    if (monitor < 0) /* screen span */
+    {
+        if (G_LIKELY(size))
+            *size = s;
+        return TRUE;
+    }
+
+    screen = gtk_widget_get_screen(GTK_WIDGET(panel));
+    n = gdk_screen_get_n_monitors(screen);
+    if (monitor >= n) /* hidden now */
+        return FALSE;
+    gdk_screen_get_monitor_geometry(screen, monitor, &rect);
+    switch (edge)
+    {
+        case EDGE_LEFT:
+            rect.width = rect.x;
+            rect.x = 0;
+            s += rect.width;
+            break;
+        case EDGE_RIGHT:
+            rect.x += rect.width;
+            rect.width = gdk_screen_get_width(screen) - rect.x;
+            s += rect.width;
+            break;
+        case EDGE_TOP:
+            rect.height = rect.y;
+            rect.y = 0;
+            s += rect.height;
+            break;
+        case EDGE_BOTTOM:
+            rect.y += rect.height;
+            rect.height = gdk_screen_get_height(screen) - rect.y;
+            s += rect.height;
+            break;
+        default: ;
+    }
+    if (rect.height == 0 || rect.width == 0) ; /* on a border of monitor */
+    else
+    {
+        for (i = 0; i < n; i++)
+        {
+            if (i == monitor)
+                continue;
+            gdk_screen_get_monitor_geometry(screen, i, &rect2);
+            if (gdk_rectangle_intersect(&rect, &rect2, NULL))
+                /* that monitor lies over the edge */
+                return FALSE;
+        }
+    }
+    if (G_LIKELY(size))
+        *size = s;
+    return TRUE;
 }
 
 /****************************************************
@@ -358,11 +529,7 @@ void _panel_set_wm_strut(LXPanel *panel)
     gulong strut_lower;
     gulong strut_upper;
 
-#if GTK_CHECK_VERSION(2, 20, 0)
     if (!gtk_widget_get_mapped(GTK_WIDGET(panel)))
-#else
-    if (!GTK_WIDGET_MAPPED(panel))
-#endif
         return;
     /* most wm's tend to ignore struts of unmapped windows, and that's how
      * lxpanel hides itself. so no reason to set it. */
@@ -374,25 +541,21 @@ void _panel_set_wm_strut(LXPanel *panel)
     {
         case EDGE_LEFT:
             index = 0;
-            strut_size = p->aw;
             strut_lower = p->ay;
             strut_upper = p->ay + p->ah;
             break;
         case EDGE_RIGHT:
             index = 1;
-            strut_size = p->aw;
             strut_lower = p->ay;
             strut_upper = p->ay + p->ah;
             break;
         case EDGE_TOP:
             index = 2;
-            strut_size = p->ah;
             strut_lower = p->ax;
             strut_upper = p->ax + p->aw;
             break;
         case EDGE_BOTTOM:
             index = 3;
-            strut_size = p->ah;
             strut_lower = p->ax;
             strut_upper = p->ax + p->aw;
             break;
@@ -400,18 +563,15 @@ void _panel_set_wm_strut(LXPanel *panel)
             return;
     }
 
-    /* Handle autohide case.  EWMH recommends having the strut be the minimized size. */
-    if (p->autohide)
-        strut_size = p->height_when_hidden;
-
     /* Set up strut value in property format. */
     gulong desired_strut[12];
     memset(desired_strut, 0, sizeof(desired_strut));
-    if (p->setstrut)
+    if (p->setstrut &&
+        _panel_edge_can_strut(panel, p->edge, p->monitor, &strut_size))
     {
         desired_strut[index] = strut_size;
         desired_strut[4 + index * 2] = strut_lower;
-        desired_strut[5 + index * 2] = strut_upper;
+        desired_strut[5 + index * 2] = strut_upper - 1;
     }
     else
     {
@@ -446,218 +606,200 @@ void _panel_set_wm_strut(LXPanel *panel)
     }
 }
 
-static void process_client_msg ( XClientMessageEvent* ev )
-{
-    int cmd = ev->data.b[0];
-    switch( cmd )
-    {
-#ifndef DISABLE_MENU
-        case LXPANEL_CMD_SYS_MENU:
-        {
-            GSList* l;
-            for( l = all_panels; l; l = l->next )
-            {
-                LXPanel* p = (LXPanel*)l->data;
-                GList *plugins, *pl;
-
-                plugins = gtk_container_get_children(GTK_CONTAINER(p->priv->box));
-                for (pl = plugins; pl; pl = pl->next)
-                {
-                    const LXPanelPluginInit *init = PLUGIN_CLASS(pl->data);
-                    if (init->show_system_menu)
-                        /* queue to show system menu */
-                        init->show_system_menu(pl->data);
-                }
-                g_list_free(plugins);
-            }
-            break;
-        }
-#endif
-        case LXPANEL_CMD_RUN:
-            gtk_run();
-            break;
-        case LXPANEL_CMD_CONFIG:
-            {
-            LXPanel * p = ((all_panels != NULL) ? all_panels->data : NULL);
-            if (p != NULL)
-                panel_configure(p, 0);
-            }
-            break;
-        case LXPANEL_CMD_RESTART:
-            restart();
-            break;
-        case LXPANEL_CMD_EXIT:
-            gtk_main_quit();
-            break;
-    }
-}
-
-static GdkFilterReturn
-panel_event_filter(GdkXEvent *xevent, GdkEvent *event, gpointer not_used)
-{
-    Atom at;
-    Window win;
-    XEvent *ev = (XEvent *) xevent;
-
-    ENTER;
-    DBG("win = 0x%x\n", ev->xproperty.window);
-    if (ev->type != PropertyNotify )
-    {
-        /* private client message from lxpanelctl */
-        if( ev->type == ClientMessage && ev->xproperty.atom == a_LXPANEL_CMD )
-        {
-            process_client_msg( (XClientMessageEvent*)ev );
-        }
-        else if( ev->type == DestroyNotify )
-        {
-            fb_ev_emit_destroy( fbev, ((XDestroyWindowEvent*)ev)->window );
-        }
-        RET(GDK_FILTER_CONTINUE);
-    }
-
-    at = ev->xproperty.atom;
-    win = ev->xproperty.window;
-    if (win == GDK_ROOT_WINDOW())
-    {
-        if (at == a_NET_CLIENT_LIST)
-        {
-            fb_ev_emit(fbev, EV_CLIENT_LIST);
-        }
-        else if (at == a_NET_CURRENT_DESKTOP)
-        {
-            GSList* l;
-            for( l = all_panels; l; l = l->next )
-                ((LXPanel*)l->data)->priv->curdesk = get_net_current_desktop();
-            fb_ev_emit(fbev, EV_CURRENT_DESKTOP);
-        }
-        else if (at == a_NET_NUMBER_OF_DESKTOPS)
-        {
-            GSList* l;
-            for( l = all_panels; l; l = l->next )
-                ((LXPanel*)l->data)->priv->desknum = get_net_number_of_desktops();
-            fb_ev_emit(fbev, EV_NUMBER_OF_DESKTOPS);
-        }
-        else if (at == a_NET_DESKTOP_NAMES)
-        {
-            fb_ev_emit(fbev, EV_DESKTOP_NAMES);
-        }
-        else if (at == a_NET_ACTIVE_WINDOW)
-        {
-            fb_ev_emit(fbev, EV_ACTIVE_WINDOW );
-        }
-        else if (at == a_NET_CLIENT_LIST_STACKING)
-        {
-            fb_ev_emit(fbev, EV_CLIENT_LIST_STACKING);
-        }
-        else if (at == a_XROOTPMAP_ID)
-        {
-            GSList* l;
-            for( l = all_panels; l; l = l->next )
-            {
-                LXPanel* p = (LXPanel*)l->data;
-                if (p->priv->transparent) {
-                    fb_bg_notify_changed_bg(p->priv->bg);
-                }
-            }
-        }
-        else if (at == a_NET_WORKAREA)
-        {
-            GSList* l;
-            for( l = all_panels; l; l = l->next )
-            {
-                LXPanel* p = (LXPanel*)l->data;
-                XFree( p->priv->workarea );
-                p->priv->workarea = get_xaproperty (GDK_ROOT_WINDOW(), a_NET_WORKAREA, XA_CARDINAL, &p->priv->wa_len);
-                /* print_wmdata(p); */
-            }
-        }
-        else
-            return GDK_FILTER_CONTINUE;
-
-        return GDK_FILTER_REMOVE;
-    }
-    return GDK_FILTER_CONTINUE;
-}
-
 /****************************************************
  *         panel's handlers for GTK events          *
  ****************************************************/
 
-
-static void
-on_root_bg_changed(FbBg *bg, LXPanel* p)
+static void paint_root_pixmap(LXPanel *panel, cairo_t *cr)
 {
-    _panel_update_background( p );
+    /*
+     * this code was extracted from code for FbBg object
+     *
+     * Copyright (C) 2001, 2002 Ian McKellar <yakk@yakk.net>
+     *                     2002 Sun Microsystems, Inc.
+     */
+    XGCValues gcv;
+    uint mask;
+    Window xroot;
+    GC gc;
+    Display *dpy;
+    Pixmap *prop;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_surface_t *surface;
+#else
+    GdkPixmap *pixmap;
+#endif
+    Pixmap xpixmap;
+    Panel *p = panel->priv;
+
+    dpy = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
+    xroot = DefaultRootWindow(dpy);
+    gcv.ts_x_origin = 0;
+    gcv.ts_y_origin = 0;
+    gcv.fill_style = FillTiled;
+    mask = GCTileStipXOrigin | GCTileStipYOrigin | GCFillStyle;
+    prop = get_xaproperty(xroot, a_XROOTPMAP_ID, XA_PIXMAP, NULL);
+    if (prop)
+    {
+        gcv.tile = *prop;
+        mask |= GCTile;
+        XFree(prop);
+    }
+    gc = XCreateGC(dpy, xroot, mask, &gcv);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    xpixmap = XCreatePixmap(dpy, xroot, p->aw, p->ah,
+                            DefaultDepth(dpy, DefaultScreen(dpy)));
+    surface = cairo_xlib_surface_create(dpy, xpixmap,
+                                        DefaultVisual(dpy, DefaultScreen(dpy)),
+                                        p->aw, p->ah);
+#else
+    pixmap = gdk_pixmap_new(gtk_widget_get_window(GTK_WIDGET(panel)),
+                            p->aw, p->ah, -1);
+    xpixmap = gdk_x11_drawable_get_xid(pixmap);
+#endif
+    XSetTSOrigin(dpy, gc, -p->ax, -p->ay);
+    XFillRectangle(dpy, xpixmap, gc, 0, 0, p->aw, p->ah);
+    XFreeGC(dpy, gc);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_set_source_surface(cr, surface, 0, 0);
+#else
+    gdk_cairo_set_source_pixmap(cr, pixmap, 0, 0);
+#endif
+    cairo_paint(cr);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_surface_destroy(surface);
+    XFreePixmap(dpy, xpixmap);
+#else
+    g_object_unref(pixmap);
+#endif
+}
+
+void _panel_determine_background_pixmap(LXPanel * panel)
+{
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_pattern_t *pattern;
+#else
+    GdkPixmap * pixmap = NULL;
+#endif
+    GtkWidget * widget = GTK_WIDGET(panel);
+    GdkWindow * window = gtk_widget_get_window(widget);
+    Panel * p = panel->priv;
+    cairo_t *cr;
+    gint x = 0, y = 0;
+
+    if (!p->background && !p->transparent)
+        goto not_paintable;
+    else if (p->aw <= 1 || p->ah <= 1)
+        goto not_paintable;
+    else if (p->surface == NULL)
+    {
+        GdkPixbuf *pixbuf = NULL;
+
+        p->surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, p->aw, p->ah);
+        cr = cairo_create(p->surface);
+        if (p->background)
+        {
+            /* User specified background pixmap. */
+            pixbuf = gdk_pixbuf_new_from_file(p->background_file, NULL);
+        }
+        if ((p->transparent && p->alpha != 255) || /* ignore it for opaque panel */
+            (pixbuf != NULL && gdk_pixbuf_get_has_alpha(pixbuf)))
+        {
+            /* Transparent.  Determine the appropriate value from the root pixmap. */
+            paint_root_pixmap(panel, cr);
+        }
+        if (pixbuf != NULL)
+        {
+            gint w = gdk_pixbuf_get_width(pixbuf);
+            gint h = gdk_pixbuf_get_height(pixbuf);
+
+            /* Tile the image */
+            for (y = 0; y < p->ah; y += h)
+                for (x = 0; x < p->aw; x += w)
+                {
+                    gdk_cairo_set_source_pixbuf(cr, pixbuf, x, y);
+                    cairo_paint(cr);
+                }
+            y = 0;
+            g_object_unref(pixbuf);
+        }
+        else
+        {
+            /* Either color is set or image is invalid, fill the background */
+            gdk_cairo_set_source_color(cr, &p->gtintcolor);
+            cairo_paint_with_alpha(cr, p->transparent ? (double)p->alpha/255 : 1.0);
+        }
+        cairo_destroy(cr);
+    }
+
+    if (p->surface != NULL)
+    {
+        gtk_widget_set_app_paintable(widget, TRUE);
+#if GTK_CHECK_VERSION(3, 0, 0)
+        pattern = cairo_pattern_create_for_surface(p->surface);
+        gdk_window_set_background_pattern(window, pattern);
+        cairo_pattern_destroy(pattern);
+#else
+        pixmap = gdk_pixmap_new(window, p->aw, p->ah, -1);
+        cr = gdk_cairo_create(pixmap);
+        cairo_set_source_surface(cr, p->surface, 0, 0);
+        cairo_paint(cr);
+        cairo_destroy(cr);
+        gdk_window_set_back_pixmap(window, pixmap, FALSE);
+        g_object_unref(pixmap);
+#endif
+    }
+    else
+    {
+not_paintable:
+        gtk_widget_set_app_paintable(widget, FALSE);
+    }
 }
 
 void panel_determine_background_pixmap(Panel * panel, GtkWidget * widget, GdkWindow * window)
 {
-    _panel_determine_background_pixmap(panel->topgwin, widget);
-}
-
-void _panel_determine_background_pixmap(LXPanel * panel, GtkWidget * widget)
-{
-    GdkPixmap * pixmap = NULL;
-    GdkWindow * window = gtk_widget_get_window(widget);
-    Panel * p = panel->priv;
-
-    /* Free p->bg if it is not going to be used. */
-    if (( ! p->transparent) && (p->bg != NULL))
+    if (GTK_WIDGET(panel->topgwin) != widget)
     {
-        g_signal_handlers_disconnect_by_func(G_OBJECT(p->bg), on_root_bg_changed, panel);
-        g_object_unref(p->bg);
-        p->bg = NULL;
-    }
-
-    if (p->background)
-    {
-        /* User specified background pixmap. */
-        if (p->background_file != NULL)
-            pixmap = fb_bg_get_pix_from_file(widget, p->background_file);
-    }
-
-    else if (p->transparent)
-    {
-        /* Transparent.  Determine the appropriate value from the root pixmap. */
-        if (p->bg == NULL)
-        {
-            p->bg = fb_bg_get_for_display();
-            g_signal_connect(G_OBJECT(p->bg), "changed", G_CALLBACK(on_root_bg_changed), panel);
-        }
-        pixmap = fb_bg_get_xroot_pix_for_win(p->bg, widget);
-        if ((pixmap != NULL) && (pixmap != GDK_NO_BG) && (p->alpha != 0))
-            fb_bg_composite(pixmap, &p->gtintcolor, p->alpha);
-    }
-
-    if (pixmap != NULL)
-    {
-        gtk_widget_set_app_paintable(widget, TRUE );
-        gdk_window_set_back_pixmap(window, pixmap, FALSE);
-        g_object_unref(pixmap);
+        /* Backward compatibility:
+           reset background for the child, using background of panel */
+        gtk_widget_set_app_paintable(widget, (panel->background || panel->transparent));
+#if GTK_CHECK_VERSION(3, 0, 0)
+        gdk_window_set_background_pattern(window, NULL);
+#else
+        gdk_window_set_back_pixmap(window, NULL, TRUE);
+#endif
     }
     else
-        gtk_widget_set_app_paintable(widget, FALSE);
+        _panel_determine_background_pixmap(panel->topgwin);
 }
 
 /* Update the background of the entire panel.
  * This function should only be called after the panel has been realized. */
 void panel_update_background(Panel * p)
 {
-    _panel_update_background(p->topgwin);
+    _panel_update_background(p->topgwin, TRUE);
 }
 
-static void _panel_update_background(LXPanel * p)
+static void _panel_update_background(LXPanel * p, gboolean enforce)
 {
     GtkWidget *w = GTK_WIDGET(p);
-    GList *plugins, *l;
+    GList *plugins = NULL, *l;
+
+    /* reset background image */
+    if (p->priv->surface != NULL) /* FIXME: honor enforce on composited screen */
+    {
+        cairo_surface_destroy(p->priv->surface);
+        p->priv->surface = NULL;
+    }
 
     /* Redraw the top level widget. */
-    _panel_determine_background_pixmap(p, w);
+    _panel_determine_background_pixmap(p);
     gdk_window_clear(gtk_widget_get_window(w));
     gtk_widget_queue_draw(w);
 
     /* Loop over all plugins redrawing each plugin. */
-    plugins = gtk_container_get_children(GTK_CONTAINER(p->priv->box));
+    if (p->priv->box != NULL)
+        plugins = gtk_container_get_children(GTK_CONTAINER(p->priv->box));
     for (l = plugins; l != NULL; l = l->next)
         plugin_widget_set_background(l->data, p);
     g_list_free(plugins);
@@ -762,17 +904,20 @@ static gboolean ah_state_hide_timeout(gpointer p)
 static void ah_state_set(LXPanel *panel, PanelAHState ah_state)
 {
     Panel *p = panel->priv;
+    GdkRectangle rect;
 
     ENTER;
     if (p->ah_state != ah_state) {
         p->ah_state = ah_state;
         switch (ah_state) {
         case AH_STATE_VISIBLE:
+            p->visible = TRUE;
+            _calculate_position(panel, &rect);
+            gtk_window_move(GTK_WINDOW(panel), rect.x, rect.y);
             gtk_widget_show(GTK_WIDGET(panel));
             gtk_widget_show(p->box);
             gtk_widget_queue_resize(GTK_WIDGET(panel));
             gtk_window_stick(GTK_WINDOW(panel));
-            p->visible = TRUE;
             break;
         case AH_STATE_WAITING:
             if (p->hide_timeout)
@@ -937,9 +1082,28 @@ static void panel_popupmenu_create_panel( GtkMenuItem* item, LXPanel* panel )
     config_setting_t *global;
 
     /* Allocate the edge. */
-    screen = gdk_screen_get_default();
+    screen = gtk_widget_get_screen(GTK_WIDGET(panel));
     g_assert(screen);
     monitors = gdk_screen_get_n_monitors(screen);
+    /* try to allocate edge on current monitor first */
+    m = panel->priv->monitor;
+    if (m < 0)
+    {
+        /* panel is spanned over the screen, guess from pointer now */
+        gint x, y;
+        gdk_display_get_pointer(gdk_display_get_default(), NULL, &x, &y, NULL);
+        m = gdk_screen_get_monitor_at_point(screen, x, y);
+    }
+    for (e = 1; e < 5; ++e)
+    {
+        if (panel_edge_available(p, e, m))
+        {
+            p->edge = e;
+            p->monitor = m;
+            goto found_edge;
+        }
+    }
+    /* try all monitors */
     for(m=0; m<monitors; ++m)
     {
         /* try each of the four edges */
@@ -967,8 +1131,7 @@ found_edge:
     config_group_set_int(global, "monitor", p->monitor);
     panel_configure(new_panel, 0);
     panel_normalize_configuration(p);
-    panel_start_gui(new_panel);
-    gtk_widget_show_all(GTK_WIDGET(new_panel));
+    panel_start_gui(new_panel, NULL);
 
     lxpanel_config_save(new_panel);
     all_panels = g_slist_prepend(all_panels, new_panel);
@@ -1248,8 +1411,27 @@ gboolean lxpanel_image_set_icon_theme(LXPanel * p, GtkWidget * image, const gcha
     return panel_image_set_icon_theme(p->priv, image, icon);
 }
 
+static int
+panel_parse_plugin(LXPanel *p, config_setting_t *cfg)
+{
+    const char *type = NULL;
+
+    ENTER;
+    config_setting_lookup_string(cfg, "type", &type);
+    DBG("plug %s\n", type);
+
+    if (!type || lxpanel_add_plugin(p, type, cfg, -1) == NULL) {
+        g_warning( "lxpanel: can't load %s plugin", type);
+        goto error;
+    }
+    RET(1);
+
+error:
+    RET(0);
+}
+
 static void
-panel_start_gui(LXPanel *panel)
+panel_start_gui(LXPanel *panel, config_setting_t *list)
 {
     Atom state[3];
     XWMHints wmhints;
@@ -1257,25 +1439,30 @@ panel_start_gui(LXPanel *panel)
     Display *xdisplay = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
     Panel *p = panel->priv;
     GtkWidget *w = GTK_WIDGET(panel);
+    config_setting_t *s;
+    GdkRectangle rect;
+    int i;
 
     ENTER;
 
+    g_debug("panel_start_gui on '%s'", p->name);
     p->curdesk = get_net_current_desktop();
     p->desknum = get_net_number_of_desktops();
-    p->workarea = get_xaproperty (GDK_ROOT_WINDOW(), a_NET_WORKAREA, XA_CARDINAL, &p->wa_len);
+    //p->workarea = get_xaproperty (GDK_ROOT_WINDOW(), a_NET_WORKAREA, XA_CARDINAL, &p->wa_len);
+    p->ax = p->ay = p->aw = p->ah = 0;
 
-    /* main toplevel window */
-    /* p->topgwin =  gtk_window_new(GTK_WINDOW_TOPLEVEL); */
-    gtk_widget_set_name(w, "PanelToplevel");
     p->display = gdk_display_get_default();
-    gtk_container_set_border_width(GTK_CONTAINER(panel), 0);
-    gtk_window_set_resizable(GTK_WINDOW(panel), FALSE);
     gtk_window_set_wmclass(GTK_WINDOW(panel), "panel", "lxpanel");
-    gtk_window_set_title(GTK_WINDOW(panel), "panel");
-    gtk_window_set_position(GTK_WINDOW(panel), GTK_WIN_POS_NONE);
-    gtk_window_set_decorated(GTK_WINDOW(panel), FALSE);
 
-    gtk_window_group_add_window( win_grp, (GtkWindow*)panel );
+    if (G_UNLIKELY(win_grp == NULL))
+    {
+        win_grp = gtk_window_group_new();
+        g_object_add_weak_pointer(G_OBJECT(win_grp), (gpointer *)&win_grp);
+        gtk_window_group_add_window(win_grp, (GtkWindow*)panel);
+        g_object_unref(win_grp);
+    }
+    else
+        gtk_window_group_add_window(win_grp, (GtkWindow*)panel);
 
     gtk_widget_add_events( w, GDK_BUTTON_PRESS_MASK );
 
@@ -1290,7 +1477,7 @@ panel_start_gui(LXPanel *panel)
     if (p->round_corners)
         make_round_corners(p);
 
-    p->topxwin = GDK_WINDOW_XWINDOW(gtk_widget_get_window(w));
+    p->topxwin = GDK_WINDOW_XID(gtk_widget_get_window(w));
     DBG("topxwin = %x\n", p->topxwin);
 
     /* the settings that should be done before window is mapped */
@@ -1306,10 +1493,12 @@ panel_start_gui(LXPanel *panel)
     panel_set_dock_type(p);
 
     /* window mapping point */
-    gtk_widget_show_all(w);
+    p->visible = TRUE;
+    _calculate_position(panel, &rect);
+    gtk_window_move(GTK_WINDOW(panel), rect.x, rect.y);
+    gtk_window_present(GTK_WINDOW(panel));
 
     /* the settings that should be done after window is mapped */
-    _panel_establish_autohide(panel);
 
     /* send it to running wm */
     Xclimsg(p->topxwin, a_NET_WM_DESKTOP, G_MAXULONG, 0, 0, 0, 0);
@@ -1324,10 +1513,14 @@ panel_start_gui(LXPanel *panel)
     XChangeProperty(xdisplay, p->topxwin, a_NET_WM_STATE, XA_ATOM,
           32, PropModeReplace, (unsigned char *) state, 3);
 
-    _calculate_position(panel);
-    gdk_window_move_resize(gtk_widget_get_window(w), p->ax, p->ay, p->aw, p->ah);
-    _panel_set_wm_strut(panel);
     p->initialized = TRUE;
+
+    if (list) for (i = 1; (s = config_setting_get_elem(list, i)) != NULL; )
+        if (strcmp(config_setting_get_name(s), "Plugin") == 0 &&
+            panel_parse_plugin(panel, s)) /* success on plugin start */
+            i++;
+        else /* remove invalid data from config */
+            config_setting_remove_elem(list, i);
 
     RET();
 }
@@ -1502,8 +1695,10 @@ panel_parse_global(Panel *p, config_setting_t *cfg)
     }
     if (config_setting_lookup_string(cfg, "edge", &str))
         p->edge = str2num(edge_pair, str, EDGE_NONE);
-    if (config_setting_lookup_string(cfg, "allign", &str))
-        p->allign = str2num(allign_pair, str, ALLIGN_NONE);
+    if (config_setting_lookup_string(cfg, "align", &str) ||
+        /* NOTE: supporting "allign" for backward compatibility */
+        config_setting_lookup_string(cfg, "allign", &str))
+        p->align = str2num(allign_pair, str, ALIGN_NONE);
     config_setting_lookup_int(cfg, "monitor", &p->monitor);
     config_setting_lookup_int(cfg, "margin", &p->margin);
     if (config_setting_lookup_string(cfg, "widthtype", &str))
@@ -1562,29 +1757,35 @@ panel_parse_global(Panel *p, config_setting_t *cfg)
     return 1;
 }
 
-static int
-panel_parse_plugin(LXPanel *p, config_setting_t *cfg)
+static void on_monitors_changed(GdkScreen* screen, gpointer unused)
 {
-    const char *type = NULL;
+    GSList *pl;
+    int monitors = gdk_screen_get_n_monitors(screen);
 
-    ENTER;
-    config_setting_lookup_string(cfg, "type", &type);
-    DBG("plug %s\n", type);
+    for (pl = all_panels; pl; pl = pl->next)
+    {
+        LXPanel *p = pl->data;
 
-    if (!type || lxpanel_add_plugin(p, type, cfg, -1) == NULL) {
-        g_warning( "lxpanel: can't load %s plugin", type);
-        goto error;
+        /* handle connecting and disconnecting monitors now */
+        if (p->priv->monitor < monitors && !p->priv->initialized)
+            panel_start_gui(p, config_setting_get_member(config_root_setting(p->priv->config), ""));
+        else if (p->priv->monitor >= monitors && p->priv->initialized)
+            panel_stop_gui(p);
+        /* resize panel if appropriate monitor changed its size or position */
+        else
+        {
+            /* SF bug #666: after screen resize panel cannot establish
+               right size since cannot be moved while is hidden */
+            ah_state_set(p, AH_STATE_VISIBLE);
+            gtk_widget_queue_resize(GTK_WIDGET(p));
+        }
     }
-    RET(1);
-
-error:
-    RET(0);
 }
 
-static int panel_start( LXPanel *p )
+static int panel_start(LXPanel *p)
 {
-    config_setting_t *list, *s;
-    int i;
+    config_setting_t *list;
+    GdkScreen *screen = gdk_screen_get_default();
 
     /* parse global section */
     ENTER;
@@ -1593,17 +1794,11 @@ static int panel_start( LXPanel *p )
     if (!list || !panel_parse_global(p->priv, config_setting_get_elem(list, 0)))
         RET(0);
 
-    panel_start_gui(p);
-
-    for (i = 1; (s = config_setting_get_elem(list, i)) != NULL; )
-        if (strcmp(config_setting_get_name(s), "Plugin") == 0 &&
-            panel_parse_plugin(p, s)) /* success on plugin start */
-            i++;
-        else /* remove invalid data from config */
-            config_setting_remove_elem(list, i);
-
-    /* update backgrond of panel and all plugins */
-    _panel_update_background(p);
+    if (p->priv->monitor < gdk_screen_get_n_monitors(screen))
+        panel_start_gui(p, list);
+    if (monitors_handler == 0)
+        monitors_handler = g_signal_connect(screen, "monitors-changed",
+                                            G_CALLBACK(on_monitors_changed), NULL);
     return 1;
 }
 
@@ -1612,7 +1807,7 @@ void panel_destroy(Panel *p)
     gtk_widget_destroy(GTK_WIDGET(p->topgwin));
 }
 
-static LXPanel* panel_new( const char* config_file, const char* config_name )
+LXPanel* panel_new( const char* config_file, const char* config_name )
 {
     LXPanel* panel = NULL;
 
@@ -1632,286 +1827,6 @@ static LXPanel* panel_new( const char* config_file, const char* config_name )
     return panel;
 }
 
-static void
-usage()
-{
-    g_print(_("lxpanel %s - lightweight GTK2+ panel for UNIX desktops\n"), version);
-    g_print(_("Command line options:\n"));
-    g_print(_(" --help      -- print this help and exit\n"));
-    g_print(_(" --version   -- print version and exit\n"));
-//    g_print(_(" --log <number> -- set log level 0-5. 0 - none 5 - chatty\n"));
-//    g_print(_(" --configure -- launch configuration utility\n"));
-    g_print(_(" --profile name -- use specified profile\n"));
-    g_print("\n");
-    g_print(_(" -h  -- same as --help\n"));
-    g_print(_(" -p  -- same as --profile\n"));
-    g_print(_(" -v  -- same as --version\n"));
- //   g_print(_(" -C  -- same as --configure\n"));
-    g_print(_("\nVisit http://lxde.org/ for detail.\n\n"));
-}
-
-/* Lightweight lock related functions - X clipboard hacks */
-
-#define CLIPBOARD_NAME "LXPANEL_SELECTION"
-
-/*
- * clipboard_get_func - dummy get_func for gtk_clipboard_set_with_data ()
- */
-static void
-clipboard_get_func(
-    GtkClipboard *clipboard G_GNUC_UNUSED,
-    GtkSelectionData *selection_data G_GNUC_UNUSED,
-    guint info G_GNUC_UNUSED,
-    gpointer user_data_or_owner G_GNUC_UNUSED)
-{
-}
-
-/*
- * clipboard_clear_func - dummy clear_func for gtk_clipboard_set_with_data ()
- */
-static void clipboard_clear_func(
-    GtkClipboard *clipboard G_GNUC_UNUSED,
-    gpointer user_data_or_owner G_GNUC_UNUSED)
-{
-}
-
-/*
- * Lightweight version for checking single instance.
- * Try and get the CLIPBOARD_NAME clipboard instead of using file manipulation.
- *
- * Returns TRUE if successfully retrieved and FALSE otherwise.
- */
-static gboolean check_main_lock()
-{
-    static const GtkTargetEntry targets[] = { { CLIPBOARD_NAME, 0, 0 } };
-    gboolean retval = FALSE;
-    GtkClipboard *clipboard;
-    Atom atom;
-    Display *xdisplay = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
-
-    atom = gdk_x11_get_xatom_by_name(CLIPBOARD_NAME);
-
-    XGrabServer(xdisplay);
-
-    if (XGetSelectionOwner(xdisplay, atom) != None)
-        goto out;
-
-    clipboard = gtk_clipboard_get(gdk_atom_intern(CLIPBOARD_NAME, FALSE));
-
-    if (gtk_clipboard_set_with_data(clipboard, targets,
-                                    G_N_ELEMENTS (targets),
-                                    clipboard_get_func,
-                                    clipboard_clear_func, NULL))
-        retval = TRUE;
-
-out:
-    XUngrabServer (xdisplay);
-    gdk_flush ();
-
-    return retval;
-}
-#undef CLIPBOARD_NAME
-
-static void _start_panels_from_dir(const char *panel_dir)
-{
-    GDir* dir = g_dir_open( panel_dir, 0, NULL );
-    const gchar* name;
-
-    if( ! dir )
-    {
-        return;
-    }
-
-    while((name = g_dir_read_name(dir)) != NULL)
-    {
-        char* panel_config = g_build_filename( panel_dir, name, NULL );
-        if (strchr(panel_config, '~') == NULL)    /* Skip editor backup files in case user has hand edited in this directory */
-        {
-            LXPanel* panel = panel_new( panel_config, name );
-            if( panel )
-                all_panels = g_slist_prepend( all_panels, panel );
-        }
-        g_free( panel_config );
-    }
-    g_dir_close( dir );
-}
-
-static gboolean start_all_panels( )
-{
-    char *panel_dir;
-    const gchar * const * dir;
-
-    /* try user panels */
-    panel_dir = _user_config_file_name("panels", NULL);
-    _start_panels_from_dir(panel_dir);
-    g_free(panel_dir);
-    if (all_panels != NULL)
-        return TRUE;
-    /* else try XDG fallbacks */
-    dir = g_get_system_config_dirs();
-    if (dir) while (dir[0])
-    {
-        panel_dir = _system_config_file_name(dir[0], "panels");
-        _start_panels_from_dir(panel_dir);
-        g_free(panel_dir);
-        if (all_panels != NULL)
-            return TRUE;
-        dir++;
-    }
-    /* last try at old fallback for compatibility reasons */
-    panel_dir = _old_system_config_file_name("panels");
-    _start_panels_from_dir(panel_dir);
-    g_free(panel_dir);
-    return all_panels != NULL;
-}
-
-void load_global_config();
-void free_global_config();
-
-static void _ensure_user_config_dirs(void)
-{
-    char *dir = g_build_filename(g_get_user_config_dir(), "lxpanel", cprofile,
-                                 "panels", NULL);
-
-    /* make sure the private profile and panels dir exists */
-    g_mkdir_with_parents(dir, 0700);
-    g_free(dir);
-}
-
-int main(int argc, char *argv[], char *env[])
-{
-    int i;
-    const char* desktop_name;
-    char *file;
-
-    setlocale(LC_CTYPE, "");
-
-    g_thread_init(NULL);
-/*    gdk_threads_init();
-    gdk_threads_enter(); */
-
-    gtk_init(&argc, &argv);
-
-#ifdef ENABLE_NLS
-    bindtextdomain ( GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR );
-    bind_textdomain_codeset ( GETTEXT_PACKAGE, "UTF-8" );
-    textdomain ( GETTEXT_PACKAGE );
-#endif
-
-    XSetLocaleModifiers("");
-    XSetErrorHandler((XErrorHandler) panel_handle_x_error);
-
-    resolve_atoms();
-
-    desktop_name = g_getenv("XDG_CURRENT_DESKTOP");
-    is_in_lxde = desktop_name && (0 == strcmp(desktop_name, "LXDE"));
-
-    for (i = 1; i < argc; i++) {
-        if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
-            usage();
-            exit(0);
-        } else if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version")) {
-            printf("lxpanel %s\n", version);
-            exit(0);
-        } else if (!strcmp(argv[i], "--log")) {
-            i++;
-            if (i == argc) {
-                g_critical( "lxpanel: missing log level");
-                usage();
-                exit(1);
-            } else {
-                /* deprecated */
-            }
-        } else if (!strcmp(argv[i], "--configure") || !strcmp(argv[i], "-C")) {
-            config = 1;
-        } else if (!strcmp(argv[i], "--profile") || !strcmp(argv[i], "-p")) {
-            i++;
-            if (i == argc) {
-                g_critical( "lxpanel: missing profile name");
-                usage();
-                exit(1);
-            } else {
-                cprofile = g_strdup(argv[i]);
-            }
-        } else {
-            printf("lxpanel: unknown option - %s\n", argv[i]);
-            usage();
-            exit(1);
-        }
-    }
-
-    /* Add a gtkrc file to be parsed too. */
-    file = _user_config_file_name("gtkrc", NULL);
-    gtk_rc_parse(file);
-    g_free(file);
-
-    /* Check for duplicated lxpanel instances */
-    if (!check_main_lock() && !config) {
-        printf("There is already an instance of LXPanel.  Now to exit\n");
-        exit(1);
-    }
-
-    _ensure_user_config_dirs();
-
-    /* Add our own icons to the search path of icon theme */
-    gtk_icon_theme_append_search_path( gtk_icon_theme_get_default(), PACKAGE_DATA_DIR "/images" );
-
-    fbev = fb_ev_new();
-    win_grp = gtk_window_group_new();
-
-    is_restarting = FALSE;
-
-    /* init LibFM */
-    fm_gtk_init(NULL);
-
-    /* prepare modules data */
-    _prepare_modules();
-
-    load_global_config();
-
-    /* NOTE: StructureNotifyMask is required by XRandR
-     * See init_randr_support() in gdkscreen-x11.c of gtk+ for detail.
-     */
-    gdk_window_set_events(gdk_get_default_root_window(), GDK_STRUCTURE_MASK |
-            GDK_SUBSTRUCTURE_MASK | GDK_PROPERTY_CHANGE_MASK);
-    gdk_window_add_filter(gdk_get_default_root_window (), (GdkFilterFunc)panel_event_filter, NULL);
-
-    if( G_UNLIKELY( ! start_all_panels() ) )
-        g_warning( "Config files are not found.\n" );
-/*
- * FIXME: configure??
-    if (config)
-        configure();
-*/
-    gtk_main();
-
-    XSelectInput (GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), GDK_ROOT_WINDOW(), NoEventMask);
-    gdk_window_remove_filter(gdk_get_default_root_window (), (GdkFilterFunc)panel_event_filter, NULL);
-
-    /* destroy all panels */
-    g_slist_foreach( all_panels, (GFunc) gtk_widget_destroy, NULL );
-    g_slist_free( all_panels );
-    all_panels = NULL;
-    g_free( cfgfile );
-
-    free_global_config();
-
-    _unload_modules();
-    fm_gtk_finalize();
-
-    /* gdk_threads_leave(); */
-
-    g_object_unref(win_grp);
-    g_object_unref(fbev);
-
-    if (!is_restarting)
-        return 0;
-    if (strchr(argv[0], G_DIR_SEPARATOR))
-        execve(argv[0], argv, env);
-    else
-        execve(g_find_program_in_path(argv[0]), argv, env);
-    return 1;
-}
 
 GtkOrientation panel_get_orientation(LXPanel *panel)
 {
@@ -1981,6 +1896,8 @@ gboolean _class_is_present(const LXPanelPluginInit *init)
         LXPanel *panel = (LXPanel*)sl->data;
         GList *plugins, *p;
 
+        if (panel->priv->box == NULL)
+            continue;
         plugins = gtk_container_get_children(GTK_CONTAINER(panel->priv->box));
         for (p = plugins; p; p = p->next)
             if (PLUGIN_CLASS(p->data) == init)

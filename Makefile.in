@@ -85,7 +85,7 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/data/default/panels/panel.in \
 	$(top_srcdir)/data/two_panels/panels/top.in \
 	$(top_srcdir)/data/two_panels/panels/bottom.in AUTHORS COPYING \
-	ChangeLog README ar-lib compile config.guess config.sub \
+	ChangeLog README TODO ar-lib compile config.guess config.sub \
 	install-sh missing ltmain.sh
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -230,7 +230,6 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
-ADDITIONAL_FLAGS = @ADDITIONAL_FLAGS@
 ALL_LINGUAS = @ALL_LINGUAS@
 ALL_PLUGINS_LIST = @ALL_PLUGINS_LIST@
 AMTAR = @AMTAR@
@@ -283,6 +282,8 @@ INTLTOOL_V_MERGE = @INTLTOOL_V_MERGE@
 INTLTOOL_V_MERGE_OPTIONS = @INTLTOOL_V_MERGE_OPTIONS@
 INTLTOOL__v_MERGE_ = @INTLTOOL__v_MERGE_@
 INTLTOOL__v_MERGE_0 = @INTLTOOL__v_MERGE_0@
+KEYBINDER_CFLAGS = @KEYBINDER_CFLAGS@
+KEYBINDER_LIBS = @KEYBINDER_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -293,7 +294,6 @@ LIBXML2_LIBS = @LIBXML2_LIBS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
-LXPANEL_MODULE = @LXPANEL_MODULE@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MENU_CACHE_CFLAGS = @MENU_CACHE_CFLAGS@
@@ -334,6 +334,9 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+VERSION_MAJOR = @VERSION_MAJOR@
+VERSION_MICRO = @VERSION_MICRO@
+VERSION_MINOR = @VERSION_MINOR@
 X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
 XGETTEXT = @XGETTEXT@
@@ -393,7 +396,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = plugins src data po man
+SUBDIRS = src plugins data po man
 EXTRA_DIST = \
         autogen.sh \
         lxpanel.pc.in

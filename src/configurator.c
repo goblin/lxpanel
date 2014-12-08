@@ -25,7 +25,6 @@
 
 #include "private.h"
 #include "misc.h"
-#include "bg.h"
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -45,18 +44,7 @@ enum{
 
 static void save_global_config();
 
-Command commands[] = {
-    //{ "configure", N_("Preferences"), configure },
-    { "run", N_("Run"), gtk_run },
-    { "restart", N_("Restart"), restart },
-    { "logout", N_("Logout"), logout },
-    { NULL, NULL },
-};
-
 static char* logout_cmd = NULL;
-
-extern GSList* all_panels;
-extern int config;
 
 /* macros to update config */
 #define UPDATE_GLOBAL_INT(panel,name,val) do { \
@@ -111,18 +99,6 @@ response_event(GtkDialog *widget, gint arg1, Panel* panel )
     return;
 }
 
-static void
-update_panel_geometry( LXPanel* p )
-{
-    /* Guard against being called early in panel creation. */
-    _calculate_position(p);
-    gtk_widget_set_size_request(GTK_WIDGET(p), p->priv->aw, p->priv->ah);
-    gdk_window_move(gtk_widget_get_window(GTK_WIDGET(p)), p->priv->ax, p->priv->ay);
-    _panel_queue_update_background(p);
-    _panel_establish_autohide(p);
-    _panel_set_wm_strut(p);
-}
-
 static gboolean edge_selector(Panel* p, int edge)
 {
     return (p->edge == edge);
@@ -133,12 +109,33 @@ gboolean panel_edge_available(Panel* p, int edge, gint monitor)
 {
     GSList* l;
     for (l = all_panels; l != NULL; l = l->next)
-        {
+    {
         LXPanel* pl = (LXPanel*) l->data;
-        if ((pl->priv != p) && (pl->priv->edge == edge) && (pl->priv->monitor == monitor))
+        if ((pl->priv != p) && (pl->priv->edge == edge) &&
+            (pl->priv->monitor < 0 || monitor < 0 || pl->priv->monitor == monitor))
             return FALSE;
-        }
+    }
     return TRUE;
+}
+
+static void update_strut_control_button(LXPanel *panel)
+{
+    Panel *p = panel->priv;
+    gboolean active = _panel_edge_can_strut(panel, p->edge, p->monitor, NULL);
+    gboolean old_active = !!gtk_widget_get_sensitive(p->strut_control);
+
+    if (active == old_active)
+        return;
+    gtk_widget_set_sensitive(p->strut_control, active);
+    if (active)
+        gtk_widget_set_tooltip_text(p->strut_control, NULL);
+    else
+        gtk_widget_set_tooltip_text(p->strut_control,
+                                    _("Space reservation is not available for"
+                                      " this panel because there is another"
+                                      " monitor beyond this edge and reservation"
+                                      " would cover it if enabled."));
+    _panel_set_wm_strut(panel);
 }
 
 static void set_edge(LXPanel* panel, int edge)
@@ -146,9 +143,10 @@ static void set_edge(LXPanel* panel, int edge)
     Panel *p = panel->priv;
 
     p->edge = edge;
-    update_panel_geometry(panel);
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
     _panel_set_panel_configuration_changed(panel);
     UPDATE_GLOBAL_STRING(p, "edge", num2str(edge_pair, edge, "none"));
+    update_strut_control_button(panel);
 }
 
 static void edge_bottom_toggle(GtkToggleButton *widget, LXPanel *p)
@@ -175,14 +173,58 @@ static void edge_right_toggle(GtkToggleButton *widget, LXPanel *p)
         set_edge(p, EDGE_RIGHT);
 }
 
+/* only for old UI file, safe fallback */
 static void set_monitor(GtkSpinButton *widget, LXPanel *panel)
 {
     Panel *p = panel->priv;
 
     p->monitor = gtk_spin_button_get_value_as_int(widget) - 1;
-    update_panel_geometry(panel);
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
     _panel_set_panel_configuration_changed(panel);
     UPDATE_GLOBAL_INT(p, "monitor", p->monitor);
+}
+
+static void update_mon_sensitivity(GtkCellLayout *layout, GtkCellRenderer *cell,
+                                   GtkTreeModel *model, GtkTreeIter *iter,
+                                   gpointer user_data)
+{
+    LXPanel *panel = user_data;
+    Panel *p = panel->priv;
+    GtkTreePath *path;
+    gint *indices;
+
+    /* set it sensitive if edge is available */
+    path = gtk_tree_model_get_path(model, iter);
+    indices = gtk_tree_path_get_indices(path);
+    g_object_set(cell, "sensitive", (panel_edge_available(p, p->edge,
+                                                          indices[0] - 1)), NULL);
+    gtk_tree_path_free(path);
+}
+
+static void update_edges_buttons(Panel *p)
+{
+    gtk_widget_set_sensitive(p->edge_bottom_button,
+                             panel_edge_available(p, EDGE_BOTTOM, p->monitor));
+    gtk_widget_set_sensitive(p->edge_top_button,
+                             panel_edge_available(p, EDGE_TOP, p->monitor));
+    gtk_widget_set_sensitive(p->edge_left_button,
+                             panel_edge_available(p, EDGE_LEFT, p->monitor));
+    gtk_widget_set_sensitive(p->edge_right_button,
+                             panel_edge_available(p, EDGE_RIGHT, p->monitor));
+}
+
+static void set_monitor_cb(GtkComboBox *cb, LXPanel *panel)
+{
+    Panel *p = panel->priv;
+
+    /* change monitor */
+    p->monitor = gtk_combo_box_get_active(cb) - 1;
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
+    _panel_set_panel_configuration_changed(panel);
+    UPDATE_GLOBAL_INT(p, "monitor", p->monitor);
+    /* update edge and strut sensitivities */
+    update_edges_buttons(p);
+    update_strut_control_button(panel);
 }
 
 static void set_alignment(LXPanel* panel, int align)
@@ -190,28 +232,28 @@ static void set_alignment(LXPanel* panel, int align)
     Panel *p = panel->priv;
 
     if (p->margin_control)
-        gtk_widget_set_sensitive(p->margin_control, (align != ALLIGN_CENTER));
-    p->allign = align;
-    update_panel_geometry(panel);
-    UPDATE_GLOBAL_STRING(p, "allign", num2str(allign_pair, align, "none"));
+        gtk_widget_set_sensitive(p->margin_control, (align != ALIGN_CENTER));
+    p->align = align;
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
+    UPDATE_GLOBAL_STRING(p, "align", num2str(allign_pair, align, "none"));
 }
 
 static void align_left_toggle(GtkToggleButton *widget, LXPanel *p)
 {
     if (gtk_toggle_button_get_active(widget))
-        set_alignment(p, ALLIGN_LEFT);
+        set_alignment(p, ALIGN_LEFT);
 }
 
 static void align_center_toggle(GtkToggleButton *widget, LXPanel *p)
 {
     if (gtk_toggle_button_get_active(widget))
-        set_alignment(p, ALLIGN_CENTER);
+        set_alignment(p, ALIGN_CENTER);
 }
 
 static void align_right_toggle(GtkToggleButton *widget, LXPanel *p)
 {
     if (gtk_toggle_button_get_active(widget))
-        set_alignment(p, ALLIGN_RIGHT);
+        set_alignment(p, ALIGN_RIGHT);
 }
 
 static void
@@ -220,7 +262,7 @@ set_margin(GtkSpinButton* spin, LXPanel* panel)
     Panel *p = panel->priv;
 
     p->margin = (int)gtk_spin_button_get_value(spin);
-    update_panel_geometry(panel);
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
     UPDATE_GLOBAL_INT(p, "margin", p->margin);
 }
 
@@ -230,7 +272,7 @@ set_width(GtkSpinButton* spin, LXPanel* panel)
     Panel *p = panel->priv;
 
     p->width = (int)gtk_spin_button_get_value(spin);
-    update_panel_geometry(panel);
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
     UPDATE_GLOBAL_INT(p, "width", p->width);
 }
 
@@ -240,7 +282,8 @@ set_height(GtkSpinButton* spin, LXPanel* panel)
     Panel *p = panel->priv;
 
     p->height = (int)gtk_spin_button_get_value(spin);
-    update_panel_geometry(panel);
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
+    _panel_set_panel_configuration_changed(panel);
     UPDATE_GLOBAL_INT(p, "height", p->height);
 }
 
@@ -283,7 +326,7 @@ static void set_width_type( GtkWidget *item, LXPanel* panel )
     default: ;
     }
 
-    update_panel_geometry(panel);
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
     UPDATE_GLOBAL_STRING(p, "widthtype", num2str(width_pair, widthtype, "none"));
 }
 
@@ -329,11 +372,11 @@ static void background_file_helper(Panel * p, GtkWidget * toggle, GtkFileChooser
         {
             p->transparent = FALSE;
             p->background = TRUE;
-            panel_update_background(p);
             UPDATE_GLOBAL_INT(p, "transparent", p->transparent);
             UPDATE_GLOBAL_INT(p, "background", p->background);
         }
     }
+    panel_update_background(p);
 }
 
 static void background_toggle( GtkWidget *b, Panel* p)
@@ -368,12 +411,15 @@ background_disable_toggle( GtkWidget *b, Panel* p )
 }
 
 static void
-on_font_color_set( GtkColorButton* clr,  Panel* p )
+on_font_color_set(GtkColorButton* clr, LXPanel* panel)
 {
+    Panel *p = panel->priv;
+
     gtk_color_button_get_color( clr, &p->gfontcolor );
     panel_set_panel_configuration_changed(p);
     p->fontcolor = gcolor2rgb24(&p->gfontcolor);
     UPDATE_GLOBAL_COLOR(p, "fontcolor", p->fontcolor);
+    _panel_emit_font_changed(panel);
 }
 
 static void
@@ -388,9 +434,11 @@ on_tint_color_set( GtkColorButton* clr,  Panel* p )
 }
 
 static void
-on_use_font_color_toggled( GtkToggleButton* btn,   Panel* p )
+on_use_font_color_toggled(GtkToggleButton* btn, LXPanel* panel)
 {
     GtkWidget* clr = (GtkWidget*)g_object_get_data( G_OBJECT(btn), "clr" );
+    Panel *p = panel->priv;
+
     if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn)))
         gtk_widget_set_sensitive( clr, TRUE );
     else
@@ -398,20 +446,26 @@ on_use_font_color_toggled( GtkToggleButton* btn,   Panel* p )
     p->usefontcolor = gtk_toggle_button_get_active( btn );
     panel_set_panel_configuration_changed(p);
     UPDATE_GLOBAL_INT(p, "usefontcolor", p->usefontcolor);
+    _panel_emit_font_changed(panel);
 }
 
 static void
-on_font_size_set( GtkSpinButton* spin, Panel* p )
+on_font_size_set(GtkSpinButton* spin, LXPanel* panel)
 {
+    Panel *p = panel->priv;
+
     p->fontsize = (int)gtk_spin_button_get_value(spin);
     panel_set_panel_configuration_changed(p);
     UPDATE_GLOBAL_INT(p, "fontsize", p->fontsize);
+    _panel_emit_font_changed(panel);
 }
 
 static void
-on_use_font_size_toggled( GtkToggleButton* btn,   Panel* p )
+on_use_font_size_toggled(GtkToggleButton* btn, LXPanel* panel)
 {
     GtkWidget* clr = (GtkWidget*)g_object_get_data( G_OBJECT(btn), "clr" );
+    Panel *p = panel->priv;
+
     if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn)))
         gtk_widget_set_sensitive( clr, TRUE );
     else
@@ -419,6 +473,7 @@ on_use_font_size_toggled( GtkToggleButton* btn,   Panel* p )
     p->usefontsize = gtk_toggle_button_get_active( btn );
     panel_set_panel_configuration_changed(p);
     UPDATE_GLOBAL_INT(p, "usefontsize", p->usefontsize);
+    _panel_emit_font_changed(panel);
 }
 
 
@@ -429,7 +484,7 @@ set_dock_type(GtkToggleButton* toggle, LXPanel* panel)
 
     p->setdocktype = gtk_toggle_button_get_active(toggle) ? 1 : 0;
     panel_set_dock_type( p );
-    update_panel_geometry(panel);
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
     UPDATE_GLOBAL_INT(p, "setdocktype", p->setdocktype);
 }
 
@@ -439,7 +494,8 @@ set_strut(GtkToggleButton* toggle, LXPanel* panel)
     Panel *p = panel->priv;
 
     p->setstrut = gtk_toggle_button_get_active(toggle) ? 1 : 0;
-    update_panel_geometry(panel);
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
+    _panel_set_wm_strut(panel);
     UPDATE_GLOBAL_INT(p, "setpartialstrut", p->setstrut);
 }
 
@@ -449,8 +505,10 @@ set_autohide(GtkToggleButton* toggle, LXPanel* panel)
     Panel *p = panel->priv;
 
     p->autohide = gtk_toggle_button_get_active(toggle) ? 1 : 0;
-    update_panel_geometry(panel);
+    gtk_widget_show(GTK_WIDGET(panel));
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
     UPDATE_GLOBAL_INT(p, "autohide", p->autohide);
+    update_strut_control_button(panel);
 }
 
 static void
@@ -459,15 +517,20 @@ set_height_when_minimized(GtkSpinButton* spin, LXPanel* panel)
     Panel *p = panel->priv;
 
     p->height_when_hidden = (int)gtk_spin_button_get_value(spin);
-    update_panel_geometry(panel);
+    gtk_widget_show(GTK_WIDGET(panel));
+    gtk_widget_queue_resize(GTK_WIDGET(panel));
     UPDATE_GLOBAL_INT(p, "heightwhenhidden", p->height_when_hidden);
+    update_strut_control_button(panel);
 }
 
 static void
-set_icon_size( GtkSpinButton* spin,  Panel* p  )
+set_icon_size(GtkSpinButton *spin, LXPanel *panel)
 {
+    Panel *p = panel->priv;
+
     p->icon_size = (int)gtk_spin_button_get_value(spin);
     panel_set_panel_configuration_changed(p);
+    _panel_emit_icon_size_changed(panel);
     UPDATE_GLOBAL_INT(p, "iconsize", p->icon_size);
 }
 
@@ -645,7 +708,7 @@ static void on_add_plugin_response( GtkDialog* dlg,
 
                 panel_config_save(p->priv);
 
-                plugin_widget_set_background(pl, p);
+                //plugin_widget_set_background(pl, p);
                 gtk_container_child_get(GTK_CONTAINER(p->priv->box), pl, "expand", &expand, NULL);
                 model = gtk_tree_view_get_model( _view );
                 gtk_list_store_append( GTK_LIST_STORE(model), &it );
@@ -667,6 +730,19 @@ static void on_add_plugin_response( GtkDialog* dlg,
         }
     }
     gtk_widget_destroy( GTK_WIDGET(dlg) );
+}
+
+static gint sort_by_name(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer user_data)
+{
+    char *str_a, *str_b;
+    gint res;
+
+    gtk_tree_model_get(model, a, 0, &str_a, -1);
+    gtk_tree_model_get(model, b, 0, &str_b, -1);
+    res = g_utf8_collate(str_a, str_b);
+    g_free(str_a);
+    g_free(str_b);
+    return res;
 }
 
 static void on_add_plugin( GtkButton* btn, GtkTreeView* _view )
@@ -742,6 +818,11 @@ static void on_add_plugin( GtkButton* btn, GtkTreeView* _view )
             /* g_debug( "%s (%s)", pc->type, _(pc->name) ); */
         }
     }
+    gtk_tree_sortable_set_default_sort_func(GTK_TREE_SORTABLE(list),
+                                            sort_by_name, NULL, NULL);
+    gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(list),
+                                         GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID,
+                                         GTK_SORT_ASCENDING);
 
     gtk_tree_view_set_model( view, GTK_TREE_MODEL(list) );
     g_object_unref( list );
@@ -983,44 +1064,86 @@ void panel_configure( LXPanel* panel, int sel_page )
 
     /* position */
     w = (GtkWidget*)gtk_builder_get_object( builder, "edge_bottom" );
+    p->edge_bottom_button = w;
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), edge_selector(p, EDGE_BOTTOM));
     g_signal_connect(w, "toggled", G_CALLBACK(edge_bottom_toggle), panel);
     w = (GtkWidget*)gtk_builder_get_object( builder, "edge_top" );
+    p->edge_top_button = w;
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), edge_selector(p, EDGE_TOP));
     g_signal_connect(w, "toggled", G_CALLBACK(edge_top_toggle), panel);
     w = (GtkWidget*)gtk_builder_get_object( builder, "edge_left" );
+    p->edge_left_button = w;
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), edge_selector(p, EDGE_LEFT));
     g_signal_connect(w, "toggled", G_CALLBACK(edge_left_toggle), panel);
     w = (GtkWidget*)gtk_builder_get_object( builder, "edge_right" );
+    p->edge_right_button = w;
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), edge_selector(p, EDGE_RIGHT));
     g_signal_connect(w, "toggled", G_CALLBACK(edge_right_toggle), panel);
+    update_edges_buttons(p);
 
     /* monitor */
     monitors = 1;
-    screen = gdk_screen_get_default();
+    screen = gtk_widget_get_screen(GTK_WIDGET(panel));
     if(screen) monitors = gdk_screen_get_n_monitors(screen);
     g_assert(monitors >= 1);
     w = (GtkWidget*)gtk_builder_get_object( builder, "monitor" );
-    gtk_spin_button_set_range(GTK_SPIN_BUTTON(w), 1, monitors);
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), p->monitor + 1);
-    gtk_widget_set_sensitive(w, monitors > 1);
-    g_signal_connect(w, "value-changed", G_CALLBACK(set_monitor), panel);
+    if (GTK_IS_SPIN_BUTTON(w))
+    {
+        gtk_spin_button_set_range(GTK_SPIN_BUTTON(w), 1, monitors);
+        gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), p->monitor + 1);
+        gtk_widget_set_sensitive(w, monitors > 1);
+        g_signal_connect(w, "value-changed", G_CALLBACK(set_monitor), panel);
+    }
+    else if (GTK_IS_COMBO_BOX(w))
+    {
+        GtkCellRenderer *cell;
+#if GTK_CHECK_VERSION(3, 0, 0)
+        GtkListStore *model;
+        GtkTreeIter it;
+#endif
+        gint i;
+        char itext[4];
+
+        /* create a new cell renderer and bind cell data function to it */
+        cell = gtk_cell_renderer_text_new();
+        gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(w), cell, TRUE);
+        gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(w), cell, "text", 0);
+        gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(w), cell,
+                                           update_mon_sensitivity, panel, NULL);
+#if GTK_CHECK_VERSION(3, 0, 0)
+        model = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(w)));
+#endif
+        /* add monitors beyond first one to the model */
+        for (i = 1; i < monitors; i++)
+        {
+            snprintf(itext, sizeof(itext), "%d", i + 1);
+#if GTK_CHECK_VERSION(3, 0, 0)
+            gtk_list_store_append(model, &it);
+            gtk_list_store_set(model, &it, 0, itext, -1);
+#else
+            gtk_combo_box_append_text(GTK_COMBO_BOX(w), itext);
+#endif
+        }
+        gtk_combo_box_set_active(GTK_COMBO_BOX(w), p->monitor + 1);
+        /* FIXME: set sensitive only if more than 1 monitor available? */
+        g_signal_connect(w, "changed", G_CALLBACK(set_monitor_cb), panel);
+    }
 
     /* alignment */
     p->alignment_left_label = w = (GtkWidget*)gtk_builder_get_object( builder, "alignment_left" );
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), (p->allign == ALLIGN_LEFT));
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), (p->align == ALIGN_LEFT));
     g_signal_connect(w, "toggled", G_CALLBACK(align_left_toggle), panel);
     w = (GtkWidget*)gtk_builder_get_object( builder, "alignment_center" );
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), (p->allign == ALLIGN_CENTER));
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), (p->align == ALIGN_CENTER));
     g_signal_connect(w, "toggled", G_CALLBACK(align_center_toggle), panel);
     p->alignment_right_label = w = (GtkWidget*)gtk_builder_get_object( builder, "alignment_right" );
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), (p->allign == ALLIGN_RIGHT));
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), (p->align == ALIGN_RIGHT));
     g_signal_connect(w, "toggled", G_CALLBACK(align_right_toggle), panel);
 
     /* margin */
     p->margin_control = w = (GtkWidget*)gtk_builder_get_object( builder, "margin" );
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), p->margin);
-    gtk_widget_set_sensitive(p->margin_control, (p->allign != ALLIGN_CENTER));
+    gtk_widget_set_sensitive(p->margin_control, (p->align != ALIGN_CENTER));
     g_signal_connect( w, "value-changed",
                       G_CALLBACK(set_margin), panel);
 
@@ -1055,7 +1178,7 @@ void panel_configure( LXPanel* panel, int sel_page )
     w = (GtkWidget*)gtk_builder_get_object( builder, "icon_size" );
     gtk_spin_button_set_range( GTK_SPIN_BUTTON(w), PANEL_HEIGHT_MIN, PANEL_HEIGHT_MAX );
     gtk_spin_button_set_value( GTK_SPIN_BUTTON(w), p->icon_size );
-    g_signal_connect( w, "value-changed", G_CALLBACK(set_icon_size), p );
+    g_signal_connect( w, "value-changed", G_CALLBACK(set_icon_size), panel );
 
     /* properties */
 
@@ -1080,8 +1203,9 @@ void panel_configure( LXPanel* panel, int sel_page )
         be accessed by other applications.
         GNOME Panel acts this way, too.
     */
-    w = (GtkWidget*)gtk_builder_get_object( builder, "reserve_space" );
+    p->strut_control = w = (GtkWidget*)gtk_builder_get_object( builder, "reserve_space" );
     update_toggle_button( w, p->setstrut );
+    update_strut_control_button(panel);
     g_signal_connect( w, "toggled",
                       G_CALLBACK(set_strut), panel );
 
@@ -1143,12 +1267,12 @@ void panel_configure( LXPanel* panel, int sel_page )
     /* font color */
     w = (GtkWidget*)gtk_builder_get_object( builder, "font_clr" );
     gtk_color_button_set_color( GTK_COLOR_BUTTON(w), &p->gfontcolor );
-    g_signal_connect( w, "color-set", G_CALLBACK( on_font_color_set ), p );
+    g_signal_connect(w, "color-set", G_CALLBACK( on_font_color_set ), panel);
 
     w2 = (GtkWidget*)gtk_builder_get_object( builder, "use_font_clr" );
     gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON(w2), p->usefontcolor );
     g_object_set_data( G_OBJECT(w2), "clr", w );
-    g_signal_connect(w2, "toggled", G_CALLBACK(on_use_font_color_toggled), p);
+    g_signal_connect(w2, "toggled", G_CALLBACK(on_use_font_color_toggled), panel);
     if( ! p->usefontcolor )
         gtk_widget_set_sensitive( w, FALSE );
 
@@ -1156,12 +1280,12 @@ void panel_configure( LXPanel* panel, int sel_page )
     w = (GtkWidget*)gtk_builder_get_object( builder, "font_size" );
     gtk_spin_button_set_value( GTK_SPIN_BUTTON(w), p->fontsize );
     g_signal_connect( w, "value-changed",
-                      G_CALLBACK(on_font_size_set), p);
+                      G_CALLBACK(on_font_size_set), panel);
 
     w2 = (GtkWidget*)gtk_builder_get_object( builder, "use_font_size" );
     gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON(w2), p->usefontsize );
     g_object_set_data( G_OBJECT(w2), "clr", w );
-    g_signal_connect(w2, "toggled", G_CALLBACK(on_use_font_size_toggled), p);
+    g_signal_connect(w2, "toggled", G_CALLBACK(on_use_font_size_toggled), panel);
     if( ! p->usefontsize )
         gtk_widget_set_sensitive( w, FALSE );
 
@@ -1246,17 +1370,6 @@ void panel_config_save( Panel* p )
 void lxpanel_config_save(LXPanel *p)
 {
     panel_config_save(p->priv);
-}
-
-void restart(void)
-{
-    /* This is defined in panel.c */
-    extern gboolean is_restarting;
-    ENTER;
-    is_restarting = TRUE;
-
-    gtk_main_quit();
-    RET();
 }
 
 void logout(void)
@@ -1391,11 +1504,8 @@ void _panel_show_config_dialog(LXPanel *panel, GtkWidget *p, GtkWidget *dlg)
     g_object_set_data(G_OBJECT(dlg), "generic-config-plugin", p);
 
     /* adjust config dialog window position to be near plugin */
-    gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(panel));
-//    gtk_window_iconify(GTK_WINDOW(dlg));
-    gtk_widget_show(dlg);
     lxpanel_plugin_popup_set_position_helper(panel, p, dlg, &x, &y);
-    gdk_window_move(gtk_widget_get_window(dlg), x, y);
+    gtk_window_move(GTK_WINDOW(dlg), x, y);
 
     gtk_window_present(GTK_WINDOW(dlg));
 }
@@ -1422,11 +1532,12 @@ static GtkWidget *_lxpanel_generic_config_dlg(const char *title, Panel *p,
 
     while( name )
     {
-        GtkWidget* label = gtk_label_new( name );
         GtkWidget* entry = NULL;
         gpointer val = va_arg( args, gpointer );
         PluginConfType type = va_arg( args, PluginConfType );
-        switch( type )
+        if (type != CONF_TYPE_TRIM && val == NULL)
+            g_critical("NULL pointer for generic config dialog");
+        else switch( type )
         {
             case CONF_TYPE_STR:
             case CONF_TYPE_FILE_ENTRY: /* entry with a button to browse for files. */
@@ -1439,17 +1550,13 @@ static GtkWidget *_lxpanel_generic_config_dlg(const char *title, Panel *p,
                   G_CALLBACK(on_entry_focus_out_old), val );
                 break;
             case CONF_TYPE_INT:
-            {
-                /* FIXME: the range shouldn't be hardcoded */
-                entry = gtk_spin_button_new_with_range( 0, 1000, 1 );
-                gtk_spin_button_set_value( GTK_SPIN_BUTTON(entry), *(int*)val );
-                g_signal_connect( entry, "value-changed",
-                  G_CALLBACK(on_spin_changed), val );
+                gtk_box_pack_start(dlg_vbox,
+                                   panel_config_int_button_new(name, val, 0, 1000),
+                                   FALSE, FALSE, 2);
                 break;
-            }
             case CONF_TYPE_BOOL:
                 entry = gtk_check_button_new();
-                gtk_container_add( GTK_CONTAINER(entry), label );
+                gtk_container_add(GTK_CONTAINER(entry), gtk_label_new(name));
                 gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON(entry), *(gboolean*)val );
                 g_signal_connect( entry, "toggled",
                   G_CALLBACK(on_toggle_changed), val );
@@ -1469,6 +1576,12 @@ static GtkWidget *_lxpanel_generic_config_dlg(const char *title, Panel *p,
                 g_free (markup);
                 }
                 break;
+            case CONF_TYPE_EXTERNAL:
+                if (GTK_IS_WIDGET(val))
+                    gtk_box_pack_start(dlg_vbox, val, FALSE, FALSE, 2);
+                else
+                    g_critical("value for CONF_TYPE_EXTERNAL is not a GtkWidget");
+                break;
         }
         if( entry )
         {
@@ -1477,7 +1590,7 @@ static GtkWidget *_lxpanel_generic_config_dlg(const char *title, Panel *p,
             else
             {
                 GtkWidget* hbox = gtk_hbox_new( FALSE, 2 );
-                gtk_box_pack_start( GTK_BOX(hbox), label, FALSE, FALSE, 2 );
+                gtk_box_pack_start( GTK_BOX(hbox), gtk_label_new(name), FALSE, FALSE, 2 );
                 gtk_box_pack_start( GTK_BOX(hbox), entry, TRUE, TRUE, 2 );
                 gtk_box_pack_start( dlg_vbox, hbox, FALSE, FALSE, 2 );
                 if ((type == CONF_TYPE_FILE_ENTRY) || (type == CONF_TYPE_DIRECTORY_ENTRY))
@@ -1506,6 +1619,19 @@ static GtkWidget *_lxpanel_generic_config_dlg(const char *title, Panel *p,
     gtk_widget_show_all(GTK_WIDGET(dlg_vbox));
 
     return dlg;
+}
+
+GtkWidget *panel_config_int_button_new(const char *name, gint *val,
+                                       gint min, gint max)
+{
+    GtkWidget *entry = gtk_spin_button_new_with_range(min, max, 1);
+    GtkWidget *hbox = gtk_hbox_new(FALSE, 2);
+
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry), *val);
+    g_signal_connect(entry, "value-changed", G_CALLBACK(on_spin_changed), val);
+    gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(name), FALSE, FALSE, 2);
+    gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 2);
+    return hbox;
 }
 
 /* new plugins API -- apply_func() gets GtkWidget* */

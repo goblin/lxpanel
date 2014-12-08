@@ -34,6 +34,10 @@
 #include "misc.h"
 #include "icon-grid.h"
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+#include <gtk/gtkx.h>
+#endif
+
 /* Standards reference:  http://standards.freedesktop.org/systemtray-spec/ */
 
 /* Protocol constants. */
@@ -591,7 +595,7 @@ static GtkWidget *tray_constructor(LXPanel *panel, config_setting_t *settings)
         xev.format = 32;
         xev.data.l[0] = timestamp;
         xev.data.l[1] = selection_atom;
-        xev.data.l[2] = GDK_WINDOW_XWINDOW(gtk_widget_get_window(invisible));
+        xev.data.l[2] = GDK_WINDOW_XID(gtk_widget_get_window(invisible));
         xev.data.l[3] = 0;    /* manager specific data */
         xev.data.l[4] = 0;    /* manager specific data */
         XSendEvent(GDK_DISPLAY_XDISPLAY(display), RootWindowOfScreen(xscreen), False, StructureNotifyMask, (XEvent *) &xev);
@@ -601,7 +605,7 @@ static GtkWidget *tray_constructor(LXPanel *panel, config_setting_t *settings)
         gulong data = SYSTEM_TRAY_ORIENTATION_HORZ;
         XChangeProperty(
             GDK_DISPLAY_XDISPLAY(display),
-            GDK_WINDOW_XWINDOW(gtk_widget_get_window(invisible)),
+            GDK_WINDOW_XID(gtk_widget_get_window(invisible)),
             a_NET_SYSTEM_TRAY_ORIENTATION,
             XA_CARDINAL, 32,
             PropModeReplace,
@@ -622,7 +626,7 @@ static GtkWidget *tray_constructor(LXPanel *panel, config_setting_t *settings)
     gdk_window_add_filter(NULL, (GdkFilterFunc) tray_event_filter, tr);
     /* Reference the window since it is never added to a container. */
     tr->invisible = g_object_ref_sink(G_OBJECT(invisible));
-    tr->invisible_window = GDK_WINDOW_XWINDOW(gtk_widget_get_window(invisible));
+    tr->invisible_window = GDK_WINDOW_XID(gtk_widget_get_window(invisible));
 
     /* Allocate top level widget and set into Plugin widget pointer. */
     tr->plugin = p = panel_icon_grid_new(panel_get_orientation(panel),
@@ -631,7 +635,7 @@ static GtkWidget *tray_constructor(LXPanel *panel, config_setting_t *settings)
                                          3, 0, panel_get_height(panel));
     lxpanel_plugin_set_data(p, tr, tray_destructor);
     gtk_widget_set_name(p, "tray");
-    gtk_container_set_border_width(GTK_CONTAINER(p), 1);
+    panel_icon_grid_set_aspect_width(PANEL_ICON_GRID(p), TRUE);
 
     return p;
 }

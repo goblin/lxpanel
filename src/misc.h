@@ -138,14 +138,130 @@ GPid get_net_wm_pid(Window win);
 extern int panel_handle_x_error(Display * d, XErrorEvent * ev);
 extern int panel_handle_x_error_swallow_BadWindow_BadDrawable(Display * d, XErrorEvent * ev);
 
+/**
+ * expand_tilda
+ * @file: file path
+ *
+ * If first char of @file is a tilda (~) then replaces it with content of
+ * environment variable HOME.
+ *
+ * Returns: (transfer full): new allocated path string.
+ */
 gchar *expand_tilda(const gchar *file);
 
-void get_button_spacing(GtkRequisition *req, GtkContainer *parent, gchar *name);
+/**
+ * gcolor2rgb24
+ * @color: a color structure
+ *
+ * Creates integer @color representation which can be easily converted
+ * into string using printf conversion "#%06x".
+ *
+ * Returns: a 32-bit integer.
+ */
 guint32 gcolor2rgb24(GdkColor *color);
-GtkWidget *lxpanel_button_new_for_icon(LXPanel *panel, const gchar *name, GdkColor *color, const gchar *label);
-GtkWidget *lxpanel_button_new_for_fm_icon(LXPanel *panel, FmIcon *icon, GdkColor *color, const gchar *label);
-void lxpanel_button_set_icon(GtkWidget* btn, const gchar *name, gint size);
-void lxpanel_button_update_icon(GtkWidget* btn, FmIcon *icon, gint size);
+
+/**
+ * lxpanel_button_new_for_icon
+ * @panel: panel instance
+ * @name: icon name or path
+ * @color: (allow-none): hilight color for icon
+ * @label: (allow-none): optional label for button
+ *
+ * Creates new #GtkEventBox button which will follow theme and icon size
+ * changes on @panel. If icon name is not found in theme then fallback
+ * name "application-x-executable" will be used. Button is flagged to be
+ * displayed.
+ *
+ * Returns: (transfer full): a new #GtkEventBox widget.
+ */
+extern GtkWidget *lxpanel_button_new_for_icon(LXPanel *panel, const gchar *name, GdkColor *color, const gchar *label);
+extern GtkWidget *lxpanel_button_new_for_fm_icon(LXPanel *panel, FmIcon *icon, GdkColor *color, const gchar *label);
+
+/**
+ * lxpanel_button_set_icon
+ * @btn: a button instance
+ * @name: icon name or path
+ * @size: new icon size
+ *
+ * Updates icon in the button created with lxpanel_button_new_for_icon()
+ * or lxpanel_button_new_for_fm_icon() before. If @size > 0 then stop
+ * following panel icon size and use this fixed size, if @size is 0 then
+ * do no changes on icons size.
+ */
+extern void lxpanel_button_set_icon(GtkWidget* btn, const gchar *name, gint size);
+extern void lxpanel_button_update_icon(GtkWidget* btn, FmIcon *icon, gint size);
+
+/**
+ * lxpanel_button_set_label
+ * @btn: a button instance
+ * @label: new label text
+ *
+ * Changes text of label created with lxpanel_button_new_for_icon(),
+ * lxpanel_button_new_for_fm_icon(), or lxpanel_button_compose(). Does
+ * nothing if those API were called with NULL passed as label.
+ *
+ * Returns: %TRUE in case of success.
+ *
+ * Since: 0.8.0
+ */
+extern gboolean lxpanel_button_set_label(GtkWidget *btn, const char *label);
+
+/**
+ * lxpanel_button_compose
+ * @event_box: a widget to add image and label
+ * @image: an image widget
+ * @color: (allow-none): hilight color for icon
+ * @label: (allow-none): optional label for button
+ *
+ * Composes button similarly to lxpanel_button_new_for_icon() but using
+ * existing container @event_box and @image. The @image should be created
+ * using lxpanel_image_new_for_icon() or lxpanel_image_new_for_fm_icon(),
+ * and it can be updated later using lxpanel_button_set_icon() API.
+ *
+ * Returns: (transfer none): @event_box.
+ *
+ * Since: 0.8.0
+ */
+extern GtkWidget *lxpanel_button_compose(GtkWidget *event_box, GtkWidget *image,
+                                         GdkColor *color, const gchar *label);
+
+/**
+ * lxpanel_image_new_for_icon
+ * @panel: (allow-none): panel instance
+ * @name: icon name or image path
+ * @height: image size
+ * @fallback: (allow-none): fallback image name or path
+ *
+ * Creates new #GtkImage which will follow theme if @name is a themed
+ * icon name. If @height is -1 then created image will also follow icon
+ * size changes on @panel. If icon not found in theme and @fallback is
+ * not %NULL then it will be used to load icon or image. Otherwise the
+ * "application-x-executable" will be used as fallback.
+ *
+ * Returns: (transfer full): a new #GtkImage widget.
+ *
+ * Since: 0.8.0
+ */
+extern GtkWidget *lxpanel_image_new_for_icon(LXPanel *panel, const gchar *name,
+                                             gint height, const gchar *fallback);
+extern GtkWidget *lxpanel_image_new_for_fm_icon(LXPanel *panel, FmIcon *icon,
+                                                gint height, const gchar *fallback);
+
+/**
+ * lxpanel_image_change_icon
+ * @img: an image
+ * @name: icon name or image path
+ * @fallback: (allow-none): fallback image name or path
+ *
+ * Changes an image @img created by lxpanel_image_new_for_icon() to use
+ * new icon @name and @fallback.
+ *
+ * Returns: %TRUE.
+ *
+ * Since: 0.8.0
+ */
+extern gboolean lxpanel_image_change_icon(GtkWidget *img, const gchar *name,
+                                          const char *fallback);
 
 G_END_DECLS
 

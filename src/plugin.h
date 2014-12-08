@@ -147,7 +147,7 @@ extern GQuark lxpanel_plugin_qdata; /* access to plugin private data */
  * lxpanel_plugin_set_data
  * @_i: instance widget
  * @_data: instance data
- * @_destructor: destructor for @_data
+ * @_destructor: (allow-none): destructor for @_data
  *
  * Attaches data to the widget instance. The @_destructor callback will
  * be called on @_data when @_i is destroyed and therefore it should free
@@ -234,6 +234,14 @@ extern void lxpanel_plugin_show_config_dialog(GtkWidget* plugin);
 
 /**
  * PluginConfType:
+ * @CONF_TYPE_STR: string entry, pointer is char **
+ * @CONF_TYPE_INT: spin entry (range 0...1000), pointer is gint *
+ * @CONF_TYPE_BOOL: check button, pointer is gboolean *
+ * @CONF_TYPE_FILE: file chooser, pointer is char **
+ * @CONF_TYPE_FILE_ENTRY: file path entry, pointer is char **
+ * @CONF_TYPE_DIRECTORY_ENTRY: directory path entry, pointer is char **
+ * @CONF_TYPE_TRIM: just a text in italic, pointer is ignored
+ * @CONF_TYPE_EXTERNAL: (since 0.8) provided by caller, pointer is GtkWidget *
  *
  * Type of variable passed to lxpanel_generic_config_dlg().
  */
@@ -244,7 +252,8 @@ typedef enum {
     CONF_TYPE_FILE,
     CONF_TYPE_FILE_ENTRY,
     CONF_TYPE_DIRECTORY_ENTRY,
-    CONF_TYPE_TRIM
+    CONF_TYPE_TRIM,
+    CONF_TYPE_EXTERNAL
 } PluginConfType;
 
 /**
@@ -260,8 +269,10 @@ typedef enum {
  * Variable-size list of options consists of three arguments for each
  * option:
  *   - const char* name: text representing the option in dialog
- *   - gpointer ret_value: (out): pointer to the option value
+ *   - gpointer ret_value: (in out): pointer to the option value
  *   - PluginConfType type: type of the option
+ * Note that for type CONF_TYPE_EXTERNAL the name argument is ignored and
+ * therefore empty string ("") have to be passed.
  *
  * Returns: (tranfer full): new created dialog widget.
  */
@@ -270,6 +281,85 @@ extern GtkWidget *lxpanel_generic_config_dlg(const char *title, LXPanel *panel,
                                              GSourceFunc apply_func,
                                              GtkWidget *plugin,
                                              const char *name, ...);
+
+/**
+ * panel_config_int_button_new
+ * @name: text representing the option in dialog
+ * @min: minimal spin button value
+ * @max: maximal spin button value
+ * @val: (in out): pointer to the option value
+ *
+ * Widget to use as CONF_TYPE_EXTERNAL instead of CONF_TYPE_INT if plugin
+ * wants to customize range for lxpanel_generic_config_dlg(). The default
+ * widget uses range 0...1000 and here you can set custom range. This API
+ * should be never used outside of lxpanel_generic_config_dlg() arguments
+ * since it uses callbacks specific to that API.
+ *
+ * See also: lxpanel_generic_config_dlg().
+ *
+ * Returns: (transfer full): new widget.
+ *
+ * Since: 0.8.0
+ */
+extern GtkWidget *panel_config_int_button_new(const char *name, gint *val,
+                                              gint min, gint max);
+
+/*
+ * panel_config_hotkey_button_new
+ * @label: text representing the option in dialog
+ * @hotkey: (allow-none): current hotkey
+ *
+ * Creates a #GtkFrame derived widget which can select hotkey binding.
+ * The widget emits "changed" signal when some new combination selected
+ *      gboolean callback(PanelCfgInputButton *, char *, gpointer);
+ * Caller should test if keybinding can be used in the callback and then
+ * return test result as %TRUE or %FALSE.
+ * Widget can be used for lxpanel_generic_config_dlg as CONF_TYPE_EXTERNAL
+ *
+ * Returns: (transfer full): a created widget.
+ *
+ * Since: 0.8.0
+ */
+extern GtkWidget *panel_config_hotkey_button_new(const char *label, const char *hotkey);
+extern GtkWidget *panel_config_click_button_new(const char *label, const char *click);
+
+/**
+ * lxpanel_apply_hotkey
+ * @hkptr: (in out) (transfer full): pointer to hotkey string
+ * @keystring: (allow-none): new hotkey
+ * @handler: callback to assign to hotkey
+ * @user_data: data to provide for @handler
+ * @show_error: %TRUE to show error window if assignment failed
+ *
+ * Function designed to use in callback on "changed" signal from widget
+ * created by panel_config_hotkey_button_new(). Should be also used on
+ * initial binding and on unbinding when module unloaded (in latter case
+ * @keystring should be %NULL). In case of success returns %TRUE, unbinds
+ * previous hotkey from @hkptr, and updates @hkptr. The @hkptr contains
+ * allocated string.
+ *
+ * Returns: %TRUE on success.
+ *
+ * Since: 0.8.0
+ */
+extern gboolean lxpanel_apply_hotkey(char **hkptr, const char *keystring,
+                                     void (*handler)(const char *keystring, gpointer user_data),
+                                     gpointer user_data, gboolean show_error);
+
+/**
+ * panel_config_click_parse
+ * @keystring: string to parse
+ * @mods: (out): return location for modifier
+ *
+ * Parses click string received in "changed" signal emission of widget
+ * created with panel_config_click_button_new() and returns button and
+ * modifier that can be compared with GdkEventButton data when required.
+ *
+ * Returns: button number or 0 if @keystring is invalid.
+ *
+ * Since: 0.8.0
+ */
+extern guint panel_config_click_parse(const char *keystring, GdkModifierType *mods);
 
 G_END_DECLS
 

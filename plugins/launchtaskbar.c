@@ -62,7 +62,7 @@
 #ifndef DISABLE_MENU
 # include "menu-policy.h"
 #endif
-
+#include "gtk-compat.h"
 
 #define PANEL_ICON_SIZE 24 /* see the private.h */
 
@@ -108,7 +108,8 @@ typedef struct _task {
     GtkWidget * image;                      /* Icon for task, child of button */
     Atom image_source;                      /* Atom that is the source of taskbar icon */
     GtkWidget * label;                      /* Label for task, child of button */
-    int desktop;                            /* Desktop that contains task, needed to switch to it on Raise */
+    GtkWidget * menu_item;                  /* Menu item for grouped task after click */
+    gint desktop;                           /* Desktop that contains task, needed to switch to it on Raise */
     gint monitor;                           /* Monitor that the window is on or closest to */
     guint flash_timeout;                    /* Timer for urgency notification */
     unsigned int focused                :1; /* True if window has focus */
@@ -117,19 +118,18 @@ typedef struct _task {
     unsigned int flash_state            :1; /* One-bit counter to flash taskbar */
     unsigned int entered_state          :1; /* True if cursor is inside taskbar button */
     unsigned int present_in_client_list :1; /* State during WM_CLIENT_LIST processing to detect deletions */
-} Task;
+} Task; /* FIXME: convert it into GtkWidget, eliminate button and menu_item */
 
 /* Representative of one launch button.
  * Note that the launch parameters come from the specified desktop file, or from the configuration file.
  * This structure is also used during the "add to launchtaskbar" dialog to hold menu items. */
 typedef struct {
     LaunchTaskBarPlugin * p;            /* Back pointer to plugin */
-    GtkWidget * widget;         /* Pointer to button */
-    GtkWidget * image_widget;   /* Pointer to image */
+    GtkWidget * widget;                 /* Pointer to button */
     FmFileInfo * fi;                    /* Launcher application descriptor */
     config_setting_t * settings;        /* Pointer to settings */
     FmDndDest * dd;                     /* Drag and drop support */
-} LaunchButton;
+} LaunchButton; /* FIXME: convert it into GtkWidget, button itself */
 
 /* Private context for taskbar plugin. */
 struct LaunchTaskBarPlugin {
@@ -137,7 +137,6 @@ struct LaunchTaskBarPlugin {
     GtkWidget *lb_icon_grid;         /* Icon grid managing the container */
     GSList        *buttons;          /* Launchbar buttons */
     LaunchButton  *bootstrap_button; /* Bootstrapping button for empty launchtaskbar */
-    FmIcon * add_icon;                  /* Icon for bootstrap_button */
     GtkWidget     *p_button_add, *p_button_remove, *p_label_menu_app_exec, *p_label_def_app_exec;
     /* TASKBAR */
     Task * p_task_list;            /* List of tasks to be displayed in taskbar */
@@ -163,6 +162,7 @@ struct LaunchTaskBarPlugin {
     gboolean flat_button;          /* User preference: taskbar buttons have visible background */
     gboolean grouped_tasks;        /* User preference: windows from same task are grouped onto a single button */
     gboolean same_monitor_only;    /* User preference: only show windows that are in the same monitor as the taskbar */
+    gboolean disable_taskbar_upscale; /* User preference: don't upscale taskbar icons */
     int task_width_max;            /* Maximum width of a taskbar button in horizontal orientation */
     int spacing;                   /* Spacing between taskbar buttons */
     gboolean use_net_active;       /* NET_WM_ACTIVE_WINDOW is supported by the window manager */
@@ -372,31 +372,21 @@ static void launchbutton_build_bootstrap(LaunchTaskBarPlugin *lb)
 {
     if(lb->bootstrap_button == NULL)
     {
-        GdkPixbuf * icon;
         /* Build a button that has the stock "Add" icon.
          * The "desktop-id" being NULL is the marker that this is the bootstrap button. */
         lb->bootstrap_button = g_new0(LaunchButton, 1);
         lb->bootstrap_button->p = lb;
 
         /* Create an event box. */
-        GtkWidget * event_box = gtk_event_box_new();
-        gtk_container_set_border_width(GTK_CONTAINER(event_box), 0);
-        gtk_widget_set_can_focus            (event_box, FALSE);
-        lb->bootstrap_button->widget = event_box;
-        g_signal_connect(event_box, "button-press-event", G_CALLBACK(launchbutton_press_event), lb->bootstrap_button);
-
-        /* Create an image containing the stock "Add" icon as a child of the event box. */
-        lb->add_icon = fm_icon_from_name(GTK_STOCK_ADD);
-        icon = fm_pixbuf_from_icon(lb->add_icon, lb->icon_size);
-        lb->bootstrap_button->image_widget = gtk_image_new_from_pixbuf(icon);
-        g_object_unref(icon);
-        gtk_misc_set_padding(GTK_MISC(lb->bootstrap_button->image_widget), 0, 0);
-        gtk_misc_set_alignment(GTK_MISC(lb->bootstrap_button->image_widget), 0, 0);
-        gtk_container_add(GTK_CONTAINER(event_box), lb->bootstrap_button->image_widget);
+        lb->bootstrap_button->widget = lxpanel_button_new_for_icon(lb->panel,
+                                                                   GTK_STOCK_ADD,
+                                                                   NULL, NULL);
+        g_signal_connect(lb->bootstrap_button->widget, "button-press-event",
+                         G_CALLBACK(launchbutton_press_event), lb->bootstrap_button);
 
         /* Add the bootstrap button to the icon grid.  By policy it is empty at this point. */
-        gtk_container_add(GTK_CONTAINER(lb->lb_icon_grid), event_box);
-        gtk_widget_show_all(event_box);
+        gtk_container_add(GTK_CONTAINER(lb->lb_icon_grid), lb->bootstrap_button->widget);
+        //plugin_widget_set_background(lb->bootstrap_button->widget, lb->panel);
     }
     else
         gtk_widget_show(lb->bootstrap_button->widget);
@@ -496,7 +486,6 @@ static LaunchButton *launchbutton_for_file_info(LaunchTaskBarPlugin * lb, FmFile
     button = lxpanel_button_new_for_fm_icon(lb->panel, fm_file_info_get_icon(fi),
                                             NULL, NULL);
     btn->widget = button;
-    gtk_widget_set_can_focus(button, FALSE);
 
     gtk_widget_set_tooltip_text(button, fm_file_info_get_disp_name(fi));
 
@@ -518,8 +507,7 @@ static LaunchButton *launchbutton_for_file_info(LaunchTaskBarPlugin * lb, FmFile
     lb->buttons = g_slist_append(lb->buttons, btn);
 
     /* Show the widget and return. */
-    gtk_widget_show(button);
-    plugin_widget_set_background(button, lb->panel);
+    //plugin_widget_set_background(button, lb->panel);
     return btn;
 }
 
@@ -716,6 +704,8 @@ static void launchtaskbar_constructor_task(LaunchTaskBarPlugin *ltbp)
             ltbp->show_all_desks = (tmp_int != 0);
         if (config_setting_lookup_int(s, "SameMonitorOnly", &tmp_int))
             ltbp->same_monitor_only = (tmp_int != 0);
+        if (config_setting_lookup_int(s, "DisableUpscale", &tmp_int))
+            ltbp->disable_taskbar_upscale = (tmp_int != 0);
         config_setting_lookup_int(s, "MaxTaskWidth", &ltbp->task_width_max);
         config_setting_lookup_int(s, "spacing", &ltbp->spacing);
         if (config_setting_lookup_int(s, "UseMouseWheel", &tmp_int))
@@ -734,7 +724,6 @@ static void launchtaskbar_constructor_task(LaunchTaskBarPlugin *ltbp)
                                                  panel_get_height(ltbp->panel));
         panel_icon_grid_set_constrain_width(PANEL_ICON_GRID(ltbp->tb_icon_grid), TRUE);
         gtk_box_pack_start(GTK_BOX(ltbp->plugin), ltbp->tb_icon_grid, TRUE, TRUE, 0);
-        gtk_container_set_border_width(GTK_CONTAINER(ltbp->tb_icon_grid), 0);
         taskbar_update_style(ltbp);
 
         /* Add GDK event filter. */
@@ -817,9 +806,6 @@ static GtkWidget *_launchtaskbar_constructor(LXPanel *panel, config_setting_t *s
                                              3, 0, panel_get_height(panel));
     gtk_box_pack_start(GTK_BOX(p), ltbp->lb_icon_grid, FALSE, TRUE, 0);
 
-    gtk_container_set_border_width(GTK_CONTAINER(p), 0);
-    gtk_container_set_border_width(GTK_CONTAINER(ltbp->lb_icon_grid), 0);
-
     /* Read parameters from the configuration file. */
     config_setting_lookup_int(settings, "LaunchTaskBarMode", &ltbp->mode);
     switch (ltbp->mode) {
@@ -857,9 +843,6 @@ static void launchtaskbar_destructor_launch(LaunchTaskBarPlugin *ltbp)
         launchbutton_free(ltbp->bootstrap_button);
         ltbp->bootstrap_button = NULL;
     }
-
-    if (ltbp->add_icon != NULL)
-        g_object_unref(ltbp->add_icon);
 }
 
 static void launchtaskbar_destructor_task(LaunchTaskBarPlugin *ltbp)
@@ -1207,6 +1190,15 @@ static void on_checkbutton_same_monitor_only_toggled(GtkToggleButton *p_togglebu
     taskbar_apply_configuration(ltbp);
 }
 
+static void on_checkbutton_disable_taskbar_upscale_toggled(GtkToggleButton *p_togglebutton, gpointer p_data)
+{
+    LaunchTaskBarPlugin *ltbp = (LaunchTaskBarPlugin *)p_data;
+    ltbp->disable_taskbar_upscale = gtk_toggle_button_get_active(p_togglebutton);
+    //g_print("\ntb->disable_taskbar_upscale upd\n");
+    config_group_set_int(ltbp->settings, "DisableUpscale", ltbp->disable_taskbar_upscale);
+    taskbar_apply_configuration(ltbp);
+}
+
 static void on_checkbutton_mouse_wheel_toggled(GtkToggleButton *p_togglebutton, gpointer p_data)
 {
     LaunchTaskBarPlugin *ltbp = (LaunchTaskBarPlugin *)p_data;
@@ -1319,6 +1311,8 @@ static void on_menu_view_row_activated(GtkTreeView *tree_view, GtkTreePath *path
     _launchbar_configure_add(tree_view, ltbp);
 }
 
+/* FIXME: add support for global hotkeys for launchers */
+
 /* Callback when the configuration dialog is to be shown. */
 static GtkWidget *launchtaskbar_configure(LXPanel *panel, GtkWidget *p)
 {
@@ -1388,7 +1382,15 @@ static GtkWidget *launchtaskbar_configure(LXPanel *panel, GtkWidget *p)
         SETUP_TOGGLE_BUTTON(checkbutton_mouse_wheel, use_mouse_wheel);
         SETUP_TOGGLE_BUTTON(checkbutton_urgency_hint, use_urgency_hint);
         SETUP_TOGGLE_BUTTON(checkbutton_grouped_tasks, grouped_tasks);
+        //SETUP_TOGGLE_BUTTON(checkbutton_disable_taskbar_upscale, disable_taskbar_upscale);
 #undef SETUP_TOGGLE_BUTTON
+        /* FIXME: for transitional period, turn into SETUP_TOGGLE_BUTTON later */
+        object = gtk_builder_get_object(builder, "checkbutton_disable_taskbar_upscale");
+        if (object)
+        {
+            gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(object), ltbp->disable_taskbar_upscale); \
+            g_signal_connect(object, "toggled", G_CALLBACK(on_checkbutton_disable_taskbar_upscale_toggled), ltbp);
+        }
 
 #define SETUP_SPIN_BUTTON(button,member) \
         object = gtk_builder_get_object(builder, #button); \
@@ -1441,25 +1443,10 @@ static void launchtaskbar_panel_configuration_changed(LXPanel *panel, GtkWidget 
                                      new_icon_size, new_icon_size, 3, 0,
                                      panel_get_height(panel));
 
-    /* Reset the bootstrap button. */
-    if (ltbp->bootstrap_button != NULL)
-    {
-        GdkPixbuf * icon = fm_pixbuf_from_icon(ltbp->add_icon, new_icon_size);
-        gtk_image_set_from_pixbuf(GTK_IMAGE(ltbp->bootstrap_button->image_widget), icon);
-        g_object_unref(icon);
-    }
-
-    if (ltbp->tb_built)
-    {
-        taskbar_update_style(ltbp);
-        taskbar_make_menu(ltbp);
-    }
-
     /* If the icon size changed, refetch all the icons. */
     if (new_icon_size != ltbp->icon_size)
     {
         Task * tk;
-        GSList * l;
         ltbp->icon_size = new_icon_size;
         for (tk = ltbp->p_task_list; tk != NULL; tk = tk->p_task_flink_xwid)
         {
@@ -1470,18 +1457,15 @@ static void launchtaskbar_panel_configuration_changed(LXPanel *panel, GtkWidget 
                 g_object_unref(pixbuf);
             }
         }
-        for (l = ltbp->buttons; l != NULL; l = l->next)
-        {
-            LaunchButton * btn = (LaunchButton *) l->data;
-            lxpanel_button_update_icon(btn->widget, fm_file_info_get_icon(btn->fi),
-                                       new_icon_size);
-        }
-
     }
 
     /* Redraw all the labels.  Icon size or font color may have changed. */
     if (ltbp->tb_built)
+    {
+        taskbar_update_style(ltbp);
+        taskbar_make_menu(ltbp);
         taskbar_redraw(ltbp);
+    }
 }
 
 /* Set an urgency timer on a task. */
@@ -1490,13 +1474,13 @@ static void set_timer_on_task(Task * tk)
     gint interval;
     g_return_if_fail(tk->flash_timeout == 0);
     g_object_get(gtk_widget_get_settings(tk->button), "gtk-cursor-blink-time", &interval, NULL);
-    tk->flash_timeout = g_timeout_add(interval, flash_window_timeout, tk);
+    tk->flash_timeout = g_timeout_add(interval / 2, flash_window_timeout, tk);
 }
 
 /* Determine if a task is visible considering only its desktop placement. */
 static gboolean task_is_visible_on_current_desktop(LaunchTaskBarPlugin * tb, Task * tk)
 {
-    return ((tk->desktop == ALL_WORKSPACES) || (tk->desktop == tb->current_desktop) || (tb->show_all_desks));
+    return ((tk->desktop == ALL_WORKSPACES) || (tk->desktop == tb->current_desktop) || (tb->show_all_desks) || (tk->urgency));
 }
 
 /* Recompute the visible task for a class when the class membership changes.
@@ -1519,7 +1503,7 @@ static void recompute_group_visibility_for_class(LaunchTaskBarPlugin * tb, TaskC
             tc->visible_count += 1;
 
             /* Compute summary bit for urgency anywhere in the class. */
-            if (tk->urgency)
+            if (tk->urgency && !tk->focused)
                 class_has_urgency = TRUE;
 
             /* If there is urgency, record the currently flashing task. */
@@ -1558,6 +1542,10 @@ static void recompute_group_visibility_for_class(LaunchTaskBarPlugin * tb, TaskC
             flashing_task->flash_timeout = 0;
             tc->p_task_visible->flash_state = flashing_task->flash_state;
             flashing_task->flash_state = FALSE;
+            if (tc->p_task_visible->menu_item != NULL)
+                g_object_unref(tc->p_task_visible->menu_item);
+            tc->p_task_visible->menu_item = flashing_task->menu_item;
+            flashing_task->menu_item = NULL;
             set_timer_on_task(tc->p_task_visible);
         }
     }
@@ -1616,7 +1604,8 @@ static gboolean task_is_visible(LaunchTaskBarPlugin * tb, Task * tk)
         return FALSE;
 
     /* Not on same monitor */
-    if (tb->same_monitor_only && panel_get_monitor(tb->panel) != tk->monitor)
+    if (tb->same_monitor_only && panel_get_monitor(tb->panel) != tk->monitor
+        && panel_get_monitor(tb->panel) >= 0)
         return FALSE;
 
     /* Desktop placement. */
@@ -1874,6 +1863,12 @@ static void task_delete(LaunchTaskBarPlugin * tb, Task * tk, gboolean unlink, gb
         tk->flash_timeout = 0;
     }
 
+    if (tk->menu_item)
+    {
+        g_object_unref(tk->menu_item);
+        tk->menu_item = NULL;
+    }
+
     /* Deallocate structures. */
     if (remove)
     {
@@ -1936,20 +1931,12 @@ static GdkPixbuf * _wnck_gdk_pixbuf_get_from_pixmap(Pixmap xpixmap, int width, i
             colormap = NULL;
         else
         {
-#if GTK_CHECK_VERSION(2, 24, 0)
             colormap = gdk_screen_get_system_colormap(gdk_window_get_screen(drawable));
-#else
-            colormap = gdk_screen_get_system_colormap(gdk_drawable_get_screen(drawable));
-#endif
             g_object_ref(G_OBJECT(colormap));
         }
 
         /* Be sure we aren't going to fail due to visual mismatch. */
-#if GTK_CHECK_VERSION(2,22,0)
         if ((colormap != NULL) && (gdk_visual_get_depth(gdk_colormap_get_visual(colormap)) != depth))
-#else
-        if ((colormap != NULL) && (gdk_colormap_get_visual(colormap)->depth != depth))
-#endif
         {
             g_object_unref(G_OBJECT(colormap));
             colormap = NULL;
@@ -1999,7 +1986,9 @@ static GdkPixbuf * apply_mask(GdkPixbuf * pixbuf, GdkPixbuf * mask)
 }
 
 /* Get an icon from the window manager for a task, and scale it to a specified size. */
-static GdkPixbuf * get_wm_icon(Window task_win, guint required_width, guint required_height, Atom source, Atom * current_source)
+static GdkPixbuf * get_wm_icon(Window task_win, guint required_width,
+                               guint required_height, Atom source,
+                               Atom * current_source, LaunchTaskBarPlugin * tb)
 {
     /* The result. */
     GdkPixbuf * pixmap = NULL;
@@ -2239,9 +2228,21 @@ static GdkPixbuf * get_wm_icon(Window task_win, guint required_width, guint requ
         return NULL;
     else
     {
-        GdkPixbuf * ret = gdk_pixbuf_scale_simple(pixmap, required_width, required_height, GDK_INTERP_TILES);
-        g_object_unref(pixmap);
+        GdkPixbuf * ret;
+
         *current_source = possible_source;
+        if (tb->disable_taskbar_upscale)
+        {
+            guint w = gdk_pixbuf_get_width (pixmap);
+            guint h = gdk_pixbuf_get_height (pixmap);
+            if (w <= required_width || h <= required_height)
+            {
+                return pixmap;
+            }
+        }
+        ret = gdk_pixbuf_scale_simple(pixmap, required_width, required_height,
+                                      GDK_INTERP_BILINEAR);
+        g_object_unref(pixmap);
         return ret;
     }
 }
@@ -2252,7 +2253,7 @@ static GdkPixbuf * task_update_icon(LaunchTaskBarPlugin * tb, Task * tk, Atom so
     /* Get the icon from the window's hints. */
     GdkPixbuf * pixbuf = get_wm_icon(tk->win, MAX(0, tb->icon_size - ICON_BUTTON_TRIM),
                                      MAX(0, tb->icon_size - ICON_BUTTON_TRIM),
-                                     source, &tk->image_source);
+                                     source, &tk->image_source, tb);
 
     /* If that fails, and we have no other icon yet, return the fallback icon. */
     if ((pixbuf == NULL)
@@ -2276,6 +2277,9 @@ static void flash_window_update(Task * tk)
     if ( ! tk->tb->flat_button)
         gtk_widget_set_state(tk->button, tk->flash_state ? GTK_STATE_SELECTED : GTK_STATE_NORMAL);
     task_draw_label(tk);
+    if (tk->menu_item != NULL && gtk_widget_get_mapped(tk->menu_item))
+        /* if submenu exists and mapped then set state too */
+        gtk_widget_set_state(tk->menu_item, tk->flash_state ? GTK_STATE_SELECTED : GTK_STATE_NORMAL);
 
     /* Complement the flashing context. */
     tk->flash_state = ! tk->flash_state;
@@ -2322,6 +2326,11 @@ static void task_clear_urgency(Task * tk)
         {
             g_source_remove(tk->flash_timeout);
             tk->flash_timeout = 0;
+        }
+        if (tk->menu_item)
+        {
+            g_object_unref(tk->menu_item);
+            tk->menu_item = NULL;
         }
 
         /* Clear the flashing context and unflash the window immediately. */
@@ -2434,6 +2443,7 @@ static gboolean taskbar_task_control_event(GtkWidget * widget, GdkEventButton * 
             menu = gtk_menu_new();
             /* Bring up a popup menu listing all the class members. */
             Task * tk_cursor;
+            GtkWidget * flashing_menu = NULL;
             for (tk_cursor = tc->p_task_head; tk_cursor != NULL;
                     tk_cursor = tk_cursor->p_task_flink_same_class)
             {
@@ -2449,8 +2459,18 @@ static gboolean taskbar_task_control_event(GtkWidget * widget, GdkEventButton * 
                     g_signal_connect(mi, "button-press-event",
                             G_CALLBACK(taskbar_popup_activate_event), (gpointer) tk_cursor);
                     gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+                    /* set mi as if it's urgent with reference */
+                    if (tk_cursor->menu_item != NULL)
+                        g_object_unref(tk_cursor->menu_item);
+                    tk_cursor->menu_item = NULL;
+                    if (tk_cursor->urgency && !tk_cursor->focused && flashing_menu == NULL)
+                        flashing_menu = g_object_ref_sink(mi);
                 }
             }
+            /* since tc->visible_count > 1, tc->p_task_visible cannot be NULL */
+            g_assert(tc->p_task_visible != NULL);
+            g_assert(tc->p_task_visible->menu_item == NULL);
+            tc->p_task_visible->menu_item = flashing_menu;
         }
         else if(event->button == 3) /* Right click */
         {
@@ -2686,19 +2706,11 @@ static gboolean taskbar_button_scroll_event(GtkWidget * widget, GdkEventScroll *
 /* Handler for "size-allocate" event from taskbar button. */
 static void taskbar_button_size_allocate(GtkWidget * btn, GtkAllocation * alloc, Task * tk)
 {
-#if GTK_CHECK_VERSION(2, 20, 0)
     if (gtk_widget_get_realized(btn))
-#else
-    if (GTK_WIDGET_REALIZED(btn))
-#endif
     {
         /* Get the coordinates of the button. */
         int x, y;
-#if GTK_CHECK_VERSION(2,22,0)
         gdk_window_get_origin(gtk_button_get_event_window(GTK_BUTTON(btn)), &x, &y);
-#else
-        gdk_window_get_origin(GTK_BUTTON(btn)->event_window, &x, &y);
-#endif
 
 
         /* Send a NET_WM_ICON_GEOMETRY property change on the window. */
@@ -2823,7 +2835,7 @@ static void task_build_gui(LaunchTaskBarPlugin * tb, Task * tk)
     task_update_style(tk, tb);
 
     /* Flash button for window with urgency hint. */
-    if (tk->urgency)
+    if (tk->urgency && !tk->focused)
         task_set_urgency(tk);
 }
 
@@ -3023,6 +3035,8 @@ static void taskbar_net_active_window(GtkWidget * widget, LaunchTaskBarPlugin * 
     if ((ctk != NULL) && (drop_old))
     {
         ctk->focused = FALSE;
+        if (ctk->urgency)
+            task_set_urgency(ctk);
         tb->focused = NULL;
         if(!tb->flat_button) /* relieve the button if flat buttons is not used. */
             gtk_toggle_button_set_active((GtkToggleButton*)ctk->button, FALSE);
@@ -3036,6 +3050,8 @@ static void taskbar_net_active_window(GtkWidget * widget, LaunchTaskBarPlugin * 
         if(!tb->flat_button) /* depress the button if flat buttons is not used. */
             gtk_toggle_button_set_active((GtkToggleButton*)ntk->button, TRUE);
         ntk->focused = TRUE;
+        if (ntk->urgency)
+            task_clear_urgency(ntk);
         tb->focused = ntk;
         task_button_redraw(ntk, tb);
     }
@@ -3120,7 +3136,7 @@ static void taskbar_property_notify_event(LaunchTaskBarPlugin *tb, XEvent *ev)
                     if (tb->use_urgency_hint)
                     {
                         tk->urgency = task_has_urgency(tk);
-                        if (tk->urgency)
+                        if (tk->urgency && !tk->focused)
                             task_set_urgency(tk);
                         else
                             task_clear_urgency(tk);
@@ -3346,6 +3362,8 @@ static void taskbar_make_menu(LaunchTaskBarPlugin * tb)
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
     g_signal_connect(G_OBJECT(mi), "activate", (GCallback) menu_iconify_window, tb);
 
+    /* FIXME: if WM is Openbox then add "Window special parameters" submenu */
+
     /* If multiple desktops are supported, add menu items to select them. */
     if (tb->number_of_desktops > 1)
     {
@@ -3386,6 +3404,8 @@ static void taskbar_make_menu(LaunchTaskBarPlugin * tb)
         g_object_set_data(G_OBJECT(mi), "num", GINT_TO_POINTER(ALL_WORKSPACES));
         g_signal_connect(mi, "activate", G_CALLBACK(menu_move_to_workspace), tb);
         gtk_menu_shell_append(GTK_MENU_SHELL(workspace_menu), mi);
+
+        /* FIXME: add "Current workspace" item, active if not on a current */
 
         /* Add Move to Workspace menu item as a submenu. */
         mi = gtk_menu_item_new_with_mnemonic(_("_Move to Workspace"));

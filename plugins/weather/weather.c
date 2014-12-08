@@ -18,6 +18,8 @@
  * See the COPYRIGHT file for more information.
  */
 
+#ifndef USE_STANDALONE
+
 #include "location.h"
 #include "weatherwidget.h"
 #include "yahooutil.h"
@@ -38,6 +40,7 @@ typedef struct
   gint iMyId_;
   GtkWidget *pWeather_;
   config_setting_t *pConfig_;
+  LXPanel *pPanel_;
 } WeatherPluginPrivate;
 
 
@@ -79,6 +82,7 @@ weather_constructor(LXPanel *pPanel, config_setting_t *pConfig)
   WeatherPluginPrivate * pPriv = g_new0(WeatherPluginPrivate, 1);
 
   pPriv->pConfig_ = pConfig;
+  pPriv->pPanel_ = pPanel;
 
   /* There is one more now... */
   ++g_iCount;
@@ -96,7 +100,7 @@ weather_constructor(LXPanel *pPanel, config_setting_t *pConfig)
 
   LXW_LOG(LXW_DEBUG, "weather_constructor()");
   
-  GtkWidget * pWidg = gtk_weather_new(FALSE);
+  GtkWidget * pWidg = gtk_weather_new();
 
   pPriv->pWeather_ = pWidg;
 
@@ -257,6 +261,24 @@ void weather_save_configuration(GtkWidget * pWeather, LocationInfo * pLocation)
 
 }
 
+void weather_set_label_text(GtkWidget * pWeather, GtkWidget * label, const gchar * text)
+{
+  GtkWidget * pWidget = gtk_widget_get_parent(pWeather);
+  WeatherPluginPrivate * pPriv = NULL;
+
+  if (pWidget)
+    {
+      pPriv = (WeatherPluginPrivate *) lxpanel_plugin_get_data(pWidget);
+    }
+  if (pPriv == NULL)
+    {
+      LXW_LOG(LXW_ERROR, "Weather: weather_set_label_text() for invalid widget");
+      return;
+    }
+
+  lxpanel_draw_label_text(pPriv->pPanel_, label, text, TRUE, 1, TRUE);
+}
+
 /**
  * Weather Plugin configuration change callback.
  *
@@ -315,3 +337,4 @@ LXPanelPluginInit fm_module_init_lxpanel_gtk =
     .config = weather_configure,
     .reconfigure = weather_configuration_changed
   };
+#endif /* USE_STANDALONE */

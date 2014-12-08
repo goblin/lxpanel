@@ -40,6 +40,7 @@
 #include "menu-policy.h"
 
 #include "dbg.h"
+#include "gtk-compat.h"
 
 /* support for libmenu-cache 0.4.x */
 #ifndef MENU_CACHE_CHECK_VERSION
@@ -63,7 +64,6 @@
 typedef struct {
     GtkWidget *menu, *box, *img, *label;
     char *fname, *caption;
-    gulong handler_id;
     int iconsize;
     gboolean has_system_menu;
     guint show_system_menu_idle;
@@ -80,9 +80,6 @@ static guint idle_loader = 0;
 
 GQuark SYS_MENU_ITEM_ID = 0;
 
-/* FIXME: this is defined in misc.c and should be replaced later */
-GtkWidget *_gtk_image_new_from_file_scaled(const gchar *file, gint width,
-                                           gint height, gboolean keep_ratio);
 /* FIXME: those are defined on panel main code */
 void restart(void);
 void gtk_run(void);
@@ -110,7 +107,6 @@ menu_destructor(gpointer user_data)
     if (m->show_system_menu_idle)
         g_source_remove(m->show_system_menu_idle);
 
-    /* g_signal_handler_disconnect(G_OBJECT(m->img), m->handler_id); */
     g_signal_handlers_disconnect_matched(m->ds, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
                                          on_data_get, NULL);
     g_object_unref(G_OBJECT(m->ds));
@@ -150,44 +146,9 @@ run_command(GtkWidget *widget, void (*cmd)(void))
 static void
 menu_pos(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, GtkWidget *widget)
 {
-    int ox, oy, w, h;
-    menup *m;
-    GtkAllocation allocation;
-
-    gtk_widget_get_allocation(GTK_WIDGET(widget), &allocation);
-    ENTER;
-    m = g_object_get_data(G_OBJECT(widget), "plugin");
-    gdk_window_get_origin(gtk_widget_get_window(widget), &ox, &oy);
-#if GTK_CHECK_VERSION(2,20,0)
-    GtkRequisition requisition;
-    gtk_widget_get_requisition(GTK_WIDGET(menu), &requisition);
-    w = requisition.width;
-    h = requisition.height;
-
-#else
-    w = GTK_WIDGET(menu)->requisition.width;
-    h = GTK_WIDGET(menu)->requisition.height;
-#endif
-    if (panel_get_orientation(m->panel) == GTK_ORIENTATION_HORIZONTAL) {
-        *x = ox;
-        if (*x + w > gdk_screen_width())
-            *x = ox + allocation.width - w;
-        *y = oy - h;
-        if (*y < 0)
-            *y = oy + allocation.height;
-    } else {
-        *x = ox + allocation.width;
-        if (*x > gdk_screen_width())
-            *x = ox - w;
-        *y = oy;
-        if (*y + h >  gdk_screen_height())
-            *y = oy + allocation.height - h;
-    }
-    DBG("widget: x,y=%d,%d  w,h=%d,%d\n", ox, oy,
-          allocation.width, allocation.height );
-    DBG("w-h %d %d\n", w, h);
+    menup *m = lxpanel_plugin_get_data(widget);
+    lxpanel_plugin_popup_set_position_helper(m->panel, widget, GTK_WIDGET(menu), x, y);
     *push_in = TRUE;
-    RET();
 }
 
 static void on_menu_item( GtkMenuItem* mi, menup* m )
@@ -325,11 +286,7 @@ static void restore_grabs(GtkWidget *w, gpointer data)
 
         while (tmp)
         {
-#if GTK_CHECK_VERSION(2, 24, 0)
             if (!gtk_widget_get_mapped(tmp))
-#else
-            if (!GTK_WIDGET_MAPPED (tmp))
-#endif
             {
                 viewable = FALSE;
                 break;
@@ -562,11 +519,7 @@ static void _unload_old_icons(GtkMenu* menu, GtkIconTheme* theme, menup* m)
             {
 	        img = GTK_IMAGE(gtk_image_menu_item_get_image(GTK_IMAGE_MENU_ITEM(item)));
                 gtk_image_clear(img);
-#if GTK_CHECK_VERSION(2, 24, 0)
                 if (gtk_widget_get_mapped(GTK_WIDGET(img)))
-#else
-                if( GTK_WIDGET_MAPPED(img) )
-#endif
 		    on_menu_item_map(GTK_WIDGET(item), m);
             }
         }
@@ -669,16 +622,13 @@ static void show_menu( GtkWidget* widget, menup* m, int btn, guint32 time )
 }
 
 static gboolean
-my_button_pressed(GtkWidget *widget, GdkEventButton *event, menup *m)
+menu_button_press_event(GtkWidget * widget, GdkEventButton * event, LXPanel * panel)
 {
     ENTER;
-    GtkAllocation allocation;
-    gtk_widget_get_allocation(GTK_WIDGET(widget), &allocation);
 
-    if ((event->type == GDK_BUTTON_PRESS) && event->button == 1
-          && (event->x >=0 && event->x < allocation.width)
-          && (event->y >=0 && event->y < allocation.height)) {
-        show_menu( widget, m, event->button, event->time );
+    if (event->button == 1)
+    {
+        show_menu( widget, lxpanel_plugin_get_data(widget), event->button, event->time );
         RET(TRUE);
     }
     RET(FALSE);
@@ -689,7 +639,7 @@ static gboolean show_system_menu_idle(gpointer user_data)
     menup* m = (menup*)user_data;
     if (g_source_is_destroyed(g_main_current_source()))
         return FALSE;
-    show_menu( m->img, m, 0, GDK_CURRENT_TIME );
+    show_menu( m->box, m, 0, GDK_CURRENT_TIME );
     m->show_system_menu_idle = 0;
     return FALSE;
 }
@@ -736,12 +686,7 @@ make_button(menup *m, const gchar *fname, const gchar *name, GdkColor* tint, Gtk
         m->img = lxpanel_button_new_for_icon(m->panel, fname, tint, NULL);
     }
 
-    gtk_widget_show(m->img);
-    gtk_box_pack_start(GTK_BOX(m->box), m->img, TRUE, FALSE, 0);
-
-    m->handler_id = g_signal_connect (G_OBJECT (m->img), "button-press-event",
-          G_CALLBACK (my_button_pressed), m);
-    g_object_set_data(G_OBJECT(m->img), "plugin", m);
+    gtk_container_add(GTK_CONTAINER(m->box), m->img);
 
     m->ds = fm_dnd_src_new(NULL);
 
@@ -807,9 +752,8 @@ read_item(menup *m, config_setting_t *s)
     if (fname) {
         GtkWidget *img;
 
-        /* FIXME: use FmIcon cache and fm_pixbuf_from_icon() API */
         tmp = expand_tilda(fname);
-        img = _gtk_image_new_from_file_scaled(tmp, m->iconsize, m->iconsize, TRUE);
+        img = lxpanel_image_new_for_icon(m->panel, tmp, m->iconsize, NULL);
         gtk_widget_show(img);
         gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
         g_free(tmp);
@@ -945,8 +889,7 @@ read_submenu(menup *m, config_setting_t *s, gboolean as_item)
         if (fname) {
             GtkWidget *img;
             char *expanded = expand_tilda(fname);
-            /* FIXME: use FmIcon cache and fm_pixbuf_from_icon() API */
-            img = _gtk_image_new_from_file_scaled(expanded, m->iconsize, m->iconsize, TRUE);
+            img = lxpanel_image_new_for_icon(m->panel, expanded, m->iconsize, NULL);
             gtk_widget_show(img);
             gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
             g_free(expanded);
@@ -979,9 +922,9 @@ menu_constructor(LXPanel *panel, config_setting_t *settings)
     gtk_icon_size_lookup( GTK_ICON_SIZE_MENU, &iw, &ih );
     m->iconsize = MAX(iw, ih);
 
-    m->box = gtk_vbox_new(TRUE, 0);
+    m->box = gtk_event_box_new();
+    gtk_widget_set_has_window(m->box, FALSE);
     lxpanel_plugin_set_data(m->box, m, menu_destructor);
-    gtk_container_set_border_width(GTK_CONTAINER(m->box), 0);
 
     /* Save construction pointers */
     m->panel = panel;
@@ -1009,6 +952,7 @@ menu_constructor(LXPanel *panel, config_setting_t *settings)
         return NULL;
     }
 
+    /* FIXME: allow bind a global key to toggle menu using libkeybinder */
     return m->box;
 }
 
@@ -1018,9 +962,10 @@ static gboolean apply_config(gpointer user_data)
     menup* m = lxpanel_plugin_get_data(p);
 
     if( m->fname ) {
-        lxpanel_button_set_icon(m->img, m->fname, panel_get_icon_size(m->panel));
+        lxpanel_button_set_icon(m->img, m->fname, -1);
     }
     config_group_set_string(m->settings, "image", m->fname);
+    /* config_group_set_int(m->settings, "panelSize", m->match_panel); */
     config_group_set_string(m->settings, "name", m->caption);
     return FALSE;
 }
@@ -1030,14 +975,9 @@ static GtkWidget *menu_config(LXPanel *panel, GtkWidget *p)
     menup* menu = lxpanel_plugin_get_data(p);
     return lxpanel_generic_config_dlg(_("Menu"), panel, apply_config, p,
                                       _("Icon"), &menu->fname, CONF_TYPE_FILE_ENTRY,
+                                      /* _("Use panel size as icon size"), &menu->match_panel, CONF_TYPE_INT, */
                                       /* _("Caption"), &menu->caption, CONF_TYPE_STR, */
                                       NULL);
-}
-
-/* Callback when panel configuration changes. */
-static void menu_panel_configuration_changed(LXPanel *panel, GtkWidget *p)
-{
-    apply_config(p);
 }
 
 LXPanelPluginInit lxpanel_static_plugin_menu = {
@@ -1046,7 +986,7 @@ LXPanelPluginInit lxpanel_static_plugin_menu = {
 
     .new_instance = menu_constructor,
     .config = menu_config,
-    .reconfigure = menu_panel_configuration_changed,
+    .button_press_event = menu_button_press_event,
     .show_system_menu = show_system_menu
 };
 

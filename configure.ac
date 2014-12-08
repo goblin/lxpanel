@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(lxpanel, 0.7.2, http://lxde.org/)
+AC_INIT(lxpanel, 0.8.0, http://lxde.org/)
 AM_INIT_AUTOMAKE([-Wall foreign subdir-objects no-dist-gzip dist-xz])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -24,6 +24,7 @@ LT_PREREQ([2.2])
 LT_INIT
 
 # Checks for libraries.
+AC_SEARCH_LIBS([log], [m])
 AC_ARG_ENABLE(gtk3,
 AC_HELP_STRING([--enable-gtk3],[enable to use gtk-3.0 instead of gtk-2.0]),
 [case "${enableval}" in
@@ -33,10 +34,11 @@ AC_HELP_STRING([--enable-gtk3],[enable to use gtk-3.0 instead of gtk-2.0]),
 esac],[])
 
 if test "x$enable_gtk3" = "xyes" ; then
-  CFLAGS="$CFLAGS -DENABLE_GTK3"
   pkg_modules="$pkg_modules gtk+-3.0 libfm-gtk3 >= 1.2.0 libwnck-3.0"
+  keybinder_module=keybinder-3.0
 else
   pkg_modules="$pkg_modules gtk+-2.0 >= 2.18.0 libfm-gtk >= 1.2.0 libwnck-1.0"
+  keybinder_module=keybinder
 fi
 
 pkg_modules="$pkg_modules \
@@ -46,6 +48,10 @@ pkg_modules="$pkg_modules \
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
+
+PKG_CHECK_MODULES(KEYBINDER, [$keybinder_module])
+AC_SUBST(KEYBINDER_CFLAGS)
+AC_SUBST(KEYBINDER_LIBS)
 
 ###########################
 # Indicator Info
@@ -86,8 +92,6 @@ if test x"$enable_menu_cache" = "xno"; then
 	AC_WARN([No libmenu-cache found.  All menu related routines are not built.])
 	AC_DEFINE(DISABLE_MENU, [1], [Disable menu related routines])
 fi
-AC_SUBST(MENU_CACHE_CFLAGS)
-AC_SUBST(MENU_CACHE_LIBS)
 AM_CONDITIONAL(ENABLE_MENU_CACHE, test x"$enable_menu_cache" = x"yes")
 
 AC_ARG_ENABLE(more_warnings,
@@ -100,7 +104,6 @@ AC_ARG_ENABLE(more_warnings,
 if test x"$enable_more_warnings" = x"yes"; then
   ADDITIONAL_FLAGS="-Wall -Werror=all -Werror=format -Werror=implicit-function-declaration -Werror=implicit-int -Werror=missing-braces -Werror=parentheses -Werror=return-type -Werror=strict-aliasing -Werror=switch -Wuninitialized -Werror=unused-label -Werror=unused-value -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -Werror=missing-declarations -Wredundant-decls -Wmissing-noreturn -Wpointer-arith -Wcast-align -Wwrite-strings -Werror=inline -Werror=format-nonliteral -Wformat-nonliteral -Werror=format-security -Wformat-security -Winit-self -Werror=missing-include-dirs -Werror=undef -Werror=aggregate-return -Wmissing-format-attribute -Werror=nested-externs -fno-strict-aliasing -fmessage-length=0 -Wp,-D_FORTIFY_SOURCE=2 -DG_DISABLE_DEPRECATED -DG_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES -DGTK_DISABLE_DEPRECATED -DGTK_DISABLE_SINGLE_INCLUDES"
 fi
-AC_SUBST(ADDITIONAL_FLAGS)
 
 PACKAGE_CFLAGS="$PACKAGE_CFLAGS $MENU_CACHE_CFLAGS $ADDITIONAL_FLAGS"
 PACKAGE_LIBS="$PACKAGE_LIBS $MENU_CACHE_LIBS"
@@ -154,20 +157,6 @@ case `$LD --sort-common -v 2>&1 </dev/null` in
   AC_MSG_RESULT([no])
   ;;
 esac
-
-dnl FIXME: filter for undefined symbols in plugins
-# when passing "-z defs" to linker, we would better to make sure
-# there are no undefined references.  However, we intend not to
-# fix at the moment since we don't have spin-off libraray containing
-# the necessary functions.
-if test ! -z "$LDFLAGS"; then
-    LDFLAGS=`echo "$LDFLAGS" | sed -e 's/-Wl,-z,defs//'`
-fi
-
-LXPANEL_MODULE="-avoid-version \
--rpath \$(libdir)/lxpanel/plugins \
--no-undefined "'-export-symbols-regex "^[[^_]].*"'
-AC_SUBST(LXPANEL_MODULE)
 
 AC_ARG_ENABLE([alsa],
     AS_HELP_STRING([--disable-alsa],
@@ -381,6 +370,13 @@ else
     CPPFLAGS="$CPPFLAGS -DG_DISABLE_ASSERT -DG_DISABLE_CHECKS -DG_DISABLE_CAST_CHECKS"
 fi
 
+dnl Make version subfields for LXPANEL_CHECK_VERSION macro
+ac_version_subst_str=`echo $VERSION | awk -F '.' '/.*/ { printf "VERSION_MAJOR=%d VERSION_MINOR=%d VERSION_MICRO=%d", $1, $2, $3 }'`
+eval ${ac_version_subst_str}
+AC_SUBST(VERSION_MAJOR)
+AC_SUBST(VERSION_MINOR)
+AC_SUBST(VERSION_MICRO)
+
 dnl Fix invalid sysconfdir when --prefix=/usr
 if test `eval "echo $sysconfdir"` = /usr/etc
 then
@@ -391,6 +387,7 @@ AC_CONFIG_FILES([
     lxpanel.pc
     Makefile
     src/Makefile
+    src/panel.h
     plugins/Makefile
     po/Makefile.in
     data/Makefile

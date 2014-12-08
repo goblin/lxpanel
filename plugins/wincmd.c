@@ -185,7 +185,6 @@ static GtkWidget *wincmd_constructor(LXPanel *panel, config_setting_t *settings)
     /* Allocate top level widget and set into Plugin widget pointer. */
     p = lxpanel_button_new_for_icon(panel, wc->image, NULL, NULL);
     lxpanel_plugin_set_data(p, wc, wincmd_destructor);
-    gtk_container_set_border_width(GTK_CONTAINER(p), 0);
     gtk_widget_set_tooltip_text(p, _("Left click to iconify all windows.  Middle click to shade them."));
 
     /* Show the widget and return. */
@@ -206,8 +205,9 @@ static gboolean wincmd_apply_configuration(gpointer user_data)
     GtkWidget * p = user_data;
     WinCmdPlugin * wc = lxpanel_plugin_get_data(p);
 
+    //lxpanel_button_set_icon(p, wc->image, -1);
     /* Just save settings */
-    config_group_set_string(wc->settings, "image", wc->image);
+    //config_group_set_string(wc->settings, "image", wc->image);
     config_group_set_string(wc->settings, "Button1",
                             wincmd_names[wc->button_1_command]);
     config_group_set_string(wc->settings, "Button2",
@@ -228,14 +228,6 @@ static GtkWidget *wincmd_configure(LXPanel *panel, GtkWidget *p)
 }
 
 
-/* Callback when panel configuration changes. */
-static void wincmd_panel_reconfigure(LXPanel *panel, GtkWidget *p)
-{
-    WinCmdPlugin * wc = lxpanel_plugin_get_data(p);
-
-    lxpanel_button_set_icon(p, wc->image, panel_get_icon_size(panel));
-}
-
 /* Plugin descriptor. */
 LXPanelPluginInit lxpanel_static_plugin_wincmd = {
     .name = N_("Minimize All Windows"),
@@ -243,6 +235,5 @@ LXPanelPluginInit lxpanel_static_plugin_wincmd = {
 
     .new_instance = wincmd_constructor,
     .config = wincmd_configure,
-    .reconfigure = wincmd_panel_reconfigure,
     .button_press_event = wincmd_button_clicked
 };

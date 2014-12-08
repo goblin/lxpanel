@@ -35,6 +35,7 @@
 #include "devproc.h"
 #include "wireless.h"
 #include "plugin.h"
+#include "misc.h"
 #include "dbg.h"
 
 /* 1 second */
@@ -169,7 +170,7 @@ wireless_menu(netdev_info *ni)
 
             /* Encryption */
             if (aps->apinfo->haskey) {
-                lockicon = gtk_image_new_from_file(ICONS_WL_LOCK);
+                lockicon = lxpanel_image_new_for_icon(NULL, ICONS_WL_LOCK, 18, NULL);
                 gtk_box_pack_start(GTK_BOX(item_box), lockicon, FALSE, FALSE, 0);
             }
 
@@ -226,15 +227,17 @@ static gint menupopup(GtkWidget *widget, GdkEvent *event, netdev_info *ni)
 
     g_return_val_if_fail (event != NULL, FALSE);
 
-    if (event->type == GDK_BUTTON_PRESS) {
+//    if (event->type == GDK_BUTTON_PRESS) {
         event_button = (GdkEventButton *) event;
-        if (event_button->button == 1) {
+    if (event->type == GDK_BUTTON_PRESS && event_button->button == 1) {
+//        if (event_button->button == 1) {
             /* wireless device */
             if (ni->netdev_list->info.wireless) {
                 gtk_menu_popup(GTK_MENU(wireless_menu(ni)), NULL, NULL, NULL, NULL, event_button->button, event_button->time);
-            }
+//            }
             return TRUE;
-        } else if (event_button->button == 3) {
+        } else {
+//        } else if (event_button->button == 3) {
             GtkWidget *menu;
             GtkWidget *menu_item;
 
@@ -323,6 +326,7 @@ static void refresh_systray(netstat *ns, NETDEVLIST_PTR netdev_list)
 {
     NETDEVLIST_PTR ptr;
     char *tooltip;
+    const char *icon, *theme_icon;
 
     if (netdev_list==NULL) {
         return;
@@ -375,6 +379,11 @@ static void refresh_systray(netstat *ns, NETDEVLIST_PTR netdev_list)
                                                                 ptr->info.trans_bytes, ptr->info.recv_bytes, _("bytes"),
                                                                 ptr->info.trans_packets, ptr->info.recv_packets, _("packets"));
 
+            icon = select_icon(ptr->info.plug, ptr->info.connected, ptr->info.status);
+            if (ns->use_theme)
+                theme_icon = select_icon_theme(ptr->info.plug, ptr->info.connected, ptr->info.status);
+            else
+                theme_icon = icon;
             /* status icon doesn't exist  */
             if (ptr->info.status_icon==NULL) {
                 netdev_info *ni;
@@ -382,12 +391,12 @@ static void refresh_systray(netstat *ns, NETDEVLIST_PTR netdev_list)
                 ni->ns = ns;
                 ni->netdev_list = ptr;
 
-                ptr->info.status_icon = create_statusicon(ns->mainw, select_icon(ptr->info.plug, ptr->info.connected, ptr->info.status), tooltip, select_icon_theme(ptr->info.plug, ptr->info.connected, ptr->info.status));
+                ptr->info.status_icon = create_statusicon(ns->panel, ns->mainw, icon, tooltip, theme_icon);
                 g_signal_connect(ptr->info.status_icon->main, "button-press-event", G_CALLBACK(menupopup), ni);
                 g_object_weak_ref(G_OBJECT(ptr->info.status_icon->main), g_free_weaknotify, ni);
             } else {
                 set_statusicon_tooltips(ptr->info.status_icon, tooltip);
-                set_statusicon_image_from_file(ptr->info.status_icon, select_icon(ptr->info.plug, ptr->info.connected, ptr->info.status));
+                update_statusicon(ptr->info.status_icon, icon, theme_icon);
                 set_statusicon_visible(ptr->info.status_icon, TRUE);
             }
             g_free(tooltip);
@@ -433,14 +442,18 @@ static GtkWidget *netstat_constructor(LXPanel *panel, config_setting_t *settings
 {
     netstat *ns;
     const char *tmp;
+    int tmp_int;
     GtkWidget *p;
 
     ENTER;
     ns = g_new0(netstat, 1);
     g_return_val_if_fail(ns != NULL, NULL);
+    ns->panel = panel;
     /* apply config */
     if (config_setting_lookup_string(settings, "FixCommand", &tmp))
         ns->fixcmd = g_strdup(tmp);
+    if (config_setting_lookup_int(settings, "UseTheme", &tmp_int))
+        ns->use_theme = !!tmp_int;
 
     /* initializing */
     ns->fnetd = malloc(sizeof(FNETD));

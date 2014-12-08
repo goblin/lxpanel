@@ -220,13 +220,15 @@ static gint get_temperature(thermal *th, gint *warn)
     for(i = 0; i < th->numsensors; i++){
         cur = th->get_temperature[i](th->sensor_array[i]);
         if (w == 2) ; /* already warning2 */
-        else if (th->critical[i] > 0 && cur >= th->critical[i] - 5)
+        else if (th->not_custom_levels &&
+                 th->critical[i] > 0 && cur >= th->critical[i] - 5)
             w = 2;
         else if ((!th->not_custom_levels || th->critical[i] < 0) &&
                  cur >= th->warning2)
             w = 2;
         else if (w == 1) ; /* already warning1 */
-        else if (th->critical[i] > 0 && cur >= th->critical[i] - 10)
+        else if (th->not_custom_levels &&
+                 th->critical[i] > 0 && cur >= th->critical[i] - 10)
             w = 1;
         else if ((!th->not_custom_levels || th->critical[i] < 0) &&
                  cur >= th->warning1)
@@ -357,7 +359,6 @@ static gboolean try_hwmon_sensors(thermal* th, const char *path)
 
     if (!(sensorsDirectory = g_dir_open(path, 0, NULL)))
         return FALSE;
-    /* FIXME: do scanning hwmonX other than 0 */
 
     while ((sensor_name = g_dir_read_name(sensorsDirectory)))
     {
@@ -443,6 +444,7 @@ static gboolean applyConfig(gpointer p)
     if (th->str_cl_warning2) gdk_color_parse(th->str_cl_warning2, &th->cl_warning2);
 
     remove_all_sensors(th);
+    /* FIXME: support wildcards in th->sensor */
     if(th->sensor == NULL) th->auto_sensor = TRUE;
     if(th->auto_sensor) check_sensors(th);
     else if (strncmp(th->sensor, "/sys/", 5) != 0)
@@ -504,7 +506,6 @@ thermal_constructor(LXPanel *panel, config_setting_t *settings)
     p = gtk_event_box_new();
     lxpanel_plugin_set_data(p, th, thermal_destructor);
     gtk_widget_set_has_window(p, FALSE);
-    gtk_container_set_border_width( GTK_CONTAINER(p), 2 );
 
     th->namew = gtk_label_new("ww");
     gtk_container_add(GTK_CONTAINER(p), th->namew);

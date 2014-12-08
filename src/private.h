@@ -31,7 +31,6 @@
 
 #include <gdk/gdk.h>
 
-#include "bg.h"
 #include "ev.h"
 
 #if !GLIB_CHECK_VERSION(2, 40, 0)
@@ -42,7 +41,7 @@
  *   Definitions used by lxpanel main code internally */
 
 /* Extracted from panel.h */
-enum { ALLIGN_NONE, ALLIGN_LEFT, ALLIGN_CENTER, ALLIGN_RIGHT  };
+enum { ALIGN_NONE, ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT  };
 enum { EDGE_NONE=0, EDGE_LEFT, EDGE_RIGHT, EDGE_TOP, EDGE_BOTTOM };
 enum { WIDTH_NONE, WIDTH_REQUEST, WIDTH_PIXEL, WIDTH_PERCENT };
 enum { HEIGHT_NONE, HEIGHT_PIXEL, HEIGHT_REQUEST };
@@ -59,6 +58,8 @@ extern gboolean is_in_lxde;
 
 extern gchar *cprofile;
 
+extern GSList* all_panels;
+
 /* Context of a panel on a given edge. */
 struct _Panel {
     char* name;
@@ -74,7 +75,7 @@ struct _Panel {
     GtkWidget *(*my_box_new) (gboolean, gint);
     GtkWidget *(*my_separator_new) ();
 
-    FbBg *bg;
+    void *bg; /* unused since 0.8.0 */
     int alpha;
     guint32 tintcolor;
     guint32 fontcolor;
@@ -83,7 +84,7 @@ struct _Panel {
 
     int ax, ay, aw, ah;  /* prefferd allocation of a panel */
     int cx, cy, cw, ch;  /* current allocation (as reported by configure event) allocation */
-    int allign, edge, margin;
+    int align, edge, margin;
     guint orientation;
     int widthtype, width;
     int heighttype, height;
@@ -113,8 +114,8 @@ struct _Panel {
 
     int desknum;
     int curdesk;
-    gulong *workarea;
-    int wa_len;
+    gulong *workarea; /* unused since 0.8.0 */
+    int wa_len; /* unused since 0.8.0 */
 
     char* background_file;
 
@@ -130,14 +131,21 @@ struct _Panel {
     GtkWidget* alignment_right_label;	/* Label of alignment: right control */
     GtkWidget* height_control;		/* Height control in preference dialog */
     GtkWidget* width_control;		/* Width control in preference dialog */
+    GtkWidget* strut_control;		/* Reserve space in preference dialog */
+    GtkWidget* edge_bottom_button;
+    GtkWidget* edge_top_button;
+    GtkWidget* edge_left_button;
+    GtkWidget* edge_right_button;
 
     guint initialized : 1;              /* Should be grouped better later, */
     guint ah_far : 1;                   /* placed here for binary compatibility */
     guint ah_state : 3;
     guint background_update_queued;
+    guint strut_update_queued;
     guint mouse_timeout;
     //gint dyn_space;                     /* Space for expandable plugins */
     //guint calculate_size_idle;          /* The idle handler for dyn_space calc */
+    cairo_surface_t *surface;           /* Panel background */
 };
 
 typedef struct {
@@ -198,8 +206,8 @@ static inline char *_user_config_file_name(const char *name1, const char *name2)
 #define STATIC_ICONS
 
 /* Plugins management - new style */
-void _prepare_modules(void);
-void _unload_modules(void);
+void lxpanel_prepare_modules(void);
+void lxpanel_unload_modules(void);
 
 GtkWidget *lxpanel_add_plugin(LXPanel *p, const char *name, config_setting_t *cfg, gint at);
 GHashTable *lxpanel_get_all_types(void); /* transfer none */
@@ -213,21 +221,26 @@ extern GQuark lxpanel_plugin_qconf; /* access to congig_setting_t data */
 
 gboolean _class_is_present(const LXPanelPluginInit *init);
 
+LXPanel* panel_new(const char* config_file, const char* config_name);
+
 void _panel_show_config_dialog(LXPanel *panel, GtkWidget *p, GtkWidget *dlg);
 
-void _calculate_position(LXPanel *panel);
+void _calculate_position(LXPanel *panel, GdkRectangle *rect);
 
-void _panel_determine_background_pixmap(LXPanel * p, GtkWidget * widget);
 void _panel_establish_autohide(LXPanel *p);
 void _panel_set_wm_strut(LXPanel *p);
 void _panel_set_panel_configuration_changed(LXPanel *p);
 void _panel_queue_update_background(LXPanel *p);
+void _panel_emit_icon_size_changed(LXPanel *p);
+void _panel_emit_font_changed(LXPanel *p);
 
 void panel_configure(LXPanel* p, int sel_page);
 gboolean panel_edge_available(Panel* p, int edge, gint monitor);
+gboolean _panel_edge_can_strut(LXPanel *panel, int edge, gint monitor, gulong *size);
 void restart(void);
 void logout(void);
 void gtk_run(void);
+
 
 /* -----------------------------------------------------------------------------
  *   Deprecated declarations. Kept for compatibility with old code plugins.
@@ -254,6 +267,8 @@ extern void panel_update_background( Panel* p );
 
 /* if current window manager is EWMH conforming. */
 extern gboolean is_ewmh_supported;
+
+void get_button_spacing(GtkRequisition *req, GtkContainer *parent, gchar *name);
 
 /*
  This function is used to re-create a new box with different
@@ -377,5 +392,27 @@ extern void plugin_adjust_popup_position(GtkWidget * popup, Plugin * plugin);
 							/* Helper to move popup windows away from the panel */
 extern void plugin_popup_set_position_helper(Plugin * p, GtkWidget * near, GtkWidget * popup, GtkRequisition * popup_req, gint * px, gint * py);
 							/* Helper for position-calculation callback for popup menus */
+
+/**
+ * lxpanel_image_set_from_file
+ * @p: a panel instance
+ * @image: a #GtkImage widget
+ * @file: image file path
+ *
+ * Applies icon from @file to @image in accordance with icon size setting
+ * on panel @p.
+ */
+extern void lxpanel_image_set_from_file(LXPanel * p, GtkWidget * image, const char * file);
+
+/**
+ * lxpanel_image_set_icon_theme
+ * @p: a panel instance
+ * @image: a #GtkImage widget
+ * @icon: icon name
+ *
+ * Applies icon size and theme from settings of @p to @image using @icon
+ * name to select icon.
+ */
+extern gboolean lxpanel_image_set_icon_theme(LXPanel * p, GtkWidget * image, const gchar * icon);
 
 #endif

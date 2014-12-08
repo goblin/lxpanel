@@ -32,9 +32,9 @@ G_BEGIN_DECLS
  * Since: 0.8.0
  */
 #define LXPANEL_CHECK_VERSION(_a,_b,_c) \
-    (0 > _a || \
-    (0 == _a && 8 > _b) || \
-    (0 == _a && 8 == _b && 0 >= _c))
+    (@VERSION_MAJOR@ > _a || \
+    (@VERSION_MAJOR@ == _a && @VERSION_MINOR@ > _b) || \
+    (@VERSION_MAJOR@ == _a && @VERSION_MINOR@ == _b && @VERSION_MICRO@ >= _c))
 
 
 #define LX_TYPE_PANEL                  (lxpanel_get_type())

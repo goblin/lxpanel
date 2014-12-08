@@ -156,44 +156,30 @@ am__v_lt_0 = --silent
 am__v_lt_1 = 
 batt_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(batt_la_CFLAGS) \
-	$(CFLAGS) $(batt_la_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 cpu_la_LIBADD =
 am_cpu_la_OBJECTS = cpu/cpu.lo
 cpu_la_OBJECTS = $(am_cpu_la_OBJECTS)
-cpu_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(cpu_la_LDFLAGS) $(LDFLAGS) -o $@
 cpufreq_la_LIBADD =
-am_cpufreq_la_OBJECTS = cpufreq/cpufreq_la-cpufreq.lo
+am_cpufreq_la_OBJECTS = cpufreq/cpufreq.lo
 cpufreq_la_OBJECTS = $(am_cpufreq_la_OBJECTS)
-cpufreq_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(cpufreq_la_CFLAGS) \
-	$(CFLAGS) $(cpufreq_la_LDFLAGS) $(LDFLAGS) -o $@
 deskno_la_LIBADD =
 am_deskno_la_OBJECTS = deskno/deskno.lo
 deskno_la_OBJECTS = $(am_deskno_la_OBJECTS)
-deskno_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(deskno_la_LDFLAGS) $(LDFLAGS) -o $@
-indicator_la_LIBADD =
+am__DEPENDENCIES_1 =
+indicator_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_indicator_la_OBJECTS = indicator/indicator_la-indicator.lo
 indicator_la_OBJECTS = $(am_indicator_la_OBJECTS)
 indicator_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(indicator_la_CFLAGS) \
-	$(CFLAGS) $(indicator_la_LDFLAGS) $(LDFLAGS) -o $@
-kbled_la_LIBADD =
-am_kbled_la_OBJECTS = kbled/kbled_la-kbled.lo
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+kbled_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_kbled_la_OBJECTS = kbled/kbled.lo
 kbled_la_OBJECTS = $(am_kbled_la_OBJECTS)
-kbled_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(kbled_la_CFLAGS) \
-	$(CFLAGS) $(kbled_la_LDFLAGS) $(LDFLAGS) -o $@
 monitors_la_LIBADD =
 am_monitors_la_OBJECTS = monitors/monitors.lo
 monitors_la_OBJECTS = $(am_monitors_la_OBJECTS)
-monitors_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(monitors_la_LDFLAGS) $(LDFLAGS) -o $@
-netstat_la_LIBADD =
+netstat_la_DEPENDENCIES =
 am_netstat_la_OBJECTS = netstat/netstat_la-netstat.lo \
 	netstat/netstat_la-devproc.lo netstat/netstat_la-statusicon.lo \
 	netstat/netstat_la-wireless.lo \
@@ -202,7 +188,7 @@ am_netstat_la_OBJECTS = netstat/netstat_la-netstat.lo \
 netstat_la_OBJECTS = $(am_netstat_la_OBJECTS)
 netstat_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(netstat_la_CFLAGS) \
-	$(CFLAGS) $(netstat_la_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 netstatus_la_LIBADD =
 am_netstatus_la_OBJECTS = netstatus/netstatus_la-netstatus.lo \
 	netstatus/netstatus_la-netstatus-dialog.lo \
@@ -214,27 +200,21 @@ am_netstatus_la_OBJECTS = netstatus/netstatus_la-netstatus.lo \
 netstatus_la_OBJECTS = $(am_netstatus_la_OBJECTS)
 netstatus_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(netstatus_la_CFLAGS) \
-	$(CFLAGS) $(netstatus_la_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 thermal_la_LIBADD =
 am_thermal_la_OBJECTS = thermal/thermal.lo
 thermal_la_OBJECTS = $(am_thermal_la_OBJECTS)
-thermal_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(thermal_la_LDFLAGS) $(LDFLAGS) -o $@
 volume_la_LIBADD =
 am_volume_la_OBJECTS = volume/volume_la-volume-impl.lo \
 	volume/volume_la-volume.lo
 volume_la_OBJECTS = $(am_volume_la_OBJECTS)
 volume_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(volume_la_CFLAGS) \
-	$(CFLAGS) $(volume_la_LDFLAGS) $(LDFLAGS) -o $@
-volumealsa_la_LIBADD =
-am_volumealsa_la_OBJECTS = volumealsa/volumealsa_la-volumealsa.lo
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+volumealsa_la_DEPENDENCIES =
+am_volumealsa_la_OBJECTS = volumealsa/volumealsa.lo
 volumealsa_la_OBJECTS = $(am_volumealsa_la_OBJECTS)
-volumealsa_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(volumealsa_la_CFLAGS) \
-	$(CFLAGS) $(volumealsa_la_LDFLAGS) $(LDFLAGS) -o $@
-weather_la_LIBADD =
+weather_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_weather_la_OBJECTS = weather/weather_la-logutil.lo \
 	weather/weather_la-httputil.lo weather/weather_la-yahooutil.lo \
 	weather/weather_la-location.lo weather/weather_la-forecast.lo \
@@ -243,13 +223,13 @@ am_weather_la_OBJECTS = weather/weather_la-logutil.lo \
 weather_la_OBJECTS = $(am_weather_la_OBJECTS)
 weather_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(weather_la_CFLAGS) \
-	$(CFLAGS) $(weather_la_LDFLAGS) $(LDFLAGS) -o $@
-xkb_la_LIBADD =
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+xkb_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_xkb_la_OBJECTS = xkb/xkb_la-xkb-plugin.lo xkb/xkb_la-xkb.lo
 xkb_la_OBJECTS = $(am_xkb_la_OBJECTS)
 xkb_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(xkb_la_CFLAGS) $(CFLAGS) \
-	$(xkb_la_LDFLAGS) $(LDFLAGS) -o $@
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -327,7 +307,6 @@ CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 pkglibdir = $(libdir)/lxpanel/plugins
 ACLOCAL = @ACLOCAL@
-ADDITIONAL_FLAGS = @ADDITIONAL_FLAGS@
 ALL_LINGUAS = @ALL_LINGUAS@
 ALL_PLUGINS_LIST = @ALL_PLUGINS_LIST@
 AMTAR = @AMTAR@
@@ -380,6 +359,8 @@ INTLTOOL_V_MERGE = @INTLTOOL_V_MERGE@
 INTLTOOL_V_MERGE_OPTIONS = @INTLTOOL_V_MERGE_OPTIONS@
 INTLTOOL__v_MERGE_ = @INTLTOOL__v_MERGE_@
 INTLTOOL__v_MERGE_0 = @INTLTOOL__v_MERGE_0@
+KEYBINDER_CFLAGS = @KEYBINDER_CFLAGS@
+KEYBINDER_LIBS = @KEYBINDER_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -390,7 +371,6 @@ LIBXML2_LIBS = @LIBXML2_LIBS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
-LXPANEL_MODULE = @LXPANEL_MODULE@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MENU_CACHE_CFLAGS = @MENU_CACHE_CFLAGS@
@@ -431,6 +411,9 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+VERSION_MAJOR = @VERSION_MAJOR@
+VERSION_MICRO = @VERSION_MICRO@
+VERSION_MINOR = @VERSION_MINOR@
 X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
 XGETTEXT = @XGETTEXT@
@@ -496,6 +479,9 @@ AM_CPPFLAGS = \
 	$(G_CAST_CHECKS)
 
 AM_LDFLAGS = \
+	-module -avoid-version -shared -export-dynamic \
+	-no-undefined -rpath $(libdir)/lxpanel/plugins \
+	$(top_builddir)/src/liblxpanel.la \
 	$(PACKAGE_LIBS)
 
 noinst_LIBRARIES = libbuiltin_plugins.a
@@ -549,20 +535,15 @@ batt_la_SOURCES = \
 	batt/batt_sys.c
 
 batt_la_CFLAGS = -I$(srcdir)/batt
-batt_la_LDFLAGS = -module @LXPANEL_MODULE@
 
 # cpu
 cpu_la_SOURCES = cpu/cpu.c
-cpu_la_LDFLAGS = -module @LXPANEL_MODULE@
 
 # cpufreq
 cpufreq_la_SOURCES = cpufreq/cpufreq.c
-cpufreq_la_CFLAGS = -DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\"
-cpufreq_la_LDFLAGS = -module @LXPANEL_MODULE@
 
 # deskno
 deskno_la_SOURCES = deskno/deskno.c
-deskno_la_LDFLAGS = -module @LXPANEL_MODULE@
 
 # indicator
 indicator_la_SOURCES = indicator/indicator.c
@@ -571,16 +552,14 @@ indicator_la_CFLAGS = \
 	-DINDICATOR_ICONS_DIR=\""$(INDICATORICONSDIR)"\" \
 	$(APPLET_CFLAGS)
 
-indicator_la_LDFLAGS = -module @LXPANEL_MODULE@ $(APPLET_LIBS)
+indicator_la_LIBADD = $(APPLET_LIBS)
 
 # kbled
 kbled_la_SOURCES = kbled/kbled.c
-kbled_la_CFLAGS = -DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\"
-kbled_la_LDFLAGS = -module @LXPANEL_MODULE@
+kbled_la_LIBADD = $(X11_LIBS)
 
 # monitors
 monitors_la_SOURCES = monitors/monitors.c
-monitors_la_LDFLAGS = -module @LXPANEL_MODULE@
 
 # netstat
 netstat_la_SOURCES = \
@@ -591,11 +570,8 @@ netstat_la_SOURCES = \
 	netstat/lxnm_client.c \
 	netstat/passwd_gui.c
 
-netstat_la_CFLAGS = \
-	-I$(srcdir)/netstat \
-	-DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\"
-
-netstat_la_LDFLAGS = -module @LXPANEL_MODULE@ -liw
+netstat_la_CFLAGS = -I$(srcdir)/netstat
+netstat_la_LIBADD = -liw
 
 # netstatus
 netstatus_la_SOURCES = \
@@ -609,14 +585,11 @@ netstatus_la_SOURCES = \
 
 netstatus_la_CFLAGS = \
 	-I$(srcdir)/netstatus \
-	-DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\" \
 	-DPACKAGE_UI_DIR=\""$(datadir)/lxpanel/ui"\"
 
-netstatus_la_LDFLAGS = -module @LXPANEL_MODULE@
 
 # thermal
 thermal_la_SOURCES = thermal/thermal.c
-thermal_la_LDFLAGS = -module @LXPANEL_MODULE@
 
 # volume (OSS)
 volume_la_SOURCES = \
@@ -624,12 +597,10 @@ volume_la_SOURCES = \
 	volume/volume.c
 
 volume_la_CFLAGS = -I$(srcdir)/volume
-volume_la_LDFLAGS = -module @LXPANEL_MODULE@
 
 # volumealsa
 volumealsa_la_SOURCES = volumealsa/volumealsa.c
-volumealsa_la_CFLAGS = -DPACKAGE_DATA_DIR=\""$(datadir)/lxpanel"\"
-volumealsa_la_LDFLAGS = -module @LXPANEL_MODULE@ -lasound
+volumealsa_la_LIBADD = -lasound
 
 # weather
 weather_la_SOURCES = \
@@ -645,7 +616,7 @@ weather_la_CFLAGS = \
 	-I$(srcdir)/weather \
 	$(LIBXML2_CFLAGS)
 
-weather_la_LDFLAGS = -module @LXPANEL_MODULE@ $(LIBXML2_LIBS)
+weather_la_LIBADD = $(LIBXML2_LIBS)
 
 # xkb
 xkb_la_CFLAGS = \
@@ -658,7 +629,7 @@ xkb_la_SOURCES = \
 	xkb/xkb-plugin.c \
 	xkb/xkb.c
 
-xkb_la_LDFLAGS = -module @LXPANEL_MODULE@
+xkb_la_LIBADD = $(X11_LIBS)
 xkeyboardconfigdir = $(datadir)/lxpanel/xkeyboardconfig
 xkeyboardconfig_DATA = \
 	xkb/xkeyboardconfig/models.cfg \
@@ -923,18 +894,18 @@ cpu/$(DEPDIR)/$(am__dirstamp):
 cpu/cpu.lo: cpu/$(am__dirstamp) cpu/$(DEPDIR)/$(am__dirstamp)
 
 cpu.la: $(cpu_la_OBJECTS) $(cpu_la_DEPENDENCIES) $(EXTRA_cpu_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(cpu_la_LINK)  $(cpu_la_OBJECTS) $(cpu_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK)  $(cpu_la_OBJECTS) $(cpu_la_LIBADD) $(LIBS)
 cpufreq/$(am__dirstamp):
 	@$(MKDIR_P) cpufreq
 	@: > cpufreq/$(am__dirstamp)
 cpufreq/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) cpufreq/$(DEPDIR)
 	@: > cpufreq/$(DEPDIR)/$(am__dirstamp)
-cpufreq/cpufreq_la-cpufreq.lo: cpufreq/$(am__dirstamp) \
+cpufreq/cpufreq.lo: cpufreq/$(am__dirstamp) \
 	cpufreq/$(DEPDIR)/$(am__dirstamp)
 
 cpufreq.la: $(cpufreq_la_OBJECTS) $(cpufreq_la_DEPENDENCIES) $(EXTRA_cpufreq_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(cpufreq_la_LINK)  $(cpufreq_la_OBJECTS) $(cpufreq_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK)  $(cpufreq_la_OBJECTS) $(cpufreq_la_LIBADD) $(LIBS)
 deskno/$(am__dirstamp):
 	@$(MKDIR_P) deskno
 	@: > deskno/$(am__dirstamp)
@@ -945,7 +916,7 @@ deskno/deskno.lo: deskno/$(am__dirstamp) \
 	deskno/$(DEPDIR)/$(am__dirstamp)
 
 deskno.la: $(deskno_la_OBJECTS) $(deskno_la_DEPENDENCIES) $(EXTRA_deskno_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(deskno_la_LINK)  $(deskno_la_OBJECTS) $(deskno_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK)  $(deskno_la_OBJECTS) $(deskno_la_LIBADD) $(LIBS)
 indicator/$(am__dirstamp):
 	@$(MKDIR_P) indicator
 	@: > indicator/$(am__dirstamp)
@@ -963,11 +934,10 @@ kbled/$(am__dirstamp):
 kbled/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) kbled/$(DEPDIR)
 	@: > kbled/$(DEPDIR)/$(am__dirstamp)
-kbled/kbled_la-kbled.lo: kbled/$(am__dirstamp) \
-	kbled/$(DEPDIR)/$(am__dirstamp)
+kbled/kbled.lo: kbled/$(am__dirstamp) kbled/$(DEPDIR)/$(am__dirstamp)
 
 kbled.la: $(kbled_la_OBJECTS) $(kbled_la_DEPENDENCIES) $(EXTRA_kbled_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(kbled_la_LINK)  $(kbled_la_OBJECTS) $(kbled_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK)  $(kbled_la_OBJECTS) $(kbled_la_LIBADD) $(LIBS)
 monitors/$(am__dirstamp):
 	@$(MKDIR_P) monitors
 	@: > monitors/$(am__dirstamp)
@@ -978,7 +948,7 @@ monitors/monitors.lo: monitors/$(am__dirstamp) \
 	monitors/$(DEPDIR)/$(am__dirstamp)
 
 monitors.la: $(monitors_la_OBJECTS) $(monitors_la_DEPENDENCIES) $(EXTRA_monitors_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(monitors_la_LINK)  $(monitors_la_OBJECTS) $(monitors_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK)  $(monitors_la_OBJECTS) $(monitors_la_LIBADD) $(LIBS)
 netstat/$(am__dirstamp):
 	@$(MKDIR_P) netstat
 	@: > netstat/$(am__dirstamp)
@@ -1033,7 +1003,7 @@ thermal/thermal.lo: thermal/$(am__dirstamp) \
 	thermal/$(DEPDIR)/$(am__dirstamp)
 
 thermal.la: $(thermal_la_OBJECTS) $(thermal_la_DEPENDENCIES) $(EXTRA_thermal_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(thermal_la_LINK)  $(thermal_la_OBJECTS) $(thermal_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK)  $(thermal_la_OBJECTS) $(thermal_la_LIBADD) $(LIBS)
 volume/$(am__dirstamp):
 	@$(MKDIR_P) volume
 	@: > volume/$(am__dirstamp)
@@ -1053,11 +1023,11 @@ volumealsa/$(am__dirstamp):
 volumealsa/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) volumealsa/$(DEPDIR)
 	@: > volumealsa/$(DEPDIR)/$(am__dirstamp)
-volumealsa/volumealsa_la-volumealsa.lo: volumealsa/$(am__dirstamp) \
+volumealsa/volumealsa.lo: volumealsa/$(am__dirstamp) \
 	volumealsa/$(DEPDIR)/$(am__dirstamp)
 
 volumealsa.la: $(volumealsa_la_OBJECTS) $(volumealsa_la_DEPENDENCIES) $(EXTRA_volumealsa_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(volumealsa_la_LINK)  $(volumealsa_la_OBJECTS) $(volumealsa_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK)  $(volumealsa_la_OBJECTS) $(volumealsa_la_LIBADD) $(LIBS)
 weather/$(am__dirstamp):
 	@$(MKDIR_P) weather
 	@: > weather/$(am__dirstamp)
@@ -1140,10 +1110,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@batt/$(DEPDIR)/batt_la-batt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@batt/$(DEPDIR)/batt_la-batt_sys.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cpu/$(DEPDIR)/cpu.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@cpufreq/$(DEPDIR)/cpufreq_la-cpufreq.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@cpufreq/$(DEPDIR)/cpufreq.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@deskno/$(DEPDIR)/deskno.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@indicator/$(DEPDIR)/indicator_la-indicator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@kbled/$(DEPDIR)/kbled_la-kbled.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@kbled/$(DEPDIR)/kbled.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@monitors/$(DEPDIR)/monitors.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@netstat/$(DEPDIR)/netstat_la-devproc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@netstat/$(DEPDIR)/netstat_la-lxnm_client.Plo@am__quote@
@@ -1161,7 +1131,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@thermal/$(DEPDIR)/thermal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@volume/$(DEPDIR)/volume_la-volume-impl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@volume/$(DEPDIR)/volume_la-volume.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@volumealsa/$(DEPDIR)/volumealsa_la-volumealsa.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@volumealsa/$(DEPDIR)/volumealsa.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-forecast.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-httputil.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-location.Plo@am__quote@
@@ -1336,26 +1306,12 @@ batt/batt_la-batt_sys.lo: batt/batt_sys.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(batt_la_CFLAGS) $(CFLAGS) -c -o batt/batt_la-batt_sys.lo `test -f 'batt/batt_sys.c' || echo '$(srcdir)/'`batt/batt_sys.c
 
-cpufreq/cpufreq_la-cpufreq.lo: cpufreq/cpufreq.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cpufreq_la_CFLAGS) $(CFLAGS) -MT cpufreq/cpufreq_la-cpufreq.lo -MD -MP -MF cpufreq/$(DEPDIR)/cpufreq_la-cpufreq.Tpo -c -o cpufreq/cpufreq_la-cpufreq.lo `test -f 'cpufreq/cpufreq.c' || echo '$(srcdir)/'`cpufreq/cpufreq.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) cpufreq/$(DEPDIR)/cpufreq_la-cpufreq.Tpo cpufreq/$(DEPDIR)/cpufreq_la-cpufreq.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cpufreq/cpufreq.c' object='cpufreq/cpufreq_la-cpufreq.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cpufreq_la_CFLAGS) $(CFLAGS) -c -o cpufreq/cpufreq_la-cpufreq.lo `test -f 'cpufreq/cpufreq.c' || echo '$(srcdir)/'`cpufreq/cpufreq.c
-
 indicator/indicator_la-indicator.lo: indicator/indicator.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(indicator_la_CFLAGS) $(CFLAGS) -MT indicator/indicator_la-indicator.lo -MD -MP -MF indicator/$(DEPDIR)/indicator_la-indicator.Tpo -c -o indicator/indicator_la-indicator.lo `test -f 'indicator/indicator.c' || echo '$(srcdir)/'`indicator/indicator.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) indicator/$(DEPDIR)/indicator_la-indicator.Tpo indicator/$(DEPDIR)/indicator_la-indicator.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='indicator/indicator.c' object='indicator/indicator_la-indicator.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(indicator_la_CFLAGS) $(CFLAGS) -c -o indicator/indicator_la-indicator.lo `test -f 'indicator/indicator.c' || echo '$(srcdir)/'`indicator/indicator.c
-
-kbled/kbled_la-kbled.lo: kbled/kbled.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(kbled_la_CFLAGS) $(CFLAGS) -MT kbled/kbled_la-kbled.lo -MD -MP -MF kbled/$(DEPDIR)/kbled_la-kbled.Tpo -c -o kbled/kbled_la-kbled.lo `test -f 'kbled/kbled.c' || echo '$(srcdir)/'`kbled/kbled.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) kbled/$(DEPDIR)/kbled_la-kbled.Tpo kbled/$(DEPDIR)/kbled_la-kbled.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='kbled/kbled.c' object='kbled/kbled_la-kbled.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(kbled_la_CFLAGS) $(CFLAGS) -c -o kbled/kbled_la-kbled.lo `test -f 'kbled/kbled.c' || echo '$(srcdir)/'`kbled/kbled.c
 
 netstat/netstat_la-netstat.lo: netstat/netstat.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstat_la_CFLAGS) $(CFLAGS) -MT netstat/netstat_la-netstat.lo -MD -MP -MF netstat/$(DEPDIR)/netstat_la-netstat.Tpo -c -o netstat/netstat_la-netstat.lo `test -f 'netstat/netstat.c' || echo '$(srcdir)/'`netstat/netstat.c
@@ -1461,13 +1417,6 @@ volume/volume_la-volume.lo: volume/volume.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='volume/volume.c' object='volume/volume_la-volume.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volume_la_CFLAGS) $(CFLAGS) -c -o volume/volume_la-volume.lo `test -f 'volume/volume.c' || echo '$(srcdir)/'`volume/volume.c
-
-volumealsa/volumealsa_la-volumealsa.lo: volumealsa/volumealsa.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volumealsa_la_CFLAGS) $(CFLAGS) -MT volumealsa/volumealsa_la-volumealsa.lo -MD -MP -MF volumealsa/$(DEPDIR)/volumealsa_la-volumealsa.Tpo -c -o volumealsa/volumealsa_la-volumealsa.lo `test -f 'volumealsa/volumealsa.c' || echo '$(srcdir)/'`volumealsa/volumealsa.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) volumealsa/$(DEPDIR)/volumealsa_la-volumealsa.Tpo volumealsa/$(DEPDIR)/volumealsa_la-volumealsa.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='volumealsa/volumealsa.c' object='volumealsa/volumealsa_la-volumealsa.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volumealsa_la_CFLAGS) $(CFLAGS) -c -o volumealsa/volumealsa_la-volumealsa.lo `test -f 'volumealsa/volumealsa.c' || echo '$(srcdir)/'`volumealsa/volumealsa.c
 
 weather/weather_la-logutil.lo: weather/logutil.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -MT weather/weather_la-logutil.lo -MD -MP -MF weather/$(DEPDIR)/weather_la-logutil.Tpo -c -o weather/weather_la-logutil.lo `test -f 'weather/logutil.c' || echo '$(srcdir)/'`weather/logutil.c
@@ -1837,10 +1786,11 @@ uninstall-am: uninstall-flagsDATA uninstall-pkglibLTLIBRARIES \
 	uninstall-xkeyboardconfigDATA
 
 
+$(top_builddir)/src/liblxpanel.la:
+	cd $(top_builddir)/src && $(MAKE) liblxpanel.la
+
 install-exec-hook:
 	rm -f $(DESTDIR)$(libdir)/lxpanel/plugins/*.la
-	rm -f $(DESTDIR)$(libdir)/lxpanel/plugins/*.a
-	rm -f $(DESTDIR)$(libdir)/lxpanel/plugins/*.
 @BUILD_PLUGIN_LOADER_TRUE@uninstall-hook:
 @BUILD_PLUGIN_LOADER_TRUE@	cd $(DESTDIR)$(libdir)/lxpanel/plugins && rm -f $(DYNAMIC_PLUGINS_INSTALLED) || true
 

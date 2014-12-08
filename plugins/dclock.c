@@ -17,6 +17,7 @@
  */
 
 #include "plugin.h"
+#include "misc.h"
 
 #include <libfm/fm-gtk.h>
 
@@ -63,17 +64,13 @@ static gboolean dclock_update_display(DClockPlugin * dc);
 static void dclock_destructor(gpointer user_data);
 static gboolean dclock_apply_configuration(gpointer user_data);
 
-/* Handler for "map" signal on popup window. */
-static void dclock_popup_map(GtkWidget * widget, DClockPlugin * dc)
-{
-    lxpanel_plugin_adjust_popup_position(widget, dc->plugin);
-}
-
 /* Display a window containing the standard calendar widget. */
 static GtkWidget * dclock_create_calendar(DClockPlugin * dc)
 {
     /* Create a new window. */
     GtkWidget * win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gint x, y;
+
     gtk_window_set_default_size(GTK_WINDOW(win), 180, 180);
     gtk_window_set_decorated(GTK_WINDOW(win), FALSE);
     gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
@@ -93,9 +90,11 @@ static GtkWidget * dclock_create_calendar(DClockPlugin * dc)
         GTK_CALENDAR(calendar),
         GTK_CALENDAR_SHOW_WEEK_NUMBERS | GTK_CALENDAR_SHOW_DAY_NAMES | GTK_CALENDAR_SHOW_HEADING);
     gtk_box_pack_start(GTK_BOX(box), calendar, TRUE, TRUE, 0);
+    gtk_widget_show_all(box);
 
-    /* Connect signals. */
-    g_signal_connect(G_OBJECT(win), "map", G_CALLBACK(dclock_popup_map), dc);
+    /* Preset the widget position right now to not move it across the screen */
+    lxpanel_plugin_popup_set_position_helper(dc->panel, dc->plugin, win, &x, &y);
+    gtk_window_move(GTK_WINDOW(win), x, y);
 
     /* Return the widget. */
     return win;
@@ -316,7 +315,7 @@ static GtkWidget *dclock_constructor(LXPanel *panel, config_setting_t *settings)
     gtk_misc_set_alignment(GTK_MISC(dc->clock_label), 0.5, 0.5);
     gtk_misc_set_padding(GTK_MISC(dc->clock_label), 4, 0);
     gtk_container_add(GTK_CONTAINER(hbox), dc->clock_label);
-    dc->clock_icon = gtk_image_new();
+    dc->clock_icon = lxpanel_image_new_for_icon(panel, "clock", -1, NULL);
     gtk_container_add(GTK_CONTAINER(hbox), dc->clock_icon);
 
     /* Initialize the clock display. */
@@ -366,9 +365,6 @@ static gboolean dclock_apply_configuration(gpointer user_data)
     /* Set up the icon or the label as the displayable widget. */
     if (dc->icon_only)
     {
-        if(lxpanel_image_set_icon_theme(dc->panel, dc->clock_icon, "clock") != FALSE) {
-            lxpanel_image_set_from_file(dc->panel, dc->clock_icon, PACKAGE_DATA_DIR "/images/clock.png");
-        }
         gtk_widget_show(dc->clock_icon);
         gtk_widget_hide(dc->clock_label);
     }
@@ -429,12 +425,6 @@ static GtkWidget *dclock_configure(LXPanel *panel, GtkWidget *p)
         NULL);
 }
 
-/* Callback when panel configuration changes. */
-static void dclock_reconfigure(LXPanel *panel, GtkWidget *p)
-{
-    dclock_apply_configuration(p);
-}
-
 /* Plugin descriptor. */
 LXPanelPluginInit lxpanel_static_plugin_dclock = {
     .name = N_("Digital Clock"),
@@ -442,6 +432,5 @@ LXPanelPluginInit lxpanel_static_plugin_dclock = {
 
     .new_instance = dclock_constructor,
     .config = dclock_configure,
-    .reconfigure = dclock_reconfigure,
     .button_press_event = dclock_button_press_event
 };
