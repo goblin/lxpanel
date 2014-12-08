@@ -1,3 +1,9 @@
+lxpanel (0.8.0-2) experimental; urgency=low
+
+  * Adding [linux-any] for libasound2-dev to fix FTBFS on non-linux.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Mon, 08 Dec 2014 16:49:41 +0200
+
 lxpanel (0.8.0-1) experimental; urgency=low
 
   * Merging upstream version 0.8.0 (Closes: #639729, #761971).
