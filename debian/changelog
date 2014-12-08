@@ -1,3 +1,12 @@
+lxpanel (0.8.0-1) experimental; urgency=low
+
+  * Merging upstream version 0.8.0 (Closes: #639729, #761971).
+  * Adding override_dh_auto_install rule to remove unused .la file.
+  * Adding libkeybinder-dev as build dependency.
+  * Disabling dh_makeshlibs for the private library as well.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Mon, 08 Dec 2014 13:00:33 +0200
+
 lxpanel (0.7.2-1) unstable; urgency=low
 
   * Removing extra colons from Files lines in debian/copyright file.
