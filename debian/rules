@@ -23,8 +23,7 @@ override_dh_strip:
 	dh_strip --dbg-package=lxpanel-dbg
 
 override_dh_makeshlibs:
-	# plugins are not shared libs so disable processing for them
-	dh_makeshlibs -X/plugins/
+	# package does not provide public shared libs so disable processing
 
 # remove unused .la file from the package
 override_dh_auto_install:
