@@ -10,3 +10,13 @@ Make sure your account have powerdev group permission.
 eg: adduser user powerdev
 
  -- Andrew Lee (李健秋) <ajqlee@debian.org>  Fri, 18 Dec 2009 22:00:11 +0800
+
+
+Creating plugins for LXPanel.
+=============================
+
+There is no separate lxpanel-dev package currently, all the development files
+are included into the main package. All what you need to build a plugin are
+two packages installed: `lxpanel' and `libfm-dev'.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Sat, 02 May 2015 16:40:00 +0300
