@@ -519,6 +519,7 @@ load_module (const gchar * name, GtkWidget * menubar)
     return TRUE;
 }
 
+#if 0
 static void
 log_to_file_cb (GObject * source_obj G_GNUC_UNUSED,
                 GAsyncResult * result G_GNUC_UNUSED, gpointer user_data)
@@ -574,6 +575,7 @@ log_to_file (const gchar * domain G_GNUC_UNUSED,
 
     return;
 }
+#endif
 
 static gboolean
 menubar_press (GtkWidget * widget,
@@ -623,8 +625,6 @@ static void indicator_load_modules(LXPanel *panel, GtkWidget *p)
 
     gint indicators_loaded = 0;
     IndicatorPlugin * indicator = lxpanel_plugin_get_data(p);
-
-    gtk_widget_hide_all(p);
 
     gtk_container_forall(GTK_CONTAINER(indicator->menubar),
                          (GtkCallback)gtk_widget_destroy, NULL);
@@ -683,21 +683,22 @@ static void indicator_load_modules(LXPanel *panel, GtkWidget *p)
         g_dir_close (dir);
     }
 
+    /* Update the plugin container contents */
+    if (gtk_bin_get_child(GTK_BIN(p)))
+        gtk_container_remove(GTK_CONTAINER(p), gtk_bin_get_child(GTK_BIN(p)));
     if (indicators_loaded == 0)
     {
         /* A label to allow for click through */
-        gtk_container_add(GTK_CONTAINER(p), gtk_label_new(_("No Indicators")));
+        GtkWidget *label = gtk_label_new(_("No Indicators"));
+        gtk_widget_show(label);
+        gtk_container_add(GTK_CONTAINER(p), label);
     }
     else
     {
         gtk_container_add(GTK_CONTAINER(p), indicator->menubar);
-        /* Set background to default. */
-        gtk_widget_set_style(indicator->menubar, panel_get_defstyle(panel));
+        /* Enforce background */
+        plugin_widget_set_background(indicator->menubar, panel);
     }
-
-    /* Update the display, show the widget, and return. */
-    gtk_widget_show_all(p);
-
 }
 
 /* Plugin constructor. */
@@ -769,10 +770,11 @@ static GtkWidget *indicator_constructor(LXPanel *panel, config_setting_t *settin
     gtk_widget_set_name(p, "fast-user-switch-applet");
 
     /* Connect signals for container */
-    g_log_set_default_handler(log_to_file, NULL);
+    //g_log_set_default_handler(log_to_file, NULL);
 
     /* Allocate icon as a child of top level. */
-    indicator->menubar = gtk_menu_bar_new();
+    indicator->menubar = g_object_ref_sink(gtk_menu_bar_new());
+    gtk_widget_show(indicator->menubar);
     gtk_widget_set_can_focus(indicator->menubar, TRUE);
 
     /* Init some theme/icon stuff */
@@ -802,6 +804,7 @@ static void indicator_destructor(gpointer user_data)
     IndicatorPlugin * indicator = (IndicatorPlugin *) user_data;
 
     /* Deallocate all memory. */
+    g_object_unref(indicator->menubar);
     g_free(indicator);
 }
 #endif

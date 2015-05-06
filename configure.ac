@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(lxpanel, 0.8.0, http://lxde.org/)
+AC_INIT(lxpanel, 0.8.1, http://lxde.org/)
 AM_INIT_AUTOMAKE([-Wall foreign subdir-objects no-dist-gzip dist-xz])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -266,6 +266,13 @@ if test x"$compile_alsa" = "xno"; then
 else
     dnl force OSS plugin to <null>
     plugin_volume=
+fi
+if test ! -z $plugin_volume; then
+    AC_CHECK_HEADERS([sys/soundcard.h linux/soundcard.h])
+    if test x$ac_cv_header_sys_soundcard_h = xno && test x$ac_cv_header_linux_soundcard_h = xno; then
+        AC_MSG_RESULT([no OSS headers found!])
+        plugin_volume=
+    fi
 fi
 
 dnl Exclude indicator support when there is no support.

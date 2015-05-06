@@ -283,7 +283,6 @@ set_height(GtkSpinButton* spin, LXPanel* panel)
 
     p->height = (int)gtk_spin_button_get_value(spin);
     gtk_widget_queue_resize(GTK_WIDGET(panel));
-    _panel_set_panel_configuration_changed(panel);
     UPDATE_GLOBAL_INT(p, "height", p->height);
 }
 
@@ -585,10 +584,7 @@ on_plugin_expand_toggled(GtkCellRendererToggle* render, char* path, GtkTreeView*
              * Apply the new packing with only "expand" modified. */
             gtk_box_query_child_packing( box, pl, &old_expand, &fill, &padding, &pack_type );
             gtk_box_set_child_packing( box, pl, expand, fill, padding, pack_type );
-            if (expand)
-                config_group_set_int(s, "expand", 1);
-            else
-                config_setting_remove(s, "expand");
+            config_group_set_int(s, "expand", expand ? 1 : 0);
         }
     }
     gtk_tree_path_free( tp );
