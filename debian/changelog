@@ -1,3 +1,12 @@
+lxpanel (0.8.1-1) unstable; urgency=low
+
+  * Adding a notice about LXPanel plugins into lxpanel.README.Debian file.
+  * Merging upstream version 0.8.1.
+  * Changing Maintainer e-mail to Alioth based one.
+  * Resume uploads to unstable since the freeze has ended.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Wed, 06 May 2015 23:19:15 +0300
+
 lxpanel (0.8.0-2) experimental; urgency=low
 
   * Adding [linux-any] for libasound2-dev to fix FTBFS on non-linux.
