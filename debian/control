@@ -20,7 +20,7 @@ Package: lxpanel
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}, lxmenu-data,
  lxpanel-data (= ${source:Version}), libfm-modules
-Recommends: xkb-data
+Recommends: xkb-data, x-terminal-emulator | pavucontrol | gnome-alsamixer
 Suggests: lxsession | menu, iceweasel | www-browser
 Description: LXDE panel
  LXPanel is a GUI application for the Lightweight X11 Desktop Environment
