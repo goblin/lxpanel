@@ -1,3 +1,15 @@
+lxpanel (0.8.2-1) unstable; urgency=low
+
+  * Adding x-terminal-emulator | pavucontrol | gnome-alsamixer as Recommended.
+  * Removing lxsession from Suggests, LXPanel does not use it in any way.
+  * Adding apport hook (taken from Ubuntu).
+  * Adding new lxpanel-dev package (Closes: #785660).
+  * Merging upstream version 0.8.2 (Closes: #786485, #784725, #801319).
+  * Bump Standards-Version to 3.9.7.
+  * Fixing spelling error in lxpanel.hints.5 manpage.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Sun, 21 Feb 2016 16:28:42 +0200
+
 lxpanel (0.8.1-1) unstable; urgency=low
 
   * Adding a notice about LXPanel plugins into lxpanel.README.Debian file.
