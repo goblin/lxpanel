@@ -1,5 +1,8 @@
-/**
- * Copyright (c) 2006-2014 LxDE Developers, see the file AUTHORS for details.
+/*
+ * Copyright (C) 2006-2009 Hong Jen Yee (PCMan) <pcman.tw@gmail.com>
+ *               2008 Fred Chien <fred@lxde.org>
+ *               2009 martyj19 <martyj19@comcast.net>
+ *               2014 Andriy Grytsenko <andrej@rep.kiev.ua>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +121,7 @@ netstatus_constructor(LXPanel *panel, config_setting_t *settings)
         tmp = "eth0";
     ns->iface = g_strdup(tmp);
     if (!config_setting_lookup_string(settings, "configtool", &tmp))
-        tmp = "network-admin --configure %i";
+        tmp = "nm-connection-editor";
     ns->config_tool = g_strdup(tmp);
 
     iface = netstatus_iface_new(ns->iface);

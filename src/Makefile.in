@@ -439,7 +439,6 @@ lxpanel_SOURCES = \
 
 @BUILD_PLUGIN_LOADER_TRUE@DYNAMIC_FLAGS = -export-dynamic
 lxpanel_LDFLAGS = $(DYNAMIC_FLAGS)
-lxpanel_DEPENDENCIES_EXTRA = $(BUILTIN_PLUGINS)
 lxpanel_LDADD = \
 		liblxpanel.la \
 		$(BUILTIN_PLUGINS) \
@@ -1006,8 +1005,13 @@ uninstall-am: uninstall-binPROGRAMS uninstall-lxpanel_includeHEADERS \
 	uninstall-lxpanel_includeHEADERS uninstall-pkglibLTLIBRARIES
 
 
-$(top_builddir)/plugins/libbuiltin_plugins.a: $(lxpanel_include_HEADERS)
-	cd $(top_builddir)/plugins && $(MAKE) libbuiltin_plugins.a
+$(top_builddir)/plugins/libbuiltin_plugins.a: $(lxpanel_include_HEADERS) builtin-plugins-hook
+
+# re-check local modules so it is refreshed for lxpanel binary
+builtin-plugins-hook:
+	@cd $(top_builddir)/plugins && $(MAKE) libbuiltin_plugins.a
+
+.PHONY: builtin-plugins-hook
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

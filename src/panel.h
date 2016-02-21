@@ -1,5 +1,14 @@
-/**
- * Copyright (c) 2006-2014 LxDE Developers, see the file AUTHORS for details.
+/*
+ * Copyright (C) 2006-2010 Hong Jen Yee (PCMan) <pcman.tw@gmail.com>
+ *               2006-2008 Jim Huang <jserv.tw@gmail.com>
+ *               2008 Fred Chien <fred@lxde.org>
+ *               2009-2010 Marty Jack <martyj19@comcast.net>
+ *               2010 Lajos Kamocsay <lajos@panka.com>
+ *               2012 Piotr Sipika <Piotr.Sipika@gmail.com>
+ *               2012 Michael Rawson <michaelrawson76@gmail.com>
+ *               2013 Henry Gebhardt <hsggebhardt@gmail.com>
+ *               2013 Rouslan <rouslan-k@users.sourceforge.net>
+ *               2014 Andriy Grytsenko <andrej@rep.kiev.ua>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +43,7 @@ G_BEGIN_DECLS
 #define LXPANEL_CHECK_VERSION(_a,_b,_c) \
     (0 > _a || \
     (0 == _a && 8 > _b) || \
-    (0 == _a && 8 == _b && 1 >= _c))
+    (0 == _a && 8 == _b && 2 >= _c))
 
 
 #define LX_TYPE_PANEL                  (lxpanel_get_type())

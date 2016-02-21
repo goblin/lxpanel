@@ -1,8 +1,10 @@
-/**
+/*
  * Thermal plugin to lxpanel
  *
  * Copyright (C) 2007 by Daniel Kesler <kesler.daniel@gmail.com>
- *               2014 by Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2014-2015 by Andriy Grytsenko <andrej@rep.kiev.ua>
+ *
+ * This file is a part of LXPanel project.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -428,6 +430,7 @@ remove_all_sensors(thermal *th)
 static void
 check_sensors( thermal *th )
 {
+    // FIXME: scan in opposite order
     find_sensors(th, PROC_THERMAL_DIRECTORY, NULL, proc_get_temperature, proc_get_critical);
     find_sensors(th, SYSFS_THERMAL_DIRECTORY, SYSFS_THERMAL_SUBDIR_PREFIX, sysfs_get_temperature, sysfs_get_critical);
     if (th->numsensors == 0)
@@ -563,9 +566,9 @@ static GtkWidget *config(LXPanel *panel, GtkWidget *p)
             _("Normal color"), &th->str_cl_normal, CONF_TYPE_STR,
             _("Warning1 color"), &th->str_cl_warning1, CONF_TYPE_STR,
             _("Warning2 color"), &th->str_cl_warning2, CONF_TYPE_STR,
-            _("Automatic sensor location"), &th->auto_sensor, CONF_TYPE_BOOL,
-            _("Sensor"), &th->sensor, CONF_TYPE_STR,
-            _("Automatic temperature levels"), &th->not_custom_levels, CONF_TYPE_BOOL,
+            _("Automatic sensor location"), &th->auto_sensor, CONF_TYPE_BOOL, // FIXME: if off, disable next one
+            _("Sensor"), &th->sensor, CONF_TYPE_STR, // FIXME: create a list to select instead
+            _("Automatic temperature levels"), &th->not_custom_levels, CONF_TYPE_BOOL, // FIXME: if off, disable two below
             _("Warning1 temperature"), &th->warning1, CONF_TYPE_INT,
             _("Warning2 temperature"), &th->warning2, CONF_TYPE_INT,
             NULL);
