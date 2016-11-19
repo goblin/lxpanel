@@ -1,5 +1,5 @@
 .\" Information collected from source code
-.TH lxpanel.hints 5 "October 2010" "M E Andersson" ""
+.TH lxpanel.hints 5 "November 2016" "Linux" ""
 
 .SH Name
 lxpanel.hints \- Configuration hints for lxpanel plugins
@@ -11,7 +11,8 @@ of plugins available for \fBlxpanel\fR(1).
 .PP
 The templates below use keywords \fIboolean\fR, \fIinteger\fR,
 and \fIstring\fR to denote the expected type of value for each
-instance.  A few exceptions below are using explicit values in
+instance.  Currently \fIboolean\fR supports only \fB0\fR and \fB1\fR
+values.  A few exceptions below are using explicit values in
 order to clarify the common usage.
 .
 The plugins are introduced by name in a semi\-random fashion.
@@ -64,14 +65,18 @@ Plugin {
     type = taskbar
 
     expand = \fIinteger\fR
+    LaunchTaskBarMode = \fIinteger\fR
     Config {
         tooltips = \fIboolean\fR
         IconsOnly = \fIboolean\fR
-        ShowAllDeska = \fIboolean\fR
+        ShowAllDesks = \fIboolean\fR
+        SameMonitorOnly = \fIboolean\fR
         UseMouseWheel = \fIboolean\fR
         UseUrgencyHint = \fIboolean\fR
         FlatButton = \fIboolean\fR
         GroupedTasks = \fIboolean\fR
+        DisableUpscale = \fIboolean\fR
+        UseSmallerIcons = \fIboolean\fR
         MaxTaskWidth = \fIinteger\fR
         spacing = \fIinteger\fR
     }
@@ -84,10 +89,10 @@ Plugin {
 Plugin {
     type = launchbar
     Button {
-        id = \fIstring\fR
         image = \fIstring\fR
         tooltip = \fIstring\fR
         action = \fIstring\fR
+        path = \fIstring\fR
         terminal = \fIboolean\fR
     }
     Button {
@@ -115,6 +120,7 @@ Plugin {
 .IP
 Plugin {
     type = space
+    expand = \fIinteger\fR
     Config {
         Size = \fIinteger\fR
     }
@@ -135,7 +141,9 @@ Plugin {
 Plugin {
     type = batt
     Config {
-        HideIfNoBattery = bool
+        BatteryNumber = \fIinteger\fR
+        HideIfNoBattery = \fIboolean\fR
+        ShowExtendedInformation = \fIboolean\fR
         AlarmCommand = \fIstring\fR
         AlarmTime = \fIinteger\fR
         BorderWidth = \fIinteger\fR
@@ -171,8 +179,9 @@ Plugin {
         ClockFmt = \fIstring\fR
         TooltipFmt = \fIstring\fR
         Action = \fIstring\fR
-        BoldFont = \fIinteger\fR
-        IconOnly = \fIinteger\fR
+        BoldFont = \fIboolean\fR
+        IconOnly = \fIboolean\fR
+        CenterText = \fIboolean\fR
     }
 .br
 }
@@ -190,10 +199,20 @@ Plugin {
 .IP
 Plugin {
     type = cpufreq
+.br
+}
+
+.P
+.B monitors
+.IP
+Plugin {
+    type = monitors
     Config {
-        Frequency = \fIinteger\fR
-        Governor = \fIstring\fR
-        Remember = \fIboolean\fR
+        DisplayCPU = \fIinteger\fR
+        DisplayRAM = \fIinteger\fR
+        Action = \fIstring\fR
+        CPUColor = \fIstring\fR
+        RAMColor = \fIstring\fR
     }
 .br
 }
@@ -208,7 +227,7 @@ Plugin {
         Warning1Color = \fIstring\fR
         Warning2Color = \fIstring\fR
         Sensor = \fIstring\fR
-        CustomLevels = \fIinteger\fR
+        AutomaticLevels = \fIinteger\fR
         Warning1Temp = \fIinteger\fR
         Warning2Temp = \fIinteger\fR
         AutomaticSensor = \fIinteger\fR
@@ -247,8 +266,54 @@ Plugin {
     type = xkb
     Config {
         DisplayType = \fIinteger\fR
-        PerAppLayout = \fIinteger\fR
-        DefaultGroup = \fIinteger\fR
+        PerWinLayout = \fIboolean\fR
+        NoResetOpt =  = \fIboolean\fR
+        KeepSysLayouts = \fIboolean\fR
+        Model = \fIstring\fR
+        LayoutsList = \fIstring\fR
+        VariantsList = \fIstring\fR
+        ToggleOpt = \fIstring\fR
+        AdvancedOpt = \fIstring\fR
+        FlagSize = \fIinteger\fR
+    }
+.br
+}
+
+.P
+.B volume
+.IP
+Plugin {
+    type = volume
+    Config {
+        MixerCommand = \fIstring\fR
+        MixerCommandTerm = \fIboolean\fR
+        UseAlsamixerVolumeMapping = \fIinteger\fR
+        CardNumber = \fIinteger\fR
+        MasterChannel = \fIstring\fR
+        MuteButton = \fIstring\fR
+        SliderButton = \fIstring\fR
+        MixerButton = \fIstring\fR
+        VolumeUpKey = \fIstring\fR
+        VolumeDownKey = \fIstring\fR
+        VolumeMuteKey = \fIstring\fR
+    }
+.br
+}
+
+.P
+.B weather
+.IP
+Plugin {
+    type = weather
+    Config {
+        alias = \fIstring\fR
+        city = \fIstring\fR
+        state = \fIstring\fR
+        country = \fIstring\fR
+        woeid = \fIstring\fR
+        units = \fIstring\fR
+        interval = \fIinteger\fR
+        enabled = \fIinteger\fR
     }
 .br
 }
@@ -257,14 +322,14 @@ Plugin {
 .
 .TP
 \fI~/.config/lxpanel/"profile\-name"/panels/panel\fR
-User specific panel specification. The name of the panel
+User specific panel specification. The name of the profile
 is passed to \fBlxpanel\fR using the switch '\-\-profile'.
+If none specified then name "\fIdefault\fR" will be used.
 .
 .TP
-\fI/usr/share/lxpanel/profile/"profile\-name"/panels/panel\fR
-.
-.TP
-\fI/usr/share/lxpanel/profile/default/panels/panel\fR
+\fI/etc/xdg/lxpanel/"profile\-name"/panels/panel\fR
+System default panel specification if no panels are defined in
+user configuration directory.
 .
 .SH See also
 \fBlxpanel\fR(1), \fBlxpanelctl\fR(1)
