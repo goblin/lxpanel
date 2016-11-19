@@ -1,3 +1,16 @@
+lxpanel (0.9.0-1) unstable; urgency=medium
+
+  * Merging upstream version 0.9.0 (Closes: #831866, LP: #824071, #1445818,
+    #1474936, #1490098, #1537334, #1533308, #1539930, #1555649, #1581708,
+    #1583833, #1615326).
+  * Bump Standards-Version to 3.9.8.
+  * Updating debian/lxpanel.lintian-overrides for multiarch.
+  * Updating lxpanel.hints.5 manpage.
+  * Updating debian/lxpanel.README.Debian removing section about lxpanel-dev.
+  * Updating debian/copyright file.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Sat, 19 Nov 2016 23:19:23 +0200
+
 lxpanel (0.8.2-1) unstable; urgency=low
 
   * Adding x-terminal-emulator | pavucontrol | gnome-alsamixer as Recommended.
