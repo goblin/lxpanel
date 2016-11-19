@@ -1,8 +1,95 @@
+0.9.0
+-------------------------------------------------------------------------
+* Added support for laptops with multiple batteries.
+* Added a way to scroll through workspaces by using the scroll wheel over
+    the deskno plugin.
+* Bunch of fixes for GTK+ 3.0 compatibility.
+* Fixed outdated lxpanel man page.
+* Fixed weather locations query (since YQL was changed recently).
+* Converted space plugin into internal PanelSpace widget in liblxpanel.
+* Converted task button into widget class to avoid ambiguous code.
+* Added support for third-party plugins localized descriptions.
+* Implemented "lxpanelctl command ..." to send message to panel plugin.
+* Added APIs for PanelIconGrid to draw focus on drop.
+* Converted launch button into widget class for more easy management.
+* Adjusted PanelIconGrid: min spacing is now 1, no_window flag is now
+    left unset by default, spacing is taken into account on overall size
+    to be consistent on chosen orientation.
+* Implemented dropping file or folder onto launch bar to create launcher.
+* Implemented dragging launchers around launchbars (between panels too).
+* Implemented dropping file or folder onto free panel space to create
+    launcher.
+* Implemented dragging launchers from launchbar to some free panel space.
+    When launcher dropped onto another place and former place's launchbar
+    becomes empty, it will not be replaced with a bootstrapping icon (as
+    it happens when last launcher is removed via configuration dialog)
+    but launchbar will be removed from the panel instead, that behavior
+    is more obvious and sensible.
+* Added stripping scheme from URI menu://applications/... when a launcher
+    is created, only menu-id itself should be used.
+* Implemented moving plugins across panel by means of middle button drag
+    and drop, i.e. middle-click it then drag, and plugin will follow the
+    mouse until middle button is released.
+* Merged 'volume' and 'volumealsa' plugins into single plugin which uses
+    the same interface but different driver, in dependency on how it was
+    built - either OSS or ALSA interface is used. Name 'volume' is used
+    for simplicity while 'volumealsa' is supported for compatibility.
+* Made default channel in 'volume' plugin definable in config. If there
+    is no config statement then plugin finds first usable one, the same
+    as before.
+* Made clicks for Toggle Mute, Show Slider and Open Mixer actions of the
+    'volume' plugin configurable. Defaults are the same: left-click shows
+    slider, middle-click toggles mute state.
+* Added support for 'PCM' and 'Headphone' channels for OSS mixer.
+* Added support for other (not default one) ALSA cards in 'volume' plugin
+    via 'CardNumber' setting.
+* Added hotkey support into 'volume' plugin to be able to use multimedia
+    keys for volume changing directly by plugin.
+* Fixed missing libkeybinder initialization (keybinding did not work).
+* Fixed check for attempt to add a binding for the same hotkey which is
+    already bound elsewhere.
+* Added a configuration dialog to the 'volume' plugin with all the new
+    settings available to choose and set, including preset of discovered
+    mixers, with ability to type own command as well.
+* Fixed crash on action on task window which was deleted while task menu
+    is still opened.
+* Fixed "dynamic" panel width allocation.
+* Fixed PanelIconGrid allocation in rigth-to-left languages, it was wrong
+    so some icons might be invisible or placed under other plugins.
+* Removed call to gtk_widget_set_style() from volume slider to fix colors
+    of current theme.
+* Changed icon size handling on task bar - it may now maintain the same
+    size as rest of icons. It may affect users who are used to have them
+    smaller, it's why this feature was made configurable, corresponding
+    config variable is UseSmallerIcons and default is 1 (old behavior).
+* Changed volume slider popup behavior - it now hides when loses focus.
+* Fixed invalid memory access in weather plugin.
+* Fixed incorrect reporting units on "Feel" value in weather plugin. YQL
+    always reports Fahrenheit degrees there.
+* Added a safeguard on menu cache returning items with empty Exec line.
+* Fixed maximizing windows using task bar, GDK functions not always work.
+* Fixed wrong bind of preferences dialog to the panel, which resulted in
+    other dialogs appear on the same workspace where preferences was.
+* Expanded launch buttons active area to launchbar borders so if clicked
+    even into desktop corner, it should activate button at that corner.
+* Fixed few memory leaks in 'batt' plugin.
+* Removed unwanted conversions with energy for charge in 'batt' plugin
+    which will mess up tooltip indications, and may make rate/percentage
+    calculations invalid.
+* Replaced Xclimsg() with Xclimsgx() to be screen aware with X11 message.
+* Added a workaround for WM like MWM which does not properly resize down
+    widgets of panel kind. It still leaves artefacts but is better now.
+* Added a workaround on GtkBox behavior which does not send allocation
+    requests to children in some cases, so resizing of launchtaskbar on
+    panel height change was broken.
+* Fixed PanelIconGrid layout on vertical panels with more than 1 column.
+
 0.8.2
 -------------------------------------------------------------------------
 * Fixed crash in taskbar plugin after number of desktops was updated.
 * Fixed incorrect panel geometry initialization.
 * Fixed crash with invalid size of icon in _NET_WM_ICON property.
+* Fixed memory leak on 'indicator' plugin destruction.
 * Replaced old commands:
     - Use notify send instead of xmessage
     - Use nm-connection-editor instead of network-admin

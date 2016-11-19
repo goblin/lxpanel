@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(lxpanel, 0.8.2, http://lxde.org/)
+AC_INIT(lxpanel, 0.9.0, http://lxde.org/)
 AM_INIT_AUTOMAKE([-Wall foreign subdir-objects no-dist-gzip dist-xz])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -34,10 +34,12 @@ AC_HELP_STRING([--enable-gtk3],[enable to use gtk-3.0 instead of gtk-2.0]),
 esac],[])
 
 if test "x$enable_gtk3" = "xyes" ; then
-  pkg_modules="$pkg_modules gtk+-3.0 libfm-gtk3 >= 1.2.0 libwnck-3.0"
+  gtk_module="gtk+-3.0"
+  pkg_modules="$pkg_modules $gtk_module libfm-gtk3 >= 1.2.0 libwnck-3.0"
   keybinder_module=keybinder-3.0
 else
-  pkg_modules="$pkg_modules gtk+-2.0 >= 2.18.0 libfm-gtk >= 1.2.0 libwnck-1.0"
+  gtk_module="gtk+-2.0 >= 2.18.0"
+  pkg_modules="$pkg_modules $gtk_module libfm-gtk >= 1.2.0 libwnck-1.0"
   keybinder_module=keybinder
 fi
 
@@ -48,6 +50,7 @@ pkg_modules="$pkg_modules \
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
+AC_SUBST(gtk_module)
 
 PKG_CHECK_MODULES(KEYBINDER, [$keybinder_module])
 AC_SUBST(KEYBINDER_CFLAGS)
@@ -188,7 +191,6 @@ dnl Here are plugin listing.
 plugin_netstatus=
 plugin_netstat=
 plugin_volume=
-plugin_volumealsa=
 plugin_cpu=
 plugin_deskno=
 plugin_batt=
@@ -206,8 +208,8 @@ AC_ARG_WITH(plugins,
 [                         'all' builds all plugins (default), 'none' builds none ]
 [                         plugins prefixed with '-' are not built]
 [                         Possible plugins are: ]
-[                         netstatus, netstat, volume, volumealsa, cpu, deskno, batt,]
-[                         kbled, xkb, thermal, cpufreq, monitors, indicator, weather]
+[                         netstatus, netstat, volume, cpu, deskno, batt, kbled,]
+[                         xkb, thermal, cpufreq, monitors, indicator, weather]
 , plugins="$withval",[plugins="all"])
 
 if test x"$plugins" != xall -a x"$plugins" != xnone; then
@@ -218,7 +220,6 @@ if test x"$plugins" != xall -a x"$plugins" != xnone; then
 fi
 
 ALL_PLUGINS_LIST="netstatus netstat volume volumealsa cpu deskno batt kbled xkb thermal cpufreq monitors indicator weather"
-AC_SUBST(ALL_PLUGINS_LIST)
 
 AC_DEFUN([check_plugin_name],[
     plugin_found=false
@@ -259,19 +260,18 @@ fi
 
 dnl FIXME: OSS/ALSA checking
 if test x"$compile_alsa" = "xno"; then
-    if test ! -z $plugin_volumealsa; then
-        AC_MSG_RESULT([no ALSA headers/libraries found!])
-        plugin_volumealsa=
+    AC_DEFINE(DISABLE_ALSA, [1], [Define to disable using ALSA in 'volume' plugin.])
+    if test -n $plugin_volume; then
+        AC_CHECK_HEADERS([sys/soundcard.h linux/soundcard.h])
+        if test x$ac_cv_header_sys_soundcard_h = xno && test x$ac_cv_header_linux_soundcard_h = xno; then
+            AC_MSG_RESULT([no OSS headers found!])
+            plugin_volume=
+        fi
     fi
 else
-    dnl force OSS plugin to <null>
-    plugin_volume=
-fi
-if test ! -z $plugin_volume; then
-    AC_CHECK_HEADERS([sys/soundcard.h linux/soundcard.h])
-    if test x$ac_cv_header_sys_soundcard_h = xno && test x$ac_cv_header_linux_soundcard_h = xno; then
-        AC_MSG_RESULT([no OSS headers found!])
-        plugin_volume=
+    dnl use $plugin_volumealsa for backward compatibility
+    if test -n $plugin_volumealsa; then
+        plugin_volume=volume.la
     fi
 fi
 
@@ -284,7 +284,6 @@ PLUGINS_LIST="\
     $plugin_netstatus \
     $plugin_netstat \
     $plugin_volume \
-    $plugin_volumealsa \
     $plugin_cpu \
     $plugin_deskno \
     $plugin_batt \
@@ -421,10 +420,7 @@ echo Building dynamic plugins:
         AC_MSG_RESULT([    netstat - Monitor networking status])
     fi
     if test x"$plugin_volume" != x; then
-        AC_MSG_RESULT([    volume - Display and adjust volume of sound card for OSS])
-    fi
-    if test x"$plugin_volumealsa" != x; then
-        AC_MSG_RESULT([    volumealsa - Display and adjust volume of sound card for ALSA])
+        AC_MSG_RESULT([    volume - Display and adjust volume of sound card])
     fi
     if test x"$plugin_cpu" != x; then
         AC_MSG_RESULT([    cpu - Display CPU loading])

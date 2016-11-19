@@ -371,6 +371,7 @@ gtk_weather_destroy(GObject * object)
   if (priv->forecast_data.timerid > 0)
     {
       g_source_remove(priv->forecast_data.timerid);
+      priv->forecast_data.timerid = 0;
     }
   
   /* Need to free location and forecast. */
@@ -378,28 +379,9 @@ gtk_weather_destroy(GObject * object)
   freeLocation(priv->location);
   freeForecast(priv->forecast);
 
-#ifdef USE_STANDALONE
-  if (priv->menu_data.menu && GTK_IS_WIDGET(priv->menu_data.menu))
-    {
-      gtk_widget_destroy(priv->menu_data.menu);
-    }
-#endif
-
-  if (priv->hbox && GTK_IS_WIDGET(priv->hbox))
-    {
-      gtk_widget_destroy(priv->hbox);
-    }
-
-  if (priv->image && GTK_IS_WIDGET(priv->image))
-    {
-      gtk_widget_destroy(priv->image);
-    }
-
-  if (priv->label && GTK_IS_WIDGET(priv->label))
-    {
-      gtk_widget_destroy(priv->label);
-    }
-  
+  priv->previous_location = NULL;
+  priv->location = NULL;
+  priv->forecast = NULL;
 }
 
 /**
@@ -688,12 +670,12 @@ gtk_weather_set_forecast(GtkWeather * weather, gpointer forecast)
   printForecast(priv->forecast);
   printForecast(forecast);
 #endif
-  
-  if (!forecast)
+
+  if (priv->forecast && priv->forecast != forecast)
     {
       freeForecast(priv->forecast);
 
-      priv->forecast = NULL;
+      priv->forecast = forecast;
     }
 
   gtk_weather_render(weather);
@@ -1633,6 +1615,9 @@ gtk_weather_run_conditions_dialog(GtkWidget * widget)
                        2,2);
 
       gchar * feels = g_strdup_printf("%d \302\260%s", 
+                          /* Yahoo reports chill always in Fahreheit degrees */
+                                      (location->cUnits_ == 'c') ?
+                                      (forecast->iWindChill_ - 32) * 5 / 9 :
                                       forecast->iWindChill_,
                                       forecast->units_.pcTemperature_);
 

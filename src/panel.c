@@ -13,7 +13,9 @@
  *               2012 Julien Lavergne <julien.lavergne@gmail.com>
  *               2013 Rouslan <rouslan-k@users.sourceforge.net>
  *               2013 peadaredwards <peadaredwards@users.sourceforge.net>
- *               2014-2015 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2014-2016 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2015 Rafał Mużyło <galtgendo@gmail.com>
+ *               2015 Hanno Zulla <hhz@users.sf.net>
  *
  * This file is a part of LXPanel project.
  *
@@ -53,6 +55,7 @@
 
 #include "private.h"
 #include "misc.h"
+#include "space.h"
 
 #include "lxpanelctl.h"
 #include "dbg.h"
@@ -237,7 +240,12 @@ static void lxpanel_size_request(GtkWidget *widget, GtkRequisition *req)
     Panel *p = panel->priv;
     GdkRectangle rect;
 
+#if !GTK_CHECK_VERSION(3, 0, 0)
     GTK_WIDGET_CLASS(lxpanel_parent_class)->size_request(widget, req);
+#else
+    GTK_WIDGET_CLASS(lxpanel_parent_class)->get_preferred_width(widget, &req->width, &req->width);
+    GTK_WIDGET_CLASS(lxpanel_parent_class)->get_preferred_height(widget, &req->height, &req->height);
+#endif
 
     if (!p->visible)
         /* When the panel is in invisible state, the content box also got hidden, thus always
@@ -249,7 +257,42 @@ static void lxpanel_size_request(GtkWidget *widget, GtkRequisition *req)
     _calculate_position(panel, &rect);
     req->width = rect.width;
     req->height = rect.height;
+    /* update data ahead of configuration request */
+    p->cw = rect.width;
+    p->ch = rect.height;
 }
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+static void
+lxpanel_get_preferred_width (GtkWidget *widget,
+                             gint      *minimal_width,
+                             gint      *natural_width)
+{
+  GtkRequisition requisition;
+
+  lxpanel_size_request (widget, &requisition);
+
+  if (minimal_width)
+      *minimal_width = requisition.width;
+  if (natural_width)
+      *natural_width = requisition.width;
+}
+
+static void
+lxpanel_get_preferred_height (GtkWidget *widget,
+                              gint      *minimal_height,
+                              gint      *natural_height)
+{
+  GtkRequisition requisition;
+
+  lxpanel_size_request (widget, &requisition);
+
+  if (minimal_height)
+      *minimal_height = requisition.height;
+  if (natural_height)
+      *natural_height = requisition.height;
+}
+#endif
 
 static void lxpanel_size_allocate(GtkWidget *widget, GtkAllocation *a)
 {
@@ -257,6 +300,11 @@ static void lxpanel_size_allocate(GtkWidget *widget, GtkAllocation *a)
     Panel *p = panel->priv;
     GdkRectangle rect;
     gint x, y;
+
+    /* some WM like mwm are too generous giving us space more that requested
+       so let correct it right now, as much as we can */
+    a->width = MAX(8, MIN(p->cw, a->width));
+    a->height = MAX(8, MIN(p->ch, a->height));
 
     GTK_WIDGET_CLASS(lxpanel_parent_class)->size_allocate(widget, a);
 
@@ -279,8 +327,7 @@ static void lxpanel_size_allocate(GtkWidget *widget, GtkAllocation *a)
     {
         p->aw = a->width;
         p->ah = a->height;
-        /* FIXME: should we "correct" requested sizes? */
-        gtk_window_move(GTK_WINDOW(widget), p->ax, p->ay);
+        gdk_window_move_resize(gtk_widget_get_window(widget), p->ax, p->ay, p->aw, p->ah);
         /* SF bug #708: strut update does not work while in size allocation */
         if (!panel->priv->strut_update_queued)
             panel->priv->strut_update_queued = g_idle_add_full(G_PRIORITY_HIGH,
@@ -317,11 +364,31 @@ static gboolean lxpanel_map_event(GtkWidget *widget, GdkEventAny *event)
 /* Handler for "button_press_event" signal with Panel as parameter. */
 static gboolean lxpanel_button_press(GtkWidget *widget, GdkEventButton *event)
 {
+    LXPanel *panel = PLUGIN_PANEL(widget);
+
+    if ((event->state & gtk_accelerator_get_default_mod_mask()) != 0)
+        /* ignore clicks with modifiers */
+        return FALSE;
+
     if (event->button == 3) /* right button */
     {
-        GtkMenu* popup = (GtkMenu*) lxpanel_get_plugin_menu(LXPANEL(widget), NULL, FALSE);
+        GtkMenu* popup = (GtkMenu*) lxpanel_get_plugin_menu(panel, NULL, FALSE);
         gtk_menu_popup(popup, NULL, NULL, NULL, NULL, event->button, event->time);
         return TRUE;
+    }
+    else if (event->button == 2) /* middle button */
+    {
+        Panel *p = panel->priv;
+        if (p->move_state == PANEL_MOVE_STOP)
+        {
+            gdk_window_get_origin(event->window, &p->move_x, &p->move_y);
+            p->move_x += event->x - p->ax;
+            p->move_y += event->y - p->ay;
+            p->move_state = PANEL_MOVE_DETECT;
+            p->move_device = event->device;
+            /* rest of work see in panel-plugin-move.c file */
+            return TRUE;
+        }
     }
     return FALSE;
 }
@@ -341,12 +408,19 @@ static void lxpanel_class_init(PanelToplevelClass *klass)
     gtk_object_class->destroy = lxpanel_destroy;
 #endif
     widget_class->realize = lxpanel_realize;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    widget_class->get_preferred_width = lxpanel_get_preferred_width;
+    widget_class->get_preferred_height = lxpanel_get_preferred_height;
+#else
     widget_class->size_request = lxpanel_size_request;
+#endif
     widget_class->size_allocate = lxpanel_size_allocate;
     widget_class->configure_event = lxpanel_configure_event;
     widget_class->style_set = lxpanel_style_set;
     widget_class->map_event = lxpanel_map_event;
     widget_class->button_press_event = lxpanel_button_press;
+    widget_class->button_release_event = _lxpanel_button_release;
+    widget_class->motion_notify_event = _lxpanel_motion_notify;
 
     signals[ICON_SIZE_CHANGED] =
         g_signal_new("icon-size-changed",
@@ -402,7 +476,7 @@ static void lxpanel_init(PanelToplevel *self)
 }
 
 /* Allocate and initialize new Panel structure. */
-static LXPanel* panel_allocate(void)
+static LXPanel* panel_allocate(GdkScreen *screen)
 {
     return g_object_new(LX_TYPE_PANEL,
                         "border-width", 0,
@@ -412,6 +486,7 @@ static LXPanel* panel_allocate(void)
                         "title", "panel",
                         "type-hint", GDK_WINDOW_TYPE_HINT_DOCK,
                         "window-position", GTK_WIN_POS_NONE,
+                        "screen", screen,
                         NULL);
 }
 
@@ -815,7 +890,9 @@ static void _panel_update_background(LXPanel * p, gboolean enforce)
 
     /* Redraw the top level widget. */
     _panel_determine_background_pixmap(p);
+#if !GTK_CHECK_VERSION(3, 0, 0)
     gdk_window_clear(gtk_widget_get_window(w));
+#endif
     gtk_widget_queue_draw(w);
 
     /* Loop over all plugins redrawing each plugin. */
@@ -883,6 +960,10 @@ mouse_watch(LXPanel *panel)
     cy = p->ay;
     cw = p->cw;
     ch = p->ch;
+
+    if (p->move_state != PANEL_MOVE_STOP)
+        /* prevent autohide when dragging is on */
+        return TRUE;
 
     if (cw == 1) cw = 0;
     if (ch == 1) ch = 0;
@@ -1043,7 +1124,12 @@ static void panel_popupmenu_add_item( GtkMenuItem* item, LXPanel* panel )
 
 static void panel_popupmenu_remove_item( GtkMenuItem* item, GtkWidget* plugin )
 {
-    Panel* panel = PLUGIN_PANEL(plugin)->priv;
+    lxpanel_remove_plugin(PLUGIN_PANEL(plugin), plugin);
+}
+
+void lxpanel_remove_plugin(LXPanel *p, GtkWidget *plugin)
+{
+    Panel* panel = p->priv;
 
     /* If the configuration dialog is open, there will certainly be a crash if the
      * user manipulates the Configured Plugins list, after we remove this entry.
@@ -1053,11 +1139,73 @@ static void panel_popupmenu_remove_item( GtkMenuItem* item, GtkWidget* plugin )
         gtk_widget_destroy(panel->pref_dialog);
         panel->pref_dialog = NULL;
     }
+    _lxpanel_remove_plugin(p, plugin);
+}
+
+void _lxpanel_remove_plugin(LXPanel *p, GtkWidget *plugin)
+{
+    Panel* panel = p->priv;
+    GtkWidget *prev, *next;
+    GList *children;
+    GtkAllocation alloc;
+    gint idx = -1, size1, size2;
+    gboolean expand;
+
     config_setting_destroy(g_object_get_qdata(G_OBJECT(plugin), lxpanel_plugin_qconf));
     /* reset conf pointer because the widget still may be referenced by configurator */
     g_object_set_qdata(G_OBJECT(plugin), lxpanel_plugin_qconf, NULL);
 
-    lxpanel_config_save(PLUGIN_PANEL(plugin));
+    /* squash previous and next spaces if this plugin was between two spaces */
+    children = gtk_container_get_children(GTK_CONTAINER(panel->box));
+    idx = g_list_index(children, plugin);
+    if (idx > 0)
+    {
+
+        prev = g_list_nth_data(children, idx - 1);
+        next = g_list_nth_data(children, idx + 1);
+        if (next && PANEL_IS_SPACE(next) && PANEL_IS_SPACE(prev))
+        {
+            expand = FALSE;
+            gtk_container_child_get(GTK_CONTAINER(panel->box), prev, "expand", &expand, NULL);
+            if (expand == TRUE)
+            {
+                /* prev is expandable, remove next */
+                config_setting_destroy(g_object_get_qdata(G_OBJECT(next), lxpanel_plugin_qconf));
+                g_object_set_qdata(G_OBJECT(next), lxpanel_plugin_qconf, NULL);
+                gtk_widget_destroy(next);
+            }
+            else
+            {
+                gtk_container_child_get(GTK_CONTAINER(panel->box), next, "expand", &expand, NULL);
+                if (expand == TRUE)
+                {
+                    /* next is expandable, remove prev */
+                    config_setting_destroy(g_object_get_qdata(G_OBJECT(prev), lxpanel_plugin_qconf));
+                    g_object_set_qdata(G_OBJECT(prev), lxpanel_plugin_qconf, NULL);
+                    gtk_widget_destroy(prev);
+                }
+                else
+                {
+                    /* calculate size of prev -- add size of this and next to it */
+                    size1 = _panel_space_get_size(prev);
+                    size2 = _panel_space_get_size(next);
+                    gtk_widget_get_allocation(plugin, &alloc);
+                    if (panel->orientation == GTK_ORIENTATION_HORIZONTAL)
+                        size1 += alloc.width + size2;
+                    else
+                        size1 += alloc.height + size2;
+                    /* remove next */
+                    config_setting_destroy(g_object_get_qdata(G_OBJECT(next), lxpanel_plugin_qconf));
+                    g_object_set_qdata(G_OBJECT(next), lxpanel_plugin_qconf, NULL);
+                    gtk_widget_destroy(next);
+                    _panel_space_resize(prev, size1);
+                }
+            }
+        }
+    }
+    g_list_free(children);
+
+    lxpanel_config_save(p);
     gtk_widget_destroy(plugin);
 }
 
@@ -1097,13 +1245,12 @@ static char* gen_panel_name( int edge, gint monitor )
 static void panel_popupmenu_create_panel( GtkMenuItem* item, LXPanel* panel )
 {
     gint m, e, monitors;
-    GdkScreen *screen;
-    LXPanel *new_panel = panel_allocate();
+    GdkScreen *screen = gtk_widget_get_screen(GTK_WIDGET(panel));
+    LXPanel *new_panel = panel_allocate(screen);
     Panel *p = new_panel->priv;
     config_setting_t *global;
 
     /* Allocate the edge. */
-    screen = gtk_widget_get_screen(GTK_WIDGET(panel));
     g_assert(screen);
     monitors = gdk_screen_get_n_monitors(screen);
     /* try to allocate edge on current monitor first */
@@ -1226,7 +1373,7 @@ static void panel_popupmenu_about( GtkMenuItem* item, Panel* panel )
                                     gdk_pixbuf_new_from_file(PACKAGE_DATA_DIR "/images/my-computer.png", NULL));
     }
 
-    gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), _("Copyright (C) 2008-2014"));
+    gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), _("Copyright (C) 2008-2016"));
     gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about), _( "Desktop panel for LXDE project"));
     gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about), "This program is free software; you can redistribute it and/or\nmodify it under the terms of the GNU General Public License\nas published by the Free Software Foundation; either version 2\nof the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.");
     gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about), "http://lxde.org/");
@@ -1269,7 +1416,8 @@ GtkMenu* lxpanel_get_plugin_menu( LXPanel* panel, GtkWidget* plugin, gboolean us
         init = PLUGIN_CLASS(plugin);
         /* create single item - plugin instance settings */
         img = gtk_image_new_from_stock( GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_MENU );
-        tmp = g_strdup_printf( _("\"%s\" Settings"), _(init->name) );
+        tmp = g_strdup_printf(_("\"%s\" Settings"),
+                              g_dgettext(init->gettext_package, init->name));
         menu_item = gtk_image_menu_item_new_with_label( tmp );
         g_free( tmp );
         gtk_image_menu_item_set_image( (GtkImageMenuItem*)menu_item, img );
@@ -1457,7 +1605,8 @@ panel_start_gui(LXPanel *panel, config_setting_t *list)
     Atom state[3];
     XWMHints wmhints;
     gulong val;
-    Display *xdisplay = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
+    Screen *xscreen = GDK_SCREEN_XSCREEN(gtk_widget_get_screen(GTK_WIDGET(panel)));
+    Display *xdisplay = DisplayOfScreen(xscreen);
     Panel *p = panel->priv;
     GtkWidget *w = GTK_WIDGET(panel);
     config_setting_t *s;
@@ -1522,7 +1671,7 @@ panel_start_gui(LXPanel *panel, config_setting_t *list)
     /* the settings that should be done after window is mapped */
 
     /* send it to running wm */
-    Xclimsg(p->topxwin, a_NET_WM_DESKTOP, G_MAXULONG, 0, 0, 0, 0);
+    Xclimsgx(xscreen, p->topxwin, a_NET_WM_DESKTOP, G_MAXULONG, 0, 0, 0, 0);
     /* and assign it ourself just for case when wm is not running */
     val = G_MAXULONG;
     XChangeProperty(xdisplay, p->topxwin, a_NET_WM_DESKTOP, XA_CARDINAL, 32,
@@ -1829,7 +1978,7 @@ static void on_monitors_changed(GdkScreen* screen, gpointer unused)
 static int panel_start(LXPanel *p)
 {
     config_setting_t *list;
-    GdkScreen *screen = gdk_screen_get_default();
+    GdkScreen *screen = gtk_widget_get_screen(GTK_WIDGET(p));
 
     /* parse global section */
     ENTER;
@@ -1857,7 +2006,7 @@ LXPanel* panel_new( const char* config_file, const char* config_name )
 
     if (G_LIKELY(config_file))
     {
-        panel = panel_allocate();
+        panel = panel_allocate(gdk_screen_get_default());
         panel->priv->name = g_strdup(config_name);
         g_debug("starting panel from file %s",config_file);
         if (!config_read_file(panel->priv->config, config_file) ||

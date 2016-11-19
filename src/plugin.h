@@ -2,7 +2,8 @@
  * Copyright (C) 2006-2008 Hong Jen Yee (PCMan) <pcman.tw@gmail.com>
  *               2006-2008 Jim Huang <jserv.tw@gmail.com>
  *               2009-2010 Marty Jack <martyj19@comcast.net>
- *               2014 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2014-2016 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2015 Hanno Zulla <hhz@users.sf.net>
  *
  * This file is a part of LXPanel project.
  *
@@ -48,6 +49,7 @@ G_BEGIN_DECLS
  * @show_system_menu: (allow-none): callback to queue show system menu
  * @update_context_menu: (allow-none): callback to update context menu
  * @control: (allow-none): callback to pass messages from lxpanelctl
+ * @gettext_package: (allow-none): additional catalog to read translations
  *
  * Callback @init is called on module loading, only once per application
  * lifetime.
@@ -73,7 +75,9 @@ G_BEGIN_DECLS
  * Callback @button_press_event is a handler for "button-press-event"
  * signal on the plugin instance. This callback would never receive any
  * right-clicks without modifier keys because panel itself will handle it
- * showing context menu.
+ * showing context menu. This callback should never return %TRUE for the
+ * button 2 (middle-click) because that will disrupt the plugins movement
+ * feature of panel (drag & drop) for that plugin.
  *
  * Callback @show_system_menu is called when lxpanel received a message
  * by 'lxpanelctl menu' command. It will be sent to each instance if more
@@ -90,7 +94,12 @@ G_BEGIN_DECLS
  * Callback @control is called when command was sent via the lxpanelctl.
  * The message will be sent to only one instance of plugin. Some messages
  * are handled by lxpanel: "DEL" will remove plugin from panel, "ADD"
- * will create new instance if there is no instance yet. (TODO)
+ * will create new instance if there is no instance yet. Due to design
+ * limitations of XClientMessageEvent the size of plugin type and command
+ * cannot exceed 18 characters in total.
+ *
+ * If @gettext_package is not %NULL then it will be used for translation
+ * of @name and @description. (Since: 0.9.0)
  */
 typedef struct {
     /*< public >*/
@@ -104,11 +113,11 @@ typedef struct {
     gboolean (*button_press_event)(GtkWidget *widget, GdkEventButton *event, LXPanel *panel);
     void (*show_system_menu)(GtkWidget *widget);
     gboolean (*update_context_menu)(GtkWidget *plugin, GtkMenu *menu);
-    gboolean (*control)(GtkWidget *plugin, const char *cmd); /* not implemented */
+    gboolean (*control)(GtkWidget *plugin, const char *cmd);
+    char *gettext_package;      /* optional: gettext package used to translate name and description */
     /*< private >*/
     gpointer _reserved1;
     gpointer _reserved2;
-    gpointer _reserved3;
     /*< public >*/
     int one_per_system : 1;     /* True to disable more than one instance */
     int expand_available : 1;   /* True if "stretch" option is available */
@@ -365,6 +374,10 @@ extern gboolean lxpanel_apply_hotkey(char **hkptr, const char *keystring,
  * Since: 0.8.0
  */
 extern guint panel_config_click_parse(const char *keystring, GdkModifierType *mods);
+
+/* Add/remove plugin to/from panel */
+GtkWidget *lxpanel_add_plugin(LXPanel *p, const char *name, config_setting_t *cfg, gint at);
+void lxpanel_remove_plugin(LXPanel *p, GtkWidget *plugin);
 
 G_END_DECLS
 

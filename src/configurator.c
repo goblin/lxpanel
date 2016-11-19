@@ -11,7 +11,8 @@
  *               2012 Piotr Sipika <Piotr.Sipika@gmail.com>
  *               2012 Rafał Mużyło <galtgendo@gmail.com>
  *               2013 Rouslan <rouslan-k@users.sourceforge.net>
- *               2014 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2014-2016 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2015 Hanno Zulla <hhz@users.sf.net>
  *
  * This file is a part of LXPanel project.
  *
@@ -560,7 +561,8 @@ on_sel_plugin_changed( GtkTreeSelection* tree_sel, GtkWidget* label )
         const LXPanelPluginInit *init;
         gtk_tree_model_get( model, &it, COL_DATA, &pl, -1 );
         init = PLUGIN_CLASS(pl);
-        gtk_label_set_text( GTK_LABEL(label), _(init->description) );
+        gtk_label_set_text(GTK_LABEL(label),
+                           g_dgettext(init->gettext_package, init->description));
         gtk_widget_set_sensitive( edit_btn, init->config != NULL );
     }
 }
@@ -652,13 +654,15 @@ static void init_plugin_list( LXPanel* p, GtkTreeView* view, GtkWidget* label )
         gtk_container_child_get(GTK_CONTAINER(p->priv->box), w, "expand", &expand, NULL);
         gtk_list_store_append( list, &it );
         gtk_list_store_set( list, &it,
-                            COL_NAME, _(PLUGIN_CLASS(w)->name),
+                            COL_NAME,
+                            g_dgettext(PLUGIN_CLASS(w)->gettext_package, PLUGIN_CLASS(w)->name),
                             COL_EXPAND, expand,
                             COL_DATA, w,
                             -1);
     }
     g_list_free(plugins);
     gtk_tree_view_set_model( view, GTK_TREE_MODEL( list ) );
+    g_object_unref(list);
     g_signal_connect( view, "row-activated",
                       G_CALLBACK(modify_plugin), NULL );
     tree_sel = gtk_tree_view_get_selection( view );
@@ -722,7 +726,8 @@ static void on_add_plugin_response( GtkDialog* dlg,
                 model = gtk_tree_view_get_model( _view );
                 gtk_list_store_append( GTK_LIST_STORE(model), &it );
                 gtk_list_store_set( GTK_LIST_STORE(model), &it,
-                                    COL_NAME, _(PLUGIN_CLASS(pl)->name),
+                                    COL_NAME,
+                                    g_dgettext(PLUGIN_CLASS(pl)->gettext_package, PLUGIN_CLASS(pl)->name),
                                     COL_EXPAND, expand,
                                     COL_DATA, pl, -1 );
                 tree_sel = gtk_tree_view_get_selection( _view );
@@ -821,7 +826,7 @@ static void on_add_plugin( GtkButton* btn, GtkTreeView* _view )
             gtk_list_store_append( list, &it );
             /* it is safe to put classes data here - they will be valid until restart */
             gtk_list_store_set( list, &it,
-                                0, _(init->name),
+                                0, g_dgettext(init->gettext_package, init->name),
                                 1, key,
                                 -1 );
             /* g_debug( "%s (%s)", pc->type, _(pc->name) ); */
@@ -853,11 +858,13 @@ static void on_add_plugin( GtkButton* btn, GtkTreeView* _view )
 
 static void on_remove_plugin( GtkButton* btn, GtkTreeView* view )
 {
-    GtkTreeIter it;
+    GtkTreeIter it, it2;
     GtkTreePath* tree_path;
     GtkTreeModel* model;
     GtkTreeSelection* tree_sel = gtk_tree_view_get_selection( view );
-    GtkWidget* pl;
+    GtkWidget *pl, *prev, *next;
+    GList *plugins;
+    gint i;
 
     LXPanel* p = (LXPanel*) g_object_get_data( G_OBJECT(view), "panel" );
 
@@ -865,17 +872,44 @@ static void on_remove_plugin( GtkButton* btn, GtkTreeView* view )
     {
         tree_path = gtk_tree_model_get_path( model, &it );
         gtk_tree_model_get( model, &it, COL_DATA, &pl, -1 );
+        plugins = p->priv->box ? gtk_container_get_children(GTK_CONTAINER(p->priv->box)) : NULL;
+        i = g_list_index(plugins, pl);
+        if (i > 0)
+        {
+            prev = g_list_nth_data(plugins, i - 1);
+            next = g_list_nth_data(plugins, i + 1);
+            gtk_tree_path_prev(tree_path);
+            gtk_tree_model_get_iter(model, &it2, tree_path);
+            gtk_tree_path_next(tree_path);
+        }
+        else
+            prev = next = NULL;
         if( gtk_tree_path_get_indices(tree_path)[0] >= gtk_tree_model_iter_n_children( model, NULL ) )
             gtk_tree_path_prev( tree_path );
         gtk_list_store_remove( GTK_LIST_STORE(model), &it );
         gtk_tree_selection_select_path( tree_sel, tree_path );
         gtk_tree_path_free( tree_path );
+        g_list_free(plugins);
 
-        config_setting_destroy(g_object_get_qdata(G_OBJECT(pl), lxpanel_plugin_qconf));
-        /* reset conf pointer because the widget still may be referenced by configurator */
-        g_object_set_qdata(G_OBJECT(pl), lxpanel_plugin_qconf, NULL);
-        gtk_widget_destroy(pl);
-        panel_config_save(p->priv);
+        _lxpanel_remove_plugin(p, pl);
+
+        if (next && prev)
+        {
+            plugins = gtk_container_get_children(GTK_CONTAINER(p->priv->box));
+            if (g_list_index(plugins, prev) < 0)
+            {
+                /* previous was removed */
+                gtk_list_store_remove(GTK_LIST_STORE(model), &it2);
+            }
+            else if (g_list_index(plugins, next) < 0)
+            {
+                /* next was removed */
+                if (gtk_tree_model_iter_next(model, &it2))
+                    gtk_list_store_remove(GTK_LIST_STORE(model), &it2);
+                //FIXME: else move selection!
+            }
+            g_list_free(plugins);
+        }
     }
 }
 
@@ -1028,7 +1062,7 @@ update_toggle_button(GtkWidget *w, gboolean n)
     RET();
 }
 
-static void on_app_chooser_destroy(GtkComboBox *fm, gpointer _unused)
+static void on_app_chooser_unrealize(GtkComboBox *fm, gpointer _unused)
 {
     gboolean is_changed;
     GAppInfo *app = fm_app_chooser_combo_box_dup_selected_app(fm, &is_changed);
@@ -1065,7 +1099,6 @@ void panel_configure( LXPanel* panel, int sel_page )
     }
 
     p->pref_dialog = (GtkWidget*)gtk_builder_get_object( builder, "panel_pref" );
-    gtk_window_set_transient_for(GTK_WINDOW(p->pref_dialog), GTK_WINDOW(panel));
     g_signal_connect(p->pref_dialog, "response", G_CALLBACK(response_event), p);
     g_object_add_weak_pointer( G_OBJECT(p->pref_dialog), (gpointer) &p->pref_dialog );
     gtk_window_set_position( GTK_WINDOW(p->pref_dialog), GTK_WIN_POS_CENTER );
@@ -1325,7 +1358,7 @@ void panel_configure( LXPanel* panel, int sel_page )
     fm = GTK_COMBO_BOX(gtk_builder_get_object(builder, "fm_combobox"));
     fm_app_chooser_combo_box_setup_for_mime_type(fm, mt);
     fm_mime_type_unref(mt);
-    g_signal_connect(fm, "destroy", G_CALLBACK(on_app_chooser_destroy), NULL);
+    g_signal_connect(fm, "unrealize", G_CALLBACK(on_app_chooser_unrealize), NULL);
 
     w = (GtkWidget*)gtk_builder_get_object( builder, "term" );
     if (fm_config->terminal)

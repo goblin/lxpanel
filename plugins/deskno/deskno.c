@@ -5,6 +5,7 @@
  *               2006 Jim Huang <jserv.tw@gmail.com>
  *               2009 Marty Jack <martyj19@comcast.net>
  *               2014 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2016 Charles Lehner <cel10@users.sf.net>
  *
  * This file is a part of LXPanel project.
  *
@@ -98,11 +99,37 @@ static gboolean deskno_button_press_event(GtkWidget * widget, GdkEventButton * e
     int desknum = get_net_current_desktop();
     int desks = get_net_number_of_desktops();
     int newdesk = desknum + 1;
+    Screen *xscreen = GDK_SCREEN_XSCREEN(gtk_widget_get_screen(widget));
     if (newdesk >= desks)
         newdesk = 0;
 
     /* Ask the window manager to make the new desktop current. */
-    Xclimsg(GDK_ROOT_WINDOW(), a_NET_CURRENT_DESKTOP, newdesk, 0, 0, 0, 0);
+    Xclimsgx(xscreen, RootWindowOfScreen(xscreen), a_NET_CURRENT_DESKTOP, newdesk, 0, 0, 0, 0);
+    return TRUE;
+}
+
+/* Handler for scroll events on the plugin */
+static gboolean deskno_scrolled(GtkWidget * p, GdkEventScroll * ev, DesknoPlugin * dc)
+{
+    int desknum = get_net_current_desktop();
+    int desks = get_net_number_of_desktops();
+    Screen *xscreen = GDK_SCREEN_XSCREEN(gtk_widget_get_screen(p));
+
+    switch (ev->direction) {
+        case GDK_SCROLL_DOWN:
+            desknum++;
+            break;
+        case GDK_SCROLL_UP:
+            desknum--;
+            break;
+        default:
+            return FALSE;
+    }
+
+    if (desknum < 0 || desknum >= desks)
+        return TRUE;
+
+    Xclimsgx(xscreen, RootWindowOfScreen(xscreen), a_NET_CURRENT_DESKTOP, desknum, 0, 0, 0, 0);
     return TRUE;
 }
 
@@ -140,6 +167,9 @@ static GtkWidget *deskno_constructor(LXPanel *panel, config_setting_t *settings)
     g_signal_connect(G_OBJECT(fbev), "desktop-names", G_CALLBACK(deskno_redraw), (gpointer) dc);
     g_signal_connect(G_OBJECT(fbev), "number-of-desktops", G_CALLBACK(deskno_redraw), (gpointer) dc);
 
+    gtk_widget_add_events(p, GDK_SCROLL_MASK);
+    g_signal_connect(G_OBJECT(p), "scroll-event", G_CALLBACK(deskno_scrolled), (gpointer) dc);
+
     /* Initialize value and show the widget. */
     deskno_redraw(NULL, dc);
     gtk_widget_show_all(p);
@@ -150,10 +180,12 @@ static GtkWidget *deskno_constructor(LXPanel *panel, config_setting_t *settings)
 static void deskno_destructor(gpointer user_data)
 {
     DesknoPlugin * dc = (DesknoPlugin *) user_data;
+    GtkWidget * p = gtk_widget_get_parent(dc->label);
 
     /* Disconnect signal from window manager event object. */
     g_signal_handlers_disconnect_by_func(G_OBJECT(fbev), deskno_name_update, dc);
     g_signal_handlers_disconnect_by_func(G_OBJECT(fbev), deskno_redraw, dc);
+    g_signal_handlers_disconnect_by_func(G_OBJECT(p), deskno_scrolled, dc);
 
     /* Deallocate all memory. */
     if (dc->desktop_labels != NULL)

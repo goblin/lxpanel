@@ -9,6 +9,7 @@
  *               2012-2013 Henry Gebhardt <hsggebhardt@gmail.com>
  *               2013 Marko Rauhamaa <marko@pacujo.net>
  *               2014 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2015 Rafał Mużyło <galtgendo@gmail.com>
  *
  * This file is a part of LXPanel project.
  *
@@ -69,7 +70,11 @@ typedef struct {
 static void redraw_pixmap(CPUPlugin * c);
 static gboolean cpu_update(CPUPlugin * c);
 static gboolean configure_event(GtkWidget * widget, GdkEventConfigure * event, CPUPlugin * c);
+#if !GTK_CHECK_VERSION(3, 0, 0)
 static gboolean expose_event(GtkWidget * widget, GdkEventExpose * event, CPUPlugin * c);
+#else
+static gboolean draw(GtkWidget * widget, cairo_t * cr, CPUPlugin * c);
+#endif
 
 static void cpu_destructor(gpointer user_data);
 
@@ -217,22 +222,32 @@ static gboolean configure_event(GtkWidget * widget, GdkEventConfigure * event, C
 }
 
 /* Handler for expose_event on drawing area. */
+#if !GTK_CHECK_VERSION(3, 0, 0)
 static gboolean expose_event(GtkWidget * widget, GdkEventExpose * event, CPUPlugin * c)
+#else
+static gboolean draw(GtkWidget * widget, cairo_t * cr, CPUPlugin * c)
+#endif
 {
     /* Draw the requested part of the pixmap onto the drawing area.
      * Translate it in both x and y by the border size. */
     if (c->pixmap != NULL)
     {
+#if !GTK_CHECK_VERSION(3, 0, 0)
         cairo_t * cr = gdk_cairo_create(gtk_widget_get_window(widget));
         GtkStyle * style = gtk_widget_get_style(c->da);
         gdk_cairo_region(cr, event->region);
         cairo_clip(cr);
         gdk_cairo_set_source_color(cr, &style->black);
+#else
+        cairo_set_source_rgb(cr, 0, 0, 0); // FIXME: use black color from style
+#endif
         cairo_set_source_surface(cr, c->pixmap,
               BORDER_SIZE, BORDER_SIZE);
         cairo_paint(cr);
         /* check_cairo_status(cr); */
+#if !GTK_CHECK_VERSION(3, 0, 0)
         cairo_destroy(cr);
+#endif
     }
     return FALSE;
 }
@@ -249,10 +264,11 @@ static GtkWidget *cpu_constructor(LXPanel *panel, config_setting_t *settings)
     gtk_widget_set_has_window(p, FALSE);
     lxpanel_plugin_set_data(p, c, cpu_destructor);
 
-    /* Allocate drawing area as a child of top level widget.  Enable button press events. */
+    /* Allocate drawing area as a child of top level widget. */
     c->da = gtk_drawing_area_new();
+    gtk_widget_add_events(c->da, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK |
+                                 GDK_BUTTON_MOTION_MASK);
     gtk_widget_set_size_request(c->da, 40, PANEL_HEIGHT_DEFAULT);
-    gtk_widget_add_events(c->da, GDK_BUTTON_PRESS_MASK);
     gtk_container_add(GTK_CONTAINER(p), c->da);
 
     /* Clone a graphics context and set "green" as its foreground color.
@@ -261,7 +277,11 @@ static GtkWidget *cpu_constructor(LXPanel *panel, config_setting_t *settings)
 
     /* Connect signals. */
     g_signal_connect(G_OBJECT(c->da), "configure-event", G_CALLBACK(configure_event), (gpointer) c);
+#if !GTK_CHECK_VERSION(3, 0, 0)
     g_signal_connect(G_OBJECT(c->da), "expose-event", G_CALLBACK(expose_event), (gpointer) c);
+#else
+    g_signal_connect(G_OBJECT(c->da), "draw", G_CALLBACK(draw), (gpointer) c);
+#endif
 
     /* Show the widget.  Connect a timer to refresh the statistics. */
     gtk_widget_show(c->da);

@@ -9,7 +9,8 @@
  * Copyright (C) 2010 Cyril Roelandt <steap@users.sourceforge.net>
  *               2012-2014 Henry Gebhardt <hsggebhardt@googlemail.com>
  *               2012 Rafał Mużyło <galtgendo@gmail.com>
- *               2014 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2014-2016 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2015 Rafał Mużyło <galtgendo@gmail.com>
  *
  * <terms>
  * Copyright (c) 2008-2014 LxDE Developers, see the file AUTHORS for details.
@@ -149,7 +150,11 @@ static void     mem_tooltip_update (Monitor *m);
 
 
 static gboolean configure_event(GtkWidget*, GdkEventConfigure*, gpointer);
+#if !GTK_CHECK_VERSION(3, 0, 0)
 static gboolean expose_event(GtkWidget *, GdkEventExpose *, Monitor *);
+#else
+static gboolean draw(GtkWidget *, cairo_t *, Monitor *);
+#endif
 static void redraw_pixmap (Monitor *m);
 
 /* Monitors functions */
@@ -166,18 +171,22 @@ monitor_init(MonitorsPlugin *mp, Monitor *m, gchar *color)
     ENTER;
 
     m->da = gtk_drawing_area_new();
+    gtk_widget_add_events(m->da, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK |
+                                 GDK_BUTTON_MOTION_MASK);
     gtk_widget_set_size_request(m->da, DEFAULT_WIDTH, panel_get_height(mp->panel));
-    gtk_widget_add_events(m->da, GDK_BUTTON_PRESS_MASK);
 
     monitor_set_foreground_color(mp, m, color);
 
     /* Signals */
     g_signal_connect(G_OBJECT(m->da), "configure-event",
         G_CALLBACK(configure_event), (gpointer) m);
+#if !GTK_CHECK_VERSION(3, 0, 0)
     g_signal_connect (G_OBJECT(m->da), "expose-event",
         G_CALLBACK(expose_event), (gpointer) m);
-    /* g_signal_connect(G_OBJECT(m->da), "button-press-event",
-                    G_CALLBACK(plugin_button_press_event), p); */
+#else
+    g_signal_connect (G_OBJECT(m->da), "draw",
+        G_CALLBACK(draw), (gpointer) m);
+#endif
 
     return m;
 }
@@ -470,22 +479,33 @@ configure_event(GtkWidget* widget, GdkEventConfigure* dummy, gpointer data)
     return TRUE;
 }
 
+#if !GTK_CHECK_VERSION(3, 0, 0)
 static gboolean
 expose_event(GtkWidget * widget, GdkEventExpose * event, Monitor *m)
+#else
+static gboolean
+draw(GtkWidget * widget, cairo_t * cr, Monitor *m)
+#endif
 {
     /* Draw the requested part of the pixmap onto the drawing area.
      * Translate it in both x and y by the border size. */
     if (m->pixmap != NULL)
     {
+#if !GTK_CHECK_VERSION(3, 0, 0)
         cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widget));
         GtkStyle *style = gtk_widget_get_style(m->da);
         gdk_cairo_region(cr, event->region);
         cairo_clip(cr);
         gdk_cairo_set_source_color(cr, &style->black);
+#else
+        cairo_set_source_rgb(cr, 0, 0, 0); // FIXME: set the color from style
+#endif
         cairo_set_source_surface(cr, m->pixmap, BORDER_SIZE, BORDER_SIZE);
         cairo_paint(cr);
         check_cairo_status(cr);
+#if !GTK_CHECK_VERSION(3, 0, 0)
         cairo_destroy(cr);
+#endif
     }
 
     return FALSE;
@@ -494,8 +514,12 @@ expose_event(GtkWidget * widget, GdkEventExpose * event, Monitor *m)
 
 static gboolean monitors_button_press_event(GtkWidget* widget, GdkEventButton* evt, LXPanel *panel)
 {
-    MonitorsPlugin* mp = lxpanel_plugin_get_data(widget);
+    MonitorsPlugin* mp;
 
+    if (evt->button != 1)
+        return FALSE;
+
+    mp = lxpanel_plugin_get_data(widget);
     if (mp->action != NULL)
         fm_launch_command_simple(NULL, NULL, 0, mp->action, NULL);
     else

@@ -3,7 +3,7 @@
  *               2006-2008 Jim Huang <jserv.tw@gmail.com>
  *               2008 Fred Chien <fred@lxde.org>
  *               2009-2010 Marty Jack <martyj19@comcast.net>
- *               2014 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2014-2016 Andriy Grytsenko <andrej@rep.kiev.ua>
  *
  * This file is a part of LXPanel project.
  *
@@ -293,7 +293,8 @@ void lxpanel_plugin_popup_set_position_helper(LXPanel * p, GtkWidget * near, Gtk
     if (gtk_widget_has_screen(near))
         screen = gtk_widget_get_screen(near);
     else
-        screen = gdk_screen_get_default();
+        /* panel as a GtkWindow always has a screen */
+        screen = gtk_widget_get_screen(GTK_WIDGET(p));
     monitor = gdk_screen_get_monitor_at_point(screen, x, y);
 #if GTK_CHECK_VERSION(3, 4, 0)
     gdk_screen_get_monitor_workarea(screen, monitor, &allocation);
@@ -578,6 +579,8 @@ GtkWidget *lxpanel_add_plugin(LXPanel *p, const char *name, config_setting_t *cf
     }
     gtk_widget_set_name(widget, name);
     gtk_box_pack_start(GTK_BOX(p->priv->box), widget, expand, TRUE, padding);
+    if (at >= 0)
+        gtk_box_reorder_child(GTK_BOX(p->priv->box), widget, at);
     gtk_container_set_border_width(GTK_CONTAINER(widget), border);
     g_signal_connect(widget, "size-allocate", G_CALLBACK(on_size_allocate), p);
     gtk_widget_show(widget);

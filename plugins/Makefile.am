@@ -35,9 +35,10 @@ PLUGINS_SOURCES = \
 	dclock.c \
 	dirmenu.c \
 	launchtaskbar.c \
+	task-button.c \
+	launch-button.c \
 	pager.c \
 	separator.c \
-	space.c \
 	tray.c \
 	wincmd.c \
 	$(MENU_SOURCES)
@@ -68,7 +69,6 @@ EXTRA_LTLIBRARIES = \
 	netstatus.la \
 	thermal.la \
 	volume.la \
-	volumealsa.la \
 	weather.la \
 	xkb.la
 
@@ -131,15 +131,11 @@ netstatus_la_CFLAGS = \
 # thermal
 thermal_la_SOURCES = thermal/thermal.c
 
-# volume (OSS)
-volume_la_SOURCES = \
-	volume/volume-impl.c \
-	volume/volume.c
-volume_la_CFLAGS = -I$(srcdir)/volume
-
-# volumealsa
-volumealsa_la_SOURCES = volumealsa/volumealsa.c
-volumealsa_la_LIBADD = -lasound
+# volume
+volume_la_SOURCES = volumealsa/volumealsa.c
+if BUILD_ALSA_PLUGINS
+volume_la_LIBADD = -lasound
+endif
 
 # weather
 weather_la_SOURCES = \
@@ -317,8 +313,6 @@ EXTRA_DIST = \
 	netstatus/netstatus-iface.h \
 	netstatus/netstatus-sysdeps.h \
 	netstatus/netstatus-util.h \
-	volume/volume_xpm.h \
-	volume/volume-impl.h \
 	weather/logutil.h \
 	weather/httputil.h \
 	weather/yahooutil.h \
@@ -328,6 +322,8 @@ EXTRA_DIST = \
 	xkb/xkb.h \
 	$(flags_DATA) \
 	$(xkeyboardconfig_DATA) \
+	task-button.h \
+	launch-button.h \
 	icon.xpm
 
 install-exec-hook:

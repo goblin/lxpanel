@@ -69,7 +69,7 @@ Atom a_XROOTPMAP_ID;
 
 /* old WM spec */
 Atom a_WM_STATE;
-Atom a_WM_CLASS;
+Atom a_WM_CLASS = XA_WM_CLASS;
 Atom a_WM_DELETE_WINDOW;
 Atom a_WM_PROTOCOLS;
 
@@ -124,7 +124,6 @@ enum{
     I_UTF8_STRING,
     I_XROOTPMAP_ID,
     I_WM_STATE,
-    I_WM_CLASS,
     I_WM_DELETE_WINDOW,
     I_WM_PROTOCOLS,
 
@@ -329,7 +328,6 @@ void resolve_atoms()
     atom_names[ I_UTF8_STRING ] = "UTF8_STRING";
     atom_names[ I_XROOTPMAP_ID ] = "_XROOTPMAP_ID";
     atom_names[ I_WM_STATE ] = "WM_STATE";
-    atom_names[ I_WM_CLASS ] = "WM_CLASS";
     atom_names[ I_WM_DELETE_WINDOW ] = "WM_DELETE_WINDOW";
     atom_names[ I_WM_PROTOCOLS ] = "WM_PROTOCOLS";
     atom_names[ I_NET_WORKAREA ] = "_NET_WORKAREA";
@@ -389,7 +387,6 @@ void resolve_atoms()
     a_UTF8_STRING = atoms[ I_UTF8_STRING ];
     a_XROOTPMAP_ID = atoms[ I_XROOTPMAP_ID ];
     a_WM_STATE = atoms[ I_WM_STATE ];
-    a_WM_CLASS = atoms[ I_WM_CLASS ];
     a_WM_DELETE_WINDOW = atoms[ I_WM_DELETE_WINDOW ];
     a_WM_PROTOCOLS = atoms[ I_WM_PROTOCOLS ];
 
@@ -440,10 +437,14 @@ void resolve_atoms()
 
 
 void
-Xclimsg(Window win, Atom type, long l0, long l1, long l2, long l3, long l4)
+Xclimsgx(Screen *screen, Window win, Atom type, long l0, long l1, long l2, long l3, long l4)
 {
+    Display *display = DisplayOfScreen(screen);
     XClientMessageEvent xev;
     xev.type = ClientMessage;
+    xev.serial = 0;
+    xev.send_event = True;
+    xev.display = display;
     xev.window = win;
     xev.message_type = type;
     xev.format = 32;
@@ -452,9 +453,18 @@ Xclimsg(Window win, Atom type, long l0, long l1, long l2, long l3, long l4)
     xev.data.l[2] = l2;
     xev.data.l[3] = l3;
     xev.data.l[4] = l4;
-    XSendEvent(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), GDK_ROOT_WINDOW(), False,
-          (SubstructureNotifyMask | SubstructureRedirectMask),
-          (XEvent *) &xev);
+    // _error_trap_push (display);
+    XSendEvent(display, RootWindowOfScreen(screen), False,
+               (SubstructureNotifyMask | SubstructureRedirectMask),
+               (XEvent *) &xev);
+    // _error_trap_pop (display);
+}
+
+void
+Xclimsg(Window win, Atom type, long l0, long l1, long l2, long l3, long l4)
+{
+    Xclimsgx(DefaultScreenOfDisplay(GDK_DISPLAY_XDISPLAY(gdk_display_get_default())),
+             win, type, l0, l1, l2, l3, l4);
 }
 
 void
@@ -715,6 +725,7 @@ get_net_wm_state(Window win, NetWMState *nws)
     } else if (state[num3] == a_NET_WM_STATE_SHADED) {
             DBG( "NET_WM_STATE_SHADED ");
             nws->shaded = 1;
+    //FIXME: modal maximized_vert maximized_horz fullscreen above below demands_attention
     } else {
         DBG( "... ");
     }
@@ -803,13 +814,15 @@ int panel_handle_x_error_swallow_BadWindow_BadDrawable(Display * d, XErrorEvent 
 }
 
 static void
-calculate_width(int scrw, int wtype, int align, int margin,
+calculate_width(int scrw, int pw, int wtype, int align, int margin,
       int *panw, int *x)
 {
     ENTER;
     DBG("scrw=%d\n", scrw);
     DBG("IN panw=%d, margin=%d\n", *panw, margin);
     //scrw -= 2;
+    if (wtype != WIDTH_REQUEST)
+        *panw = pw;
     if (wtype == WIDTH_PERCENT) {
         /* sanity check */
         if (*panw > 100)
@@ -846,7 +859,7 @@ void _calculate_position(LXPanel *panel, GdkRectangle *rect)
     GdkRectangle marea;
 
     ENTER;
-    screen = gdk_screen_get_default();
+    screen = gtk_widget_get_screen(GTK_WIDGET(panel));
     if (np->monitor < 0) /* all monitors */
     {
         marea.x = 0;
@@ -865,17 +878,15 @@ void _calculate_position(LXPanel *panel, GdkRectangle *rect)
     }
 
     if (np->edge == EDGE_TOP || np->edge == EDGE_BOTTOM) {
-        rect->width = np->width;
         rect->x = marea.x;
-        calculate_width(marea.width, np->widthtype, np->align, np->margin,
+        calculate_width(marea.width, np->width, np->widthtype, np->align, np->margin,
               &rect->width, &rect->x);
         rect->height = ((( ! np->autohide) || (np->visible)) ? np->height : np->height_when_hidden);
         rect->y = marea.y + ((np->edge == EDGE_TOP) ? 0 : (marea.height - rect->height));
 
     } else {
-        rect->height = np->width;
         rect->y = marea.y;
-        calculate_width(marea.height, np->widthtype, np->align, np->margin,
+        calculate_width(marea.height, np->width, np->widthtype, np->align, np->margin,
               &rect->height, &rect->y);
         rect->width = ((( ! np->autohide) || (np->visible)) ? np->height : np->height_when_hidden);
         rect->x = marea.x + ((np->edge == EDGE_LEFT) ? 0 : (marea.width - rect->width));

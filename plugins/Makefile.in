@@ -83,10 +83,10 @@ subdir = plugins
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/intltool.m4 \
-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -102,16 +102,17 @@ am__v_AR_1 =
 libbuiltin_plugins_a_AR = $(AR) $(ARFLAGS)
 libbuiltin_plugins_a_DEPENDENCIES =
 am__libbuiltin_plugins_a_SOURCES_DIST = dclock.c dirmenu.c \
-	launchtaskbar.c pager.c separator.c space.c tray.c wincmd.c \
-	menu.c
+	launchtaskbar.c task-button.c launch-button.c pager.c \
+	separator.c tray.c wincmd.c menu.c
 @ENABLE_MENU_CACHE_TRUE@am__objects_1 =  \
 @ENABLE_MENU_CACHE_TRUE@	libbuiltin_plugins_a-menu.$(OBJEXT)
 am__objects_2 = libbuiltin_plugins_a-dclock.$(OBJEXT) \
 	libbuiltin_plugins_a-dirmenu.$(OBJEXT) \
 	libbuiltin_plugins_a-launchtaskbar.$(OBJEXT) \
+	libbuiltin_plugins_a-task-button.$(OBJEXT) \
+	libbuiltin_plugins_a-launch-button.$(OBJEXT) \
 	libbuiltin_plugins_a-pager.$(OBJEXT) \
 	libbuiltin_plugins_a-separator.$(OBJEXT) \
-	libbuiltin_plugins_a-space.$(OBJEXT) \
 	libbuiltin_plugins_a-tray.$(OBJEXT) \
 	libbuiltin_plugins_a-wincmd.$(OBJEXT) $(am__objects_1)
 am_libbuiltin_plugins_a_OBJECTS = $(am__objects_2)
@@ -204,16 +205,9 @@ netstatus_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 thermal_la_LIBADD =
 am_thermal_la_OBJECTS = thermal/thermal.lo
 thermal_la_OBJECTS = $(am_thermal_la_OBJECTS)
-volume_la_LIBADD =
-am_volume_la_OBJECTS = volume/volume_la-volume-impl.lo \
-	volume/volume_la-volume.lo
+volume_la_DEPENDENCIES =
+am_volume_la_OBJECTS = volumealsa/volumealsa.lo
 volume_la_OBJECTS = $(am_volume_la_OBJECTS)
-volume_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(volume_la_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-volumealsa_la_DEPENDENCIES =
-am_volumealsa_la_OBJECTS = volumealsa/volumealsa.lo
-volumealsa_la_OBJECTS = $(am_volumealsa_la_OBJECTS)
 weather_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_weather_la_OBJECTS = weather/weather_la-logutil.lo \
 	weather/weather_la-httputil.lo weather/weather_la-yahooutil.lo \
@@ -269,16 +263,14 @@ SOURCES = $(libbuiltin_plugins_a_SOURCES) $(batt_la_SOURCES) \
 	$(indicator_la_SOURCES) $(kbled_la_SOURCES) \
 	$(monitors_la_SOURCES) $(netstat_la_SOURCES) \
 	$(netstatus_la_SOURCES) $(thermal_la_SOURCES) \
-	$(volume_la_SOURCES) $(volumealsa_la_SOURCES) \
-	$(weather_la_SOURCES) $(xkb_la_SOURCES)
+	$(volume_la_SOURCES) $(weather_la_SOURCES) $(xkb_la_SOURCES)
 DIST_SOURCES = $(am__libbuiltin_plugins_a_SOURCES_DIST) \
 	$(batt_la_SOURCES) $(cpu_la_SOURCES) $(cpufreq_la_SOURCES) \
 	$(deskno_la_SOURCES) $(indicator_la_SOURCES) \
 	$(kbled_la_SOURCES) $(monitors_la_SOURCES) \
 	$(netstat_la_SOURCES) $(netstatus_la_SOURCES) \
 	$(thermal_la_SOURCES) $(volume_la_SOURCES) \
-	$(volumealsa_la_SOURCES) $(weather_la_SOURCES) \
-	$(xkb_la_SOURCES)
+	$(weather_la_SOURCES) $(xkb_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -308,7 +300,6 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 pkglibdir = $(libdir)/lxpanel/plugins
 ACLOCAL = @ACLOCAL@
 ALL_LINGUAS = @ALL_LINGUAS@
-ALL_PLUGINS_LIST = @ALL_PLUGINS_LIST@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APPLET_CFLAGS = @APPLET_CFLAGS@
@@ -442,6 +433,7 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+gtk_module = @gtk_module@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -498,9 +490,10 @@ PLUGINS_SOURCES = \
 	dclock.c \
 	dirmenu.c \
 	launchtaskbar.c \
+	task-button.c \
+	launch-button.c \
 	pager.c \
 	separator.c \
-	space.c \
 	tray.c \
 	wincmd.c \
 	$(MENU_SOURCES)
@@ -525,7 +518,6 @@ EXTRA_LTLIBRARIES = \
 	netstatus.la \
 	thermal.la \
 	volume.la \
-	volumealsa.la \
 	weather.la \
 	xkb.la
 
@@ -592,16 +584,9 @@ netstatus_la_CFLAGS = \
 # thermal
 thermal_la_SOURCES = thermal/thermal.c
 
-# volume (OSS)
-volume_la_SOURCES = \
-	volume/volume-impl.c \
-	volume/volume.c
-
-volume_la_CFLAGS = -I$(srcdir)/volume
-
-# volumealsa
-volumealsa_la_SOURCES = volumealsa/volumealsa.c
-volumealsa_la_LIBADD = -lasound
+# volume
+volume_la_SOURCES = volumealsa/volumealsa.c
+@BUILD_ALSA_PLUGINS_TRUE@volume_la_LIBADD = -lasound
 
 # weather
 weather_la_SOURCES = \
@@ -782,8 +767,6 @@ EXTRA_DIST = \
 	netstatus/netstatus-iface.h \
 	netstatus/netstatus-sysdeps.h \
 	netstatus/netstatus-util.h \
-	volume/volume_xpm.h \
-	volume/volume-impl.h \
 	weather/logutil.h \
 	weather/httputil.h \
 	weather/yahooutil.h \
@@ -793,6 +776,8 @@ EXTRA_DIST = \
 	xkb/xkb.h \
 	$(flags_DATA) \
 	$(xkeyboardconfig_DATA) \
+	task-button.h \
+	launch-button.h \
 	icon.xpm
 
 @BUILD_PLUGIN_LOADER_TRUE@DYNAMIC_PLUGINS_INSTALLED = $(DYNAMIC_PLUGINS:.la=.so)
@@ -1006,19 +991,6 @@ thermal/thermal.lo: thermal/$(am__dirstamp) \
 
 thermal.la: $(thermal_la_OBJECTS) $(thermal_la_DEPENDENCIES) $(EXTRA_thermal_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(LINK)  $(thermal_la_OBJECTS) $(thermal_la_LIBADD) $(LIBS)
-volume/$(am__dirstamp):
-	@$(MKDIR_P) volume
-	@: > volume/$(am__dirstamp)
-volume/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) volume/$(DEPDIR)
-	@: > volume/$(DEPDIR)/$(am__dirstamp)
-volume/volume_la-volume-impl.lo: volume/$(am__dirstamp) \
-	volume/$(DEPDIR)/$(am__dirstamp)
-volume/volume_la-volume.lo: volume/$(am__dirstamp) \
-	volume/$(DEPDIR)/$(am__dirstamp)
-
-volume.la: $(volume_la_OBJECTS) $(volume_la_DEPENDENCIES) $(EXTRA_volume_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(volume_la_LINK)  $(volume_la_OBJECTS) $(volume_la_LIBADD) $(LIBS)
 volumealsa/$(am__dirstamp):
 	@$(MKDIR_P) volumealsa
 	@: > volumealsa/$(am__dirstamp)
@@ -1028,8 +1000,8 @@ volumealsa/$(DEPDIR)/$(am__dirstamp):
 volumealsa/volumealsa.lo: volumealsa/$(am__dirstamp) \
 	volumealsa/$(DEPDIR)/$(am__dirstamp)
 
-volumealsa.la: $(volumealsa_la_OBJECTS) $(volumealsa_la_DEPENDENCIES) $(EXTRA_volumealsa_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(LINK)  $(volumealsa_la_OBJECTS) $(volumealsa_la_LIBADD) $(LIBS)
+volume.la: $(volume_la_OBJECTS) $(volume_la_DEPENDENCIES) $(EXTRA_volume_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(LINK)  $(volume_la_OBJECTS) $(volume_la_LIBADD) $(LIBS)
 weather/$(am__dirstamp):
 	@$(MKDIR_P) weather
 	@: > weather/$(am__dirstamp)
@@ -1088,8 +1060,6 @@ mostlyclean-compile:
 	-rm -f netstatus/*.lo
 	-rm -f thermal/*.$(OBJEXT)
 	-rm -f thermal/*.lo
-	-rm -f volume/*.$(OBJEXT)
-	-rm -f volume/*.lo
 	-rm -f volumealsa/*.$(OBJEXT)
 	-rm -f volumealsa/*.lo
 	-rm -f weather/*.$(OBJEXT)
@@ -1102,11 +1072,12 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-dclock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-dirmenu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-launch-button.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-launchtaskbar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-menu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-pager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-separator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-space.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-task-button.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-tray.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbuiltin_plugins_a-wincmd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@batt/$(DEPDIR)/batt_la-batt.Plo@am__quote@
@@ -1131,8 +1102,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@netstatus/$(DEPDIR)/netstatus_la-netstatus-util.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@netstatus/$(DEPDIR)/netstatus_la-netstatus.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@thermal/$(DEPDIR)/thermal.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@volume/$(DEPDIR)/volume_la-volume-impl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@volume/$(DEPDIR)/volume_la-volume.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@volumealsa/$(DEPDIR)/volumealsa.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-forecast.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@weather/$(DEPDIR)/weather_la-httputil.Plo@am__quote@
@@ -1210,6 +1179,34 @@ libbuiltin_plugins_a-launchtaskbar.obj: launchtaskbar.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-launchtaskbar.obj `if test -f 'launchtaskbar.c'; then $(CYGPATH_W) 'launchtaskbar.c'; else $(CYGPATH_W) '$(srcdir)/launchtaskbar.c'; fi`
 
+libbuiltin_plugins_a-task-button.o: task-button.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-task-button.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-task-button.Tpo -c -o libbuiltin_plugins_a-task-button.o `test -f 'task-button.c' || echo '$(srcdir)/'`task-button.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-task-button.Tpo $(DEPDIR)/libbuiltin_plugins_a-task-button.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='task-button.c' object='libbuiltin_plugins_a-task-button.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-task-button.o `test -f 'task-button.c' || echo '$(srcdir)/'`task-button.c
+
+libbuiltin_plugins_a-task-button.obj: task-button.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-task-button.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-task-button.Tpo -c -o libbuiltin_plugins_a-task-button.obj `if test -f 'task-button.c'; then $(CYGPATH_W) 'task-button.c'; else $(CYGPATH_W) '$(srcdir)/task-button.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-task-button.Tpo $(DEPDIR)/libbuiltin_plugins_a-task-button.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='task-button.c' object='libbuiltin_plugins_a-task-button.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-task-button.obj `if test -f 'task-button.c'; then $(CYGPATH_W) 'task-button.c'; else $(CYGPATH_W) '$(srcdir)/task-button.c'; fi`
+
+libbuiltin_plugins_a-launch-button.o: launch-button.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-launch-button.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-launch-button.Tpo -c -o libbuiltin_plugins_a-launch-button.o `test -f 'launch-button.c' || echo '$(srcdir)/'`launch-button.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-launch-button.Tpo $(DEPDIR)/libbuiltin_plugins_a-launch-button.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='launch-button.c' object='libbuiltin_plugins_a-launch-button.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-launch-button.o `test -f 'launch-button.c' || echo '$(srcdir)/'`launch-button.c
+
+libbuiltin_plugins_a-launch-button.obj: launch-button.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-launch-button.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-launch-button.Tpo -c -o libbuiltin_plugins_a-launch-button.obj `if test -f 'launch-button.c'; then $(CYGPATH_W) 'launch-button.c'; else $(CYGPATH_W) '$(srcdir)/launch-button.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-launch-button.Tpo $(DEPDIR)/libbuiltin_plugins_a-launch-button.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='launch-button.c' object='libbuiltin_plugins_a-launch-button.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-launch-button.obj `if test -f 'launch-button.c'; then $(CYGPATH_W) 'launch-button.c'; else $(CYGPATH_W) '$(srcdir)/launch-button.c'; fi`
+
 libbuiltin_plugins_a-pager.o: pager.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-pager.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-pager.Tpo -c -o libbuiltin_plugins_a-pager.o `test -f 'pager.c' || echo '$(srcdir)/'`pager.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-pager.Tpo $(DEPDIR)/libbuiltin_plugins_a-pager.Po
@@ -1237,20 +1234,6 @@ libbuiltin_plugins_a-separator.obj: separator.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='separator.c' object='libbuiltin_plugins_a-separator.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-separator.obj `if test -f 'separator.c'; then $(CYGPATH_W) 'separator.c'; else $(CYGPATH_W) '$(srcdir)/separator.c'; fi`
-
-libbuiltin_plugins_a-space.o: space.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-space.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-space.Tpo -c -o libbuiltin_plugins_a-space.o `test -f 'space.c' || echo '$(srcdir)/'`space.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-space.Tpo $(DEPDIR)/libbuiltin_plugins_a-space.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='space.c' object='libbuiltin_plugins_a-space.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-space.o `test -f 'space.c' || echo '$(srcdir)/'`space.c
-
-libbuiltin_plugins_a-space.obj: space.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-space.obj -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-space.Tpo -c -o libbuiltin_plugins_a-space.obj `if test -f 'space.c'; then $(CYGPATH_W) 'space.c'; else $(CYGPATH_W) '$(srcdir)/space.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbuiltin_plugins_a-space.Tpo $(DEPDIR)/libbuiltin_plugins_a-space.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='space.c' object='libbuiltin_plugins_a-space.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -c -o libbuiltin_plugins_a-space.obj `if test -f 'space.c'; then $(CYGPATH_W) 'space.c'; else $(CYGPATH_W) '$(srcdir)/space.c'; fi`
 
 libbuiltin_plugins_a-tray.o: tray.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbuiltin_plugins_a_CFLAGS) $(CFLAGS) -MT libbuiltin_plugins_a-tray.o -MD -MP -MF $(DEPDIR)/libbuiltin_plugins_a-tray.Tpo -c -o libbuiltin_plugins_a-tray.o `test -f 'tray.c' || echo '$(srcdir)/'`tray.c
@@ -1406,20 +1389,6 @@ netstatus/netstatus_la-netstatus-util.lo: netstatus/netstatus-util.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(netstatus_la_CFLAGS) $(CFLAGS) -c -o netstatus/netstatus_la-netstatus-util.lo `test -f 'netstatus/netstatus-util.c' || echo '$(srcdir)/'`netstatus/netstatus-util.c
 
-volume/volume_la-volume-impl.lo: volume/volume-impl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volume_la_CFLAGS) $(CFLAGS) -MT volume/volume_la-volume-impl.lo -MD -MP -MF volume/$(DEPDIR)/volume_la-volume-impl.Tpo -c -o volume/volume_la-volume-impl.lo `test -f 'volume/volume-impl.c' || echo '$(srcdir)/'`volume/volume-impl.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) volume/$(DEPDIR)/volume_la-volume-impl.Tpo volume/$(DEPDIR)/volume_la-volume-impl.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='volume/volume-impl.c' object='volume/volume_la-volume-impl.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volume_la_CFLAGS) $(CFLAGS) -c -o volume/volume_la-volume-impl.lo `test -f 'volume/volume-impl.c' || echo '$(srcdir)/'`volume/volume-impl.c
-
-volume/volume_la-volume.lo: volume/volume.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volume_la_CFLAGS) $(CFLAGS) -MT volume/volume_la-volume.lo -MD -MP -MF volume/$(DEPDIR)/volume_la-volume.Tpo -c -o volume/volume_la-volume.lo `test -f 'volume/volume.c' || echo '$(srcdir)/'`volume/volume.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) volume/$(DEPDIR)/volume_la-volume.Tpo volume/$(DEPDIR)/volume_la-volume.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='volume/volume.c' object='volume/volume_la-volume.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(volume_la_CFLAGS) $(CFLAGS) -c -o volume/volume_la-volume.lo `test -f 'volume/volume.c' || echo '$(srcdir)/'`volume/volume.c
-
 weather/weather_la-logutil.lo: weather/logutil.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(weather_la_CFLAGS) $(CFLAGS) -MT weather/weather_la-logutil.lo -MD -MP -MF weather/$(DEPDIR)/weather_la-logutil.Tpo -c -o weather/weather_la-logutil.lo `test -f 'weather/logutil.c' || echo '$(srcdir)/'`weather/logutil.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) weather/$(DEPDIR)/weather_la-logutil.Tpo weather/$(DEPDIR)/weather_la-logutil.Plo
@@ -1498,7 +1467,6 @@ clean-libtool:
 	-rm -rf netstat/.libs netstat/_libs
 	-rm -rf netstatus/.libs netstatus/_libs
 	-rm -rf thermal/.libs thermal/_libs
-	-rm -rf volume/.libs volume/_libs
 	-rm -rf volumealsa/.libs volumealsa/_libs
 	-rm -rf weather/.libs weather/_libs
 	-rm -rf xkb/.libs xkb/_libs
@@ -1682,8 +1650,6 @@ distclean-generic:
 	-rm -f netstatus/$(am__dirstamp)
 	-rm -f thermal/$(DEPDIR)/$(am__dirstamp)
 	-rm -f thermal/$(am__dirstamp)
-	-rm -f volume/$(DEPDIR)/$(am__dirstamp)
-	-rm -f volume/$(am__dirstamp)
 	-rm -f volumealsa/$(DEPDIR)/$(am__dirstamp)
 	-rm -f volumealsa/$(am__dirstamp)
 	-rm -f weather/$(DEPDIR)/$(am__dirstamp)
@@ -1702,7 +1668,7 @@ clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
 	clean-pkglibLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) batt/$(DEPDIR) cpu/$(DEPDIR) cpufreq/$(DEPDIR) deskno/$(DEPDIR) indicator/$(DEPDIR) kbled/$(DEPDIR) monitors/$(DEPDIR) netstat/$(DEPDIR) netstatus/$(DEPDIR) thermal/$(DEPDIR) volume/$(DEPDIR) volumealsa/$(DEPDIR) weather/$(DEPDIR) xkb/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) batt/$(DEPDIR) cpu/$(DEPDIR) cpufreq/$(DEPDIR) deskno/$(DEPDIR) indicator/$(DEPDIR) kbled/$(DEPDIR) monitors/$(DEPDIR) netstat/$(DEPDIR) netstatus/$(DEPDIR) thermal/$(DEPDIR) volumealsa/$(DEPDIR) weather/$(DEPDIR) xkb/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1749,7 +1715,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) batt/$(DEPDIR) cpu/$(DEPDIR) cpufreq/$(DEPDIR) deskno/$(DEPDIR) indicator/$(DEPDIR) kbled/$(DEPDIR) monitors/$(DEPDIR) netstat/$(DEPDIR) netstatus/$(DEPDIR) thermal/$(DEPDIR) volume/$(DEPDIR) volumealsa/$(DEPDIR) weather/$(DEPDIR) xkb/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) batt/$(DEPDIR) cpu/$(DEPDIR) cpufreq/$(DEPDIR) deskno/$(DEPDIR) indicator/$(DEPDIR) kbled/$(DEPDIR) monitors/$(DEPDIR) netstat/$(DEPDIR) netstatus/$(DEPDIR) thermal/$(DEPDIR) volumealsa/$(DEPDIR) weather/$(DEPDIR) xkb/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

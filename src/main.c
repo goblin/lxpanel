@@ -13,7 +13,7 @@
  *               2012 Julien Lavergne <julien.lavergne@gmail.com>
  *               2013 Rouslan <rouslan-k@users.sourceforge.net>
  *               2013 peadaredwards <peadaredwards@users.sourceforge.net>
- *               2014 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2014-2016 Andriy Grytsenko <andrej@rep.kiev.ua>
  *
  * This file is a part of LXPanel project.
  *
@@ -47,6 +47,7 @@
 #include <string.h>
 #include <gdk/gdkx.h>
 #include <libfm/fm-gtk.h>
+#include <keybinder.h>
 
 #define __LXPANEL_INTERNALS__
 
@@ -55,6 +56,7 @@
 
 #include "lxpanelctl.h"
 #include "dbg.h"
+#include "space.h"
 
 static gchar *cfgfile = NULL;
 static gchar version[] = VERSION;
@@ -82,6 +84,10 @@ void restart(void)
 static void process_client_msg ( XClientMessageEvent* ev )
 {
     int cmd = ev->data.b[0];
+    int monitor;
+    int edge;
+    char *plugin_type;
+    char *command;
     switch( cmd )
     {
 #ifndef DISABLE_MENU
@@ -123,6 +129,76 @@ static void process_client_msg ( XClientMessageEvent* ev )
             break;
         case LXPANEL_CMD_EXIT:
             gtk_main_quit();
+            break;
+        case LXPANEL_CMD_COMMAND:
+            monitor = (ev->data.b[1] & 0xf) - 1; /* 0 for no monitor */
+            edge = (ev->data.b[1] >> 4) & 0x7;
+            if ((ev->data.b[1] & 0x80) != 0)
+                /* some extension, not supported yet */
+                break;
+            plugin_type = g_strndup(&ev->data.b[2], 18);
+            command = strchr(plugin_type, '\t');
+            if (command) do /* use do{}while(0) to enable break */
+            {
+                LXPanel *p;
+                GSList *l;
+                GList *plugins, *pl;
+                const LXPanelPluginInit *init;
+                GtkWidget *plugin = NULL;
+
+                *command++ = '\0';
+                /* find the panel by monitor and edge */
+                for (l = all_panels; l; l = l->next)
+                {
+                    p = (LXPanel*)l->data;
+                    if (p->priv->box == NULL) /* inactive panel */
+                        continue;
+                    if (monitor >= 0 && p->priv->monitor != monitor)
+                        continue;
+                    if (edge == EDGE_NONE || p->priv->edge == edge)
+                        break;
+                }
+                if (l == NULL) /* match not found */
+                    break;
+                /* find the plugin */
+                init = g_hash_table_lookup(lxpanel_get_all_types(), plugin_type);
+                if (init == NULL) /* no such plugin known */
+                    break;
+                plugins = gtk_container_get_children(GTK_CONTAINER(p->priv->box));
+                for (pl = plugins; pl; pl = pl->next)
+                {
+                    if (init == PLUGIN_CLASS(pl->data))
+                    {
+                        plugin = pl->data;
+                        break;
+                    }
+                }
+                g_list_free(plugins);
+                /* test for built-in commands ADD and DEL */
+                if (strcmp(command, "ADD") == 0)
+                {
+                    if (plugin == NULL)
+                    {
+                        config_setting_t *cfg;
+
+                        cfg = config_group_add_subgroup(config_root_setting(p->priv->config),
+                                                        "Plugin");
+                        config_group_set_string(cfg, "type", plugin_type);
+                        plugin = lxpanel_add_plugin(p, plugin_type, cfg, -1);
+                        if (plugin == NULL) /* failed to create */
+                            config_setting_destroy(cfg);
+                    }
+                }
+                else if (strcmp(command, "DEL") == 0)
+                {
+                    if (plugin != NULL)
+                        lxpanel_remove_plugin(p, plugin);
+                }
+                /* send the command */
+                else if (plugin && init->control)
+                    init->control(plugin, command);
+            } while(0);
+            g_free(plugin_type);
             break;
     }
 }
@@ -238,10 +314,6 @@ static void init_static_plugins(void)
 #ifdef STATIC_MENU
     REGISTER_STATIC_MODULE(menu);
 #endif
-#endif
-
-#ifdef STATIC_SPACE
-    REGISTER_STATIC_MODULE(space);
 #endif
 }
 
@@ -406,6 +478,7 @@ int main(int argc, char *argv[], char *env[])
     gdk_threads_enter(); */
 
     gtk_init(&argc, &argv);
+    keybinder_init();
 
 #ifdef ENABLE_NLS
     bindtextdomain ( GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR );
@@ -480,6 +553,7 @@ int main(int argc, char *argv[], char *env[])
 
     /* prepare modules data */
     lxpanel_prepare_modules();
+    lxpanel_register_plugin_type("space", &_lxpanel_static_plugin_space);
     init_static_plugins();
 
     load_global_config();

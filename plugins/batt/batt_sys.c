@@ -3,6 +3,7 @@
  *
  *      Copyright 2009 Juergen Hötzel <juergen@archlinux.org>
  *                2015 Henry Gebhardt <hsggebhardt@googlemail.com>
+ *                2015 Stanislav Kozina, Ersin <xersin@users.sf.net>
  *
  * 	Parts shameless stolen and glibified from acpi package
  * 	Copyright (C) 2001  Grahame Bowland <grahame@angrygoats.net>
@@ -40,7 +41,7 @@ battery* battery_new() {
     static int battery_num = 1;
     battery * b = g_new0 ( battery, 1 );
     b->type_battery = TRUE;
-    b->capacity_unit = "mAh";
+    //b->capacity_unit = "mAh";
     b->energy_full = -1;
     b->charge_full = -1;
     b->voltage_now = -1;
@@ -54,7 +55,7 @@ battery* battery_new() {
     b->battery_num = battery_num;
     b->seconds = -1;
     b->percentage = -1;
-    b->poststr = NULL;
+    //b->poststr = NULL;
     battery_num++;
     return b;
 }
@@ -63,20 +64,17 @@ battery* battery_new() {
 static gchar* parse_info_file(battery *b, char *sys_file)
 {
     char *buf = NULL;
-    gchar *value = NULL;
-    GString *filename = g_string_new(ACPI_PATH_SYS_POWER_SUPPY);
+    GString *filename = g_string_new(ACPI_PATH_SYS_POWER_SUPPLY);
 
     g_string_append_printf (filename, "/%s/%s", b->path, sys_file);
 
     if (g_file_get_contents(filename->str, &buf, NULL, NULL) == TRUE) {
-        value = g_strdup( buf );
-        value = g_strstrip( value );
-        g_free( buf );
+        g_strstrip( buf );
     }
 
     g_string_free(filename, TRUE);
 
-    return value;
+    return buf;
 }
 
 /* get_gint_from_infofile():
@@ -86,11 +84,13 @@ static gchar* parse_info_file(battery *b, char *sys_file)
 static gint get_gint_from_infofile(battery *b, gchar *sys_file)
 {
     gchar *file_content = parse_info_file(b, sys_file);
+    gint value = -1;
 
     if (file_content != NULL)
-        return atoi(file_content) / 1000;
+        value = atoi(file_content) / 1000;
+    g_free(file_content);
 
-    return -1;
+    return value;
 }
 
 static gchar* get_gchar_from_infofile(battery *b, gchar *sys_file)
@@ -98,6 +98,7 @@ static gchar* get_gchar_from_infofile(battery *b, gchar *sys_file)
     return parse_info_file(b, sys_file);
 }
 
+#if 0 /* never used */
 void battery_print(battery *b, int show_capacity)
 {
     if ( b->type_battery )
@@ -142,14 +143,14 @@ void battery_print(battery *b, int show_capacity)
         }
     }
 }
-
+#endif
 
 static gboolean battery_inserted(gchar* path)
 {
     if (path == NULL)
         return FALSE;
 
-    GString *dirname = g_string_new(ACPI_PATH_SYS_POWER_SUPPY);
+    GString *dirname = g_string_new(ACPI_PATH_SYS_POWER_SUPPLY);
     GDir *dir;
 
     g_string_append_printf (dirname, "/%s/", path);
@@ -196,19 +197,21 @@ battery* battery_update(battery *b)
 
     gctmp = get_gchar_from_infofile(b, "type");
     b->type_battery = gctmp ? (strcasecmp(gctmp, "battery") == 0) : TRUE;
+    g_free(gctmp);
 
+    g_free(b->state);
     b->state = get_gchar_from_infofile(b, "status");
     if (!b->state)
         b->state = get_gchar_from_infofile(b, "state");
     if (!b->state) {
         if (b->charge_now != -1 || b->energy_now != -1
                 || b->charge_full != -1 || b->energy_full != -1)
-            b->state = "available";
+            b->state = g_strdup("available");
         else
-            b->state = "unavailable";
+            b->state = g_strdup("unavailable");
     }
 
-
+#if 0 /* those conversions might be good for text prints but are pretty wrong for tooltip and calculations */
     /* convert energy values (in mWh) to charge values (in mAh) if needed and possible */
 
     if (b->energy_full != -1 && b->charge_full == -1) {
@@ -247,7 +250,7 @@ battery* battery_update(battery *b)
         if (b->voltage_now != -1 && b->voltage_now != 0)
             b->current_now = b->power_now * 1000 / b->voltage_now;
     }
-
+#endif
 
     if (b->charge_full < MIN_CAPACITY)
         b->percentage = 0;
@@ -260,26 +263,26 @@ battery* battery_update(battery *b)
 
 
     if (b->current_now == -1) {
-        b->poststr = "rate information unavailable";
+        //b->poststr = "rate information unavailable";
         b->seconds = -1;
     } else if (!strcasecmp(b->state, "charging")) {
         if (b->current_now > MIN_PRESENT_RATE) {
             b->seconds = 3600 * (b->charge_full - b->charge_now) / b->current_now;
-            b->poststr = " until charged";
+            //b->poststr = " until charged";
         } else {
-            b->poststr = "charging at zero rate - will never fully charge.";
+            //b->poststr = "charging at zero rate - will never fully charge.";
             b->seconds = -1;
         }
     } else if (!strcasecmp(b->state, "discharging")) {
         if (b->current_now > MIN_PRESENT_RATE) {
             b->seconds = 3600 * b->charge_now / b->current_now;
-            b->poststr = " remaining";
+            //b->poststr = " remaining";
         } else {
-            b->poststr = "discharging at zero rate - will never fully discharge.";
+            //b->poststr = "discharging at zero rate - will never fully discharge.";
             b->seconds = -1;
         }
     } else {
-        b->poststr = NULL;
+        //b->poststr = NULL;
         b->seconds = -1;
     }
 
@@ -287,29 +290,68 @@ battery* battery_update(battery *b)
 }
 
 
-battery *battery_get() {
+battery *battery_get(int battery_number) {
     GError * error = NULL;
     const gchar *entry;
-    GDir * dir = g_dir_open( ACPI_PATH_SYS_POWER_SUPPY, 0, &error );
+    gchar *batt_name = NULL;
+    gchar *batt_path = NULL;
+    GDir * dir = g_dir_open( ACPI_PATH_SYS_POWER_SUPPLY, 0, &error );
     battery *b = NULL;
+    int i;
+
     if ( dir == NULL )
     {
         g_warning( "NO ACPI/sysfs support in kernel: %s", error->message );
         return NULL;
     }
+
+    /* Try the expected path in sysfs first */
+    batt_name = g_strdup_printf(ACPI_BATTERY_DEVICE_NAME "%d", battery_number);
+    batt_path = g_strdup_printf(ACPI_PATH_SYS_POWER_SUPPLY "/%s", batt_name);
+    if (g_file_test(batt_path, G_FILE_TEST_IS_DIR) == TRUE) {
+        b = battery_new();
+        b->path = g_strdup( batt_name);
+        battery_update ( b );
+
+        if (!b->type_battery) {
+            g_warning( "Not a battery: %s", batt_path );
+            battery_free(b);
+            b = NULL;
+        }
+    }
+
+    g_free(batt_name);
+    g_free(batt_path);
+
+    if (b != NULL)
+        goto done;
+
+    /*
+     * We didn't find the expected path in sysfs.
+     * Walk the dir and blindly return n-th entry.
+     */
+    i = 0;
     while ( ( entry = g_dir_read_name (dir) ) != NULL )
     {
         b = battery_new();
         b->path = g_strdup( entry );
         battery_update ( b );
-        if ( b->type_battery == TRUE )
-            break;
-        /* ignore non-batteries */
-        else {
-            g_free(b);
-            b = NULL;
+
+        /* We're looking for a battery with the selected ID */
+        if (b->type_battery == TRUE) {
+            if (i == battery_number)
+                break;
+            i++;
         }
+        battery_free(b);
+        b = NULL;
     }
+    if (b != NULL)
+        g_warning( "Battery entry " ACPI_BATTERY_DEVICE_NAME "%d not found, using %s",
+            battery_number, b->path);
+    else
+        g_warning( "Battery %d not found", battery_number );
+done:
     g_dir_close( dir );
     return b;
 }
@@ -318,6 +360,7 @@ void battery_free(battery* bat)
 {
     if (bat) {
         g_free(bat->path);
+        g_free(bat->state);
         g_free(bat);
     }
 }

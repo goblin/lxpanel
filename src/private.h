@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Andriy Grytsenko <andrej@rep.kiev.ua>
+ * Copyright (C) 2014-2016 Andriy Grytsenko <andrej@rep.kiev.ua>
  *
  * This file is a part of LXPanel project.
  *
@@ -23,6 +23,7 @@
 
 #include "plugin.h"
 #include "conf.h"
+#include "lxpanelctl.h"
 
 #include <gmodule.h>
 
@@ -44,7 +45,6 @@
 
 /* Extracted from panel.h */
 enum { ALIGN_NONE, ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT  };
-enum { EDGE_NONE=0, EDGE_LEFT, EDGE_RIGHT, EDGE_TOP, EDGE_BOTTOM };
 enum { WIDTH_NONE, WIDTH_REQUEST, WIDTH_PIXEL, WIDTH_PERCENT };
 enum { HEIGHT_NONE, HEIGHT_PIXEL, HEIGHT_REQUEST };
 
@@ -54,6 +54,19 @@ enum { HEIGHT_NONE, HEIGHT_PIXEL, HEIGHT_REQUEST };
 #define PANEL_HEIGHT_MAX              200	/* Maximum height of panel */
 #define PANEL_HEIGHT_MIN              16	/* Minimum height of panel */
 #define PANEL_ICON_HIGHLIGHT          0x202020	/* Constant to pass to icon loader */
+
+typedef enum {
+    PANEL_MOVE_STOP, /* initial state */
+    PANEL_MOVE_DETECT, /* button pressed, detect drag */
+    PANEL_MOVE_MOVING /* moving the plugin */
+} PanelPluginMoveState;
+
+typedef struct {
+    int space_size;         /* size of space plugin if expandable */
+    int plugin_center;      /* position of center of prev no-space plugin */
+    GtkWidget * space;
+    GtkWidget * plugin;
+} PanelPluginMoveData;
 
 /* to check if we are in LXDE */
 extern gboolean is_in_lxde;
@@ -75,7 +88,7 @@ struct _Panel {
 
     GtkRequisition requisition;
     GtkWidget *(*my_box_new) (gboolean, gint);
-    GtkWidget *(*my_separator_new) ();
+    GtkWidget *(*my_separator_new) (void);
 
     void *bg; /* unused since 0.8.0 */
     int alpha;
@@ -149,6 +162,14 @@ struct _Panel {
     //gint dyn_space;                     /* Space for expandable plugins */
     //guint calculate_size_idle;          /* The idle handler for dyn_space calc */
     cairo_surface_t *surface;           /* Panel background */
+
+    PanelPluginMoveState move_state;    /* Plugin movement (drag&drop) support */
+    int move_x, move_y;
+    int move_diff;
+    GdkDevice * move_device;
+    GtkWidget * move_plugin;            /* widgets involved in movement */
+    PanelPluginMoveData move_before;
+    PanelPluginMoveData move_after;
 };
 
 typedef struct {
@@ -205,15 +226,14 @@ static inline char *_user_config_file_name(const char *name1, const char *name2)
 #define STATIC_PAGER
 #define STATIC_TRAY
 #define STATIC_MENU
-#define STATIC_SPACE
 #define STATIC_ICONS
 
 /* Plugins management - new style */
 void lxpanel_prepare_modules(void);
 void lxpanel_unload_modules(void);
 
-GtkWidget *lxpanel_add_plugin(LXPanel *p, const char *name, config_setting_t *cfg, gint at);
 GHashTable *lxpanel_get_all_types(void); /* transfer none */
+void _lxpanel_remove_plugin(LXPanel *p, GtkWidget *plugin); /* no destroy dialog */
 
 extern GQuark lxpanel_plugin_qinit; /* access to LXPanelPluginInit data */
 #define PLUGIN_CLASS(_i) ((LXPanelPluginInit*)g_object_get_qdata(G_OBJECT(_i),lxpanel_plugin_qinit))
@@ -243,6 +263,10 @@ gboolean _panel_edge_can_strut(LXPanel *panel, int edge, gint monitor, gulong *s
 void restart(void);
 void logout(void);
 void gtk_run(void);
+
+/* two huge callbacks used for plugins movement within panel */
+gboolean _lxpanel_button_release(GtkWidget *widget, GdkEventButton *event);
+gboolean _lxpanel_motion_notify(GtkWidget *widget, GdkEventMotion *event);
 
 
 /* -----------------------------------------------------------------------------
@@ -333,6 +357,8 @@ extern GtkMenu* lxpanel_get_panel_menu( Panel* panel, Plugin* plugin, gboolean u
 gboolean lxpanel_launch_app(const char* exec, GList* files, gboolean in_terminal, char const* in_workdir);
 
 extern GdkPixbuf* lxpanel_load_icon( const char* name, int width, int height, gboolean use_fallback );
+
+void Xclimsg(Window win, Atom type, long l0, long l1, long l2, long l3, long l4);
 
 
 /* Extracted from plugin.h */

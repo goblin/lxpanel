@@ -6,7 +6,7 @@
  *               2012 Michael Rawson <michaelrawson76@gmail.com>
  *               2012 Julien Lavergne <julien.lavergne@gmail.com>
  *               2013 Henry Gebhardt <hsggebhardt@gmail.com>
- *               2014 Andriy Grytsenko <andrej@rep.kiev.ua>
+ *               2014-2016 Andriy Grytsenko <andrej@rep.kiev.ua>
  *
  * This file is a part of LXPanel project.
  *
@@ -67,12 +67,13 @@ static void wincmd_adjust_toggle_state(WinCmdPlugin * wc)
 }
 
 /* Execute a window command. */
-static void wincmd_execute(WinCmdPlugin * wc, WindowCommand command)
+static void wincmd_execute(GdkScreen * screen, WinCmdPlugin * wc, WindowCommand command)
 {
     /* Get the list of all windows. */
     int client_count;
-    Window * client_list = get_xaproperty (GDK_ROOT_WINDOW(), a_NET_CLIENT_LIST, XA_WINDOW, &client_count);
-    Display *xdisplay = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
+    Screen * xscreen = GDK_SCREEN_XSCREEN(screen);
+    Window * client_list = get_xaproperty (RootWindowOfScreen(xscreen), a_NET_CLIENT_LIST, XA_WINDOW, &client_count);
+    Display *xdisplay = DisplayOfScreen(xscreen);
     if (client_list != NULL)
     {
         /* Loop over all windows. */
@@ -103,7 +104,7 @@ static void wincmd_execute(WinCmdPlugin * wc, WindowCommand command)
                         break;
 
                     case WC_SHADE:
-                        Xclimsg(client_list[i], a_NET_WM_STATE,
+                        Xclimsgx(xscreen, client_list[i], a_NET_WM_STATE,
                             ((( ! wc->toggle_preference) || ( ! wc->toggle_state)) ? a_NET_WM_STATE_ADD : a_NET_WM_STATE_REMOVE),
                             a_NET_WM_STATE_SHADED, 0, 0, 0);
                         break;
@@ -126,6 +127,7 @@ static gboolean wincmd_button_clicked(GtkWidget * widget, GdkEventButton * event
     if (event->button == 1)
     {
         GdkScreen* screen = gtk_widget_get_screen(widget);
+        Screen *xscreen = GDK_SCREEN_XSCREEN(screen);
         static GdkAtom atom = 0;
         if( G_UNLIKELY(0 == atom) )
             atom = gdk_atom_intern("_NET_SHOWING_DESKTOP", FALSE);
@@ -135,19 +137,27 @@ static gboolean wincmd_button_clicked(GtkWidget * widget, GdkEventButton * event
         if (gdk_x11_screen_supports_net_wm_hint(screen, atom))
         {
             int showing_desktop = ((( ! wc->toggle_preference) || ( ! wc->toggle_state)) ? 1 : 0);
-            Xclimsg(DefaultRootWindow(GDK_DISPLAY_XDISPLAY(gdk_display_get_default())),
+            Xclimsgx(xscreen, RootWindowOfScreen(xscreen),
                     a_NET_SHOWING_DESKTOP, showing_desktop, 0, 0, 0, 0);
             wincmd_adjust_toggle_state(wc);
         }
         else
-            wincmd_execute(wc, WC_ICONIFY);
+            wincmd_execute(screen, wc, WC_ICONIFY);
+        return TRUE;
     }
 
-    /* Middle-click to shade. */
-    else if (event->button == 2)
-        wincmd_execute(wc, WC_SHADE);
+    return FALSE;
+}
 
-    return TRUE;
+static gboolean wincmd_button_released(GtkWidget * widget, GdkEventButton * event, WinCmdPlugin * wc)
+{
+    /* Middle-click to shade. */
+    if (event->button == 2)
+    {
+        wincmd_execute(gtk_widget_get_screen(widget), wc, WC_SHADE);
+    }
+
+    return FALSE;
 }
 
 /* Plugin constructor. */
@@ -195,6 +205,9 @@ static GtkWidget *wincmd_constructor(LXPanel *panel, config_setting_t *settings)
     p = lxpanel_button_new_for_icon(panel, wc->image, NULL, NULL);
     lxpanel_plugin_set_data(p, wc, wincmd_destructor);
     gtk_widget_set_tooltip_text(p, _("Left click to iconify all windows.  Middle click to shade them."));
+
+    g_signal_connect(G_OBJECT(p), "button-release-event",
+                     G_CALLBACK(wincmd_button_released), wc);
 
     /* Show the widget and return. */
     return p;

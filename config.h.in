@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to disable using ALSA in 'volume' plugin. */
+#undef DISABLE_ALSA
+
 /* Disable menu related routines */
 #undef DISABLE_MENU
 

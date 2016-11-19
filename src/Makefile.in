@@ -86,10 +86,10 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/panel.h.in $(top_srcdir)/depcomp \
 	$(lxpanel_include_HEADERS)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/intltool.m4 \
-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -132,8 +132,9 @@ liblxpanel_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 am_liblxpanel_la_OBJECTS = liblxpanel_la-misc.lo \
 	liblxpanel_la-configurator.lo liblxpanel_la-dbg.lo \
 	liblxpanel_la-ev.lo liblxpanel_la-icon-grid.lo \
-	liblxpanel_la-panel.lo liblxpanel_la-plugin.lo \
-	liblxpanel_la-conf.lo liblxpanel_la-input-button.lo
+	liblxpanel_la-panel.lo liblxpanel_la-panel-plugin-move.lo \
+	liblxpanel_la-plugin.lo liblxpanel_la-conf.lo \
+	liblxpanel_la-space.lo liblxpanel_la-input-button.lo
 liblxpanel_la_OBJECTS = $(am_liblxpanel_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -151,7 +152,8 @@ am_lxpanel_OBJECTS = lxpanel-icon-grid-old.$(OBJEXT) \
 	lxpanel-main.$(OBJEXT) $(am__objects_1)
 lxpanel_OBJECTS = $(am_lxpanel_OBJECTS)
 lxpanel_DEPENDENCIES = liblxpanel.la $(BUILTIN_PLUGINS) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 lxpanel_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(lxpanel_LDFLAGS) $(LDFLAGS) -o $@
@@ -224,7 +226,6 @@ CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 ALL_LINGUAS = @ALL_LINGUAS@
-ALL_PLUGINS_LIST = @ALL_PLUGINS_LIST@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APPLET_CFLAGS = @APPLET_CFLAGS@
@@ -358,6 +359,7 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+gtk_module = @gtk_module@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -396,12 +398,13 @@ lxpanel_CPPFLAGS = \
 	-DPACKAGE_BIN_DIR=\""$(bindir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 	$(PACKAGE_CFLAGS) \
+	$(KEYBINDER_CFLAGS) \
 	$(G_CAST_CHECKS)
 
 BUILTIN_PLUGINS = $(top_builddir)/plugins/libbuiltin_plugins.a
 @ENABLE_MENU_CACHE_TRUE@MENU_SOURCES = menu-policy.c
 pkglib_LTLIBRARIES = liblxpanel.la
-liblxpanel_la_CPPFLAGS = $(lxpanel_CPPFLAGS) $(KEYBINDER_CFLAGS)
+liblxpanel_la_CPPFLAGS = $(lxpanel_CPPFLAGS)
 liblxpanel_la_SOURCES = \
 	misc.c \
 	configurator.c \
@@ -409,8 +412,10 @@ liblxpanel_la_SOURCES = \
 	ev.c \
 	icon-grid.c \
 	panel.c \
+	panel-plugin-move.c \
 	plugin.c \
 	conf.c \
+	space.c \
 	input-button.c
 
 liblxpanel_la_LDFLAGS = \
@@ -443,6 +448,7 @@ lxpanel_LDADD = \
 		liblxpanel.la \
 		$(BUILTIN_PLUGINS) \
 		$(PACKAGE_LIBS) \
+		$(KEYBINDER_LIBS) \
 		$(X11_LIBS)
 
 lxpanelctl_SOURCES = lxpanelctl.c lxpanelctl.h
@@ -454,6 +460,7 @@ EXTRA_DIST = \
 	menu-policy.h \
 	icon-grid-old.h \
 	gtk-compat.h \
+	space.h \
 	private.h
 
 all: all-am
@@ -601,8 +608,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liblxpanel_la-icon-grid.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liblxpanel_la-input-button.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liblxpanel_la-misc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liblxpanel_la-panel-plugin-move.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liblxpanel_la-panel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liblxpanel_la-plugin.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liblxpanel_la-space.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-bg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-gtk-run.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lxpanel-icon-grid-old.Po@am__quote@
@@ -676,6 +685,13 @@ liblxpanel_la-panel.lo: panel.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(liblxpanel_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o liblxpanel_la-panel.lo `test -f 'panel.c' || echo '$(srcdir)/'`panel.c
 
+liblxpanel_la-panel-plugin-move.lo: panel-plugin-move.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(liblxpanel_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT liblxpanel_la-panel-plugin-move.lo -MD -MP -MF $(DEPDIR)/liblxpanel_la-panel-plugin-move.Tpo -c -o liblxpanel_la-panel-plugin-move.lo `test -f 'panel-plugin-move.c' || echo '$(srcdir)/'`panel-plugin-move.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/liblxpanel_la-panel-plugin-move.Tpo $(DEPDIR)/liblxpanel_la-panel-plugin-move.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='panel-plugin-move.c' object='liblxpanel_la-panel-plugin-move.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(liblxpanel_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o liblxpanel_la-panel-plugin-move.lo `test -f 'panel-plugin-move.c' || echo '$(srcdir)/'`panel-plugin-move.c
+
 liblxpanel_la-plugin.lo: plugin.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(liblxpanel_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT liblxpanel_la-plugin.lo -MD -MP -MF $(DEPDIR)/liblxpanel_la-plugin.Tpo -c -o liblxpanel_la-plugin.lo `test -f 'plugin.c' || echo '$(srcdir)/'`plugin.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/liblxpanel_la-plugin.Tpo $(DEPDIR)/liblxpanel_la-plugin.Plo
@@ -689,6 +705,13 @@ liblxpanel_la-conf.lo: conf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='conf.c' object='liblxpanel_la-conf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(liblxpanel_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o liblxpanel_la-conf.lo `test -f 'conf.c' || echo '$(srcdir)/'`conf.c
+
+liblxpanel_la-space.lo: space.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(liblxpanel_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT liblxpanel_la-space.lo -MD -MP -MF $(DEPDIR)/liblxpanel_la-space.Tpo -c -o liblxpanel_la-space.lo `test -f 'space.c' || echo '$(srcdir)/'`space.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/liblxpanel_la-space.Tpo $(DEPDIR)/liblxpanel_la-space.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='space.c' object='liblxpanel_la-space.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(liblxpanel_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o liblxpanel_la-space.lo `test -f 'space.c' || echo '$(srcdir)/'`space.c
 
 liblxpanel_la-input-button.lo: input-button.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(liblxpanel_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT liblxpanel_la-input-button.lo -MD -MP -MF $(DEPDIR)/liblxpanel_la-input-button.Tpo -c -o liblxpanel_la-input-button.lo `test -f 'input-button.c' || echo '$(srcdir)/'`input-button.c

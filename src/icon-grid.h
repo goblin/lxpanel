@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Andriy Grytsenko <andrej@rep.kiev.ua>
+ * Copyright (C) 2014-2016 Andriy Grytsenko <andrej@rep.kiev.ua>
  *
  * This file is a part of LXPanel project.
  *
@@ -43,8 +43,20 @@ typedef struct _PanelIconGridClass      PanelIconGridClass;
 extern GtkWidget * panel_icon_grid_new(
     GtkOrientation orientation, gint child_width, gint child_height, gint spacing, gint border, gint target_dimension);
 						/* Create an icon grid */
+
+/**
+ * panel_icon_grid_set_constrain_width
+ * @ig: a widget
+ * @constrain_width: value to set
+ *
+ * Changes #PanelIconGrid::constrain-width property on the @ig. This
+ * property defines whether children of @ig may be constrained in case if
+ * the size allocated to @ig isn't sufficient to give assigned size for
+ * all existing children of @ig. All children will receive the same size
+ * deficit in described case.
+ */
 extern void panel_icon_grid_set_constrain_width(PanelIconGrid * ig, gboolean constrain_width);
-						/* Set the constrain-width property */
+
 /**
  * panel_icon_grid_set_aspect_width
  * @ig: a widget
@@ -58,7 +70,7 @@ extern void panel_icon_grid_set_constrain_width(PanelIconGrid * ig, gboolean con
  * allocated.
  * Note that if #PanelIconGrid::constrain-width is set to %TRUE then the
  * #PanelIconGrid::aspect-width is ignored and behavior of widget is that
- * if #PanelIconGrid::aspect-width is set to %FALSE.
+ * as if #PanelIconGrid::aspect-width is set to %FALSE.
  *
  * Since: 0.8.0
  */
@@ -73,6 +85,63 @@ extern gint panel_icon_grid_get_child_position(PanelIconGrid * ig, GtkWidget * c
 						/* Get the index of an icon grid element. */
 extern void panel_icon_grid_reorder_child(PanelIconGrid * ig, GtkWidget * child, gint position);
 						/* Reorder the position of a child in the icon grid */
+extern guint panel_icon_grid_get_n_children(PanelIconGrid * ig);
+						/* Count non-internal children */
+
+typedef enum {
+    PANEL_ICON_GRID_DROP_LEFT_AFTER,
+    PANEL_ICON_GRID_DROP_LEFT_BEFORE,
+    PANEL_ICON_GRID_DROP_RIGHT_AFTER,
+    PANEL_ICON_GRID_DROP_RIGHT_BEFORE,
+    PANEL_ICON_GRID_DROP_BELOW,
+    PANEL_ICON_GRID_DROP_ABOVE,
+    PANEL_ICON_GRID_DROP_INTO
+} PanelIconGridDropPosition;
+
+/**
+ * panel_icon_grid_get_dest_at_pos
+ * @ig: a widget
+ * @x: coordinate to inspect
+ * @y: coordinate to inspect
+ * @child: (allow-none): (out) (transfer none): pointer to return found child
+ * @pos: (allow-none): (out): pointer to return drop position
+ *
+ * Inspects coordinates @x and @y within @ig to contain some child widget.
+ * Returns nearest child widget and position against it.
+ *
+ * Returns: %FALSE if position is not drawable.
+ *
+ * Since: 0.9.0
+ */
+extern gboolean panel_icon_grid_get_dest_at_pos(PanelIconGrid * ig, gint x, gint y,
+                            GtkWidget ** child, PanelIconGridDropPosition * pos);
+
+/**
+ * panel_icon_grid_set_drag_dest
+ * @ig: a widget
+ * @child: (allow-none): pointer to a child
+ * @pos: drop position to draw
+ *
+ * Queues drawing of focus for given @child and @pos. If @child is %NULL
+ * then nothing will be drawn. In any case previous focus will be wiped.
+ *
+ * Since: 0.9.0
+ */
+extern void panel_icon_grid_set_drag_dest(PanelIconGrid * ig, GtkWidget * child,
+                                          PanelIconGridDropPosition pos);
+
+/**
+ * panel_icon_grid_get_drag_dest
+ * @ig: a widget
+ * @child: (allow-none): pointer to pointer to a child
+ *
+ * Retrieves data last set with panel_icon_grid_set_drag_dest()
+ *
+ * Returns: position to drop.
+ *
+ * Since: 0.9.0
+ */
+extern PanelIconGridDropPosition panel_icon_grid_get_drag_dest(PanelIconGrid * ig, GtkWidget ** child);
 
 G_END_DECLS
 

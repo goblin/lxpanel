@@ -42,8 +42,8 @@ G_BEGIN_DECLS
  */
 #define LXPANEL_CHECK_VERSION(_a,_b,_c) \
     (0 > _a || \
-    (0 == _a && 8 > _b) || \
-    (0 == _a && 8 == _b && 2 >= _c))
+    (0 == _a && 9 > _b) || \
+    (0 == _a && 9 == _b && 0 >= _c))
 
 
 #define LX_TYPE_PANEL                  (lxpanel_get_type())
