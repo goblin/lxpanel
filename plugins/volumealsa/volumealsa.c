@@ -644,9 +644,14 @@ const struct mixer_desc mixers[] = {
     /* those with needs_pa should be first! */
     { "gnome-sound-applet", "gnome-sound-applet", TRUE, FALSE },
     { "pavucontrol", "pavucontrol", TRUE, FALSE },
+#ifdef DISABLE_ALSA
+    { "xfce4-mixer", "xfce4-mixer", FALSE, FALSE },
+    { "aumix", "aumix", FALSE, TRUE },
+#else
     { "gnome-alsamixer", "gnome-alsamixer", FALSE, FALSE },
     { "alsamixergui", "alsamixergui", FALSE, FALSE },
     { "alsamixer", "alsamixer", FALSE, TRUE },
+#endif
     { NULL }
 };
 
@@ -1333,9 +1338,9 @@ static GtkWidget *volumealsa_configure(LXPanel *panel, GtkWidget *p)
     GtkTreeIter iter;
     int active = 0;
     int i = 0;
-#ifndef DISABLE_ALSA
     int j = -1;
 
+#ifndef DISABLE_ALSA
     snd_mixer_selem_id_alloca(&sid);
     /* setup card selector */
     list = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT); /* desc, num */

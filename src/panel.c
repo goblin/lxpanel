@@ -301,33 +301,34 @@ static void lxpanel_size_allocate(GtkWidget *widget, GtkAllocation *a)
     GdkRectangle rect;
     gint x, y;
 
-    /* some WM like mwm are too generous giving us space more that requested
+    /* some WM like mwm are too generous giving us space more than requested
        so let correct it right now, as much as we can */
-    a->width = MAX(8, MIN(p->cw, a->width));
-    a->height = MAX(8, MIN(p->ch, a->height));
+    rect.x = a->x;
+    rect.y = a->y;
+    rect.width = MAX(8, MIN(p->cw, a->width));
+    rect.height = MAX(8, MIN(p->ch, a->height));
+    _calculate_position(panel, &rect);
 
-    GTK_WIDGET_CLASS(lxpanel_parent_class)->size_allocate(widget, a);
+    GTK_WIDGET_CLASS(lxpanel_parent_class)->size_allocate(widget, &rect);
 
     if (p->widthtype == WIDTH_REQUEST)
-        p->width = (p->orientation == GTK_ORIENTATION_HORIZONTAL) ? a->width : a->height;
+        p->width = (p->orientation == GTK_ORIENTATION_HORIZONTAL) ? rect.width : rect.height;
     if (p->heighttype == HEIGHT_REQUEST)
-        p->height = (p->orientation == GTK_ORIENTATION_HORIZONTAL) ? a->height : a->width;
+        p->height = (p->orientation == GTK_ORIENTATION_HORIZONTAL) ? rect.height : rect.width;
 
     if (!gtk_widget_get_realized(widget))
         return;
 
-    rect = *a;
     /* get real coords since a contains 0, 0 */
     gdk_window_get_origin(gtk_widget_get_window(widget), &x, &y);
-    _calculate_position(panel, &rect);
     p->ax = rect.x;
     p->ay = rect.y;
 
-    if (a->width != p->aw || a->height != p->ah || x != p->ax || y != p->ay)
+    if (rect.width != p->aw || rect.height != p->ah || x != p->ax || y != p->ay)
     {
-        p->aw = a->width;
-        p->ah = a->height;
-        gdk_window_move_resize(gtk_widget_get_window(widget), p->ax, p->ay, p->aw, p->ah);
+        p->aw = rect.width;
+        p->ah = rect.height;
+        gtk_window_move(GTK_WINDOW(widget), p->ax, p->ay);
         /* SF bug #708: strut update does not work while in size allocation */
         if (!panel->priv->strut_update_queued)
             panel->priv->strut_update_queued = g_idle_add_full(G_PRIORITY_HIGH,
