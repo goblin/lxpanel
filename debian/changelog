@@ -1,3 +1,14 @@
+lxpanel (0.9.1-1) unstable; urgency=medium
+
+  [ Andriy Grytsenko ]
+  * Merging upstream version 0.9.1 (Closes: #845060).
+  * Using aumix-gtk on !linux-any instead of gnome-alsamixer.
+
+  [ Pino Toscano ]
+  * Making sure that ALSA is always disabled for non-Linux architectures.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Mon, 21 Nov 2016 22:57:24 +0200
+
 lxpanel (0.9.0-1) unstable; urgency=medium
 
   * Merging upstream version 0.9.0 (Closes: #831866, LP: #824071, #1445818,
