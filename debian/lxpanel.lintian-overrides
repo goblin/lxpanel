@@ -3,3 +3,5 @@ lxpanel: desktop-command-not-in-package usr/share/applications/lxde-x-terminal-e
 lxpanel: desktop-command-not-in-package usr/share/applications/lxde-x-www-browser.desktop usr/bin/x-www-browser
 # it's a false positive, blhc doesn't find any problems
 lxpanel: hardening-no-fortify-functions usr/lib/*/lxpanel/plugins/monitors.so
+# it's old config variable name for backward compatibility
+spelling-error-in-binary usr/lib/x86_64-linux-gnu/lxpanel/liblxpanel.so.0.0.0 allign align
