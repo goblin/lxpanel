@@ -13,8 +13,8 @@ Build-Depends:
  libxml2-dev, libkeybinder-dev
 Standards-Version: 3.9.8
 Homepage: http://www.lxde.org/
-Vcs-Browser: http://git.lxde.org/gitweb/?p=debian/lxpanel.git
-Vcs-Git: git://git.lxde.org/git/debian/lxpanel.git
+Vcs-Browser: https://git.lxde.org/gitweb/?p=debian/lxpanel.git
+Vcs-Git: https://git.lxde.org/git/debian/lxpanel.git
 
 Package: lxpanel
 Architecture: any
