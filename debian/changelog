@@ -1,3 +1,14 @@
+lxpanel (0.9.2-1) unstable; urgency=medium
+
+  * Replacing deprecated iceweasel with firefox-esr in Suggests.
+  * Adding firefox as an alternative to firefox-esr: Ubuntu does not have a
+    package firefox-esr.
+  * Merging upstream version 0.9.2 (Closes: #845555).
+  * Adding lintian override for "allign" word which is an old compatibility key.
+  * Using https for VCS fields in debian/control file.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Sat, 24 Dec 2016 17:35:34 +0200
+
 lxpanel (0.9.1-1) unstable; urgency=medium
 
   [ Andriy Grytsenko ]
