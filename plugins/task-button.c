@@ -100,7 +100,8 @@ struct _TaskButton
     unsigned int set_bold :1;   /* flat buttons only: TRUE if set bold */
     unsigned int visible :1;    /* TRUE if any window shown on current desktop */
     unsigned int same_name :1;  /* TRUE if all visible windows have the same name */
-    unsigned int entered_state          :1; /* True if cursor is inside taskbar button */
+    unsigned int entered_state :1; /* TRUE if cursor is inside taskbar button */
+    unsigned int has_flash :1;  /* used by task_button_set_flash_state() */
 };
 
 enum {
@@ -1356,10 +1357,10 @@ static gboolean task_button_enter_notify_event(GtkWidget *widget, GdkEventCrossi
     TaskButton *tb = PANEL_TASK_BUTTON(widget);
 
     tb->entered_state = TRUE;
+    task_draw_label(tb, tb->flags.flat_button, FALSE);
     /* As a matter of policy, avoid showing selected or prelight states on flat buttons. */
     if (tb->flags.flat_button)
-        gtk_widget_set_state(widget, GTK_STATE_NORMAL);
-    task_draw_label(tb, tb->flags.flat_button, FALSE);
+        return TRUE;
     return GTK_WIDGET_CLASS(task_button_parent_class)->enter_notify_event(widget, event);
 }
 
@@ -1369,6 +1370,8 @@ static gboolean task_button_leave_notify_event(GtkWidget *widget, GdkEventCrossi
 
     tb->entered_state = FALSE;
     task_draw_label(tb, FALSE, FALSE);
+    if (tb->flags.flat_button)
+        return TRUE;
     return GTK_WIDGET_CLASS(task_button_parent_class)->leave_notify_event(widget, event);
 }
 
@@ -1799,13 +1802,24 @@ void task_button_set_flash_state(TaskButton *button, gboolean state)
                                  m_state ? GTK_STATE_SELECTED : GTK_STATE_NORMAL);
     }
     /* Set state on the button and redraw. */
-    if (!has_flash)
-        state = button->entered_state;
     if (button->flags.flat_button)
-        task_draw_label(button, state, FALSE); /* we have to redraw bold text state */
-    else
+    {
+        if (has_flash || button->has_flash)
+        {
+            if (!has_flash)
+                state = button->entered_state;
+            task_draw_label(button, state, FALSE); /* we have to redraw bold text state */
+        }
+    }
+    else if (has_flash)
         gtk_widget_set_state(GTK_WIDGET(button),
                              state ? GTK_STATE_SELECTED : GTK_STATE_NORMAL);
+    else if (!button->entered_state && button->has_flash)
+        /* if flash state just disappeared and button isn't hovered then
+           update the state, otherwise it will be updated on mouse leave */
+        gtk_widget_set_state(GTK_WIDGET(button),
+                             button->last_focused == NULL ? GTK_STATE_NORMAL : GTK_STATE_ACTIVE);
+    button->has_flash = has_flash;
 }
 
 /* adds task only if it's the same class */
