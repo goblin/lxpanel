@@ -1,3 +1,9 @@
+lxpanel (0.9.3-1) unstable; urgency=medium
+
+  * Merging upstream version 0.9.3.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Fri, 20 Jan 2017 23:50:36 +0200
+
 lxpanel (0.9.2-1) unstable; urgency=medium
 
   * Replacing deprecated iceweasel with firefox-esr in Suggests.
