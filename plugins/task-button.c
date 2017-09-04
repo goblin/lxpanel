@@ -1665,7 +1665,7 @@ gboolean task_button_window_focus_changed(TaskButton *button, Window *win)
     for (l = button->details; l; l = l->next)
     {
         details = l->data;
-        if (details->win == *win)
+        if (win && details->win == *win)
         {
             res = TRUE;
             details->focused = TRUE;
